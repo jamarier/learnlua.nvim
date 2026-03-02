@@ -134,15 +134,12 @@ M.open = function(sections, runner, filepath)
     if correct ~= nil then
       table.insert(virt, { { "  result: " .. display_result, "Comment" } })
     end
-    table.insert(
-      virt,
+    table.insert(virt, {
       {
-        {
-          correct == true and "  ✓ Correct!" or correct == false and "  ✗ " .. msg or "  ⓘ " .. msg,
-          correct == true and "DiagnosticOk" or correct == false and "DiagnosticError" or "DiagnosticInfo",
-        },
-      }
-    )
+        correct == true and "  ✓ Correct!" or correct == false and "  ✗ " .. msg or "  ⓘ " .. msg,
+        correct == true and "DiagnosticOk" or correct == false and "DiagnosticError" or "DiagnosticInfo",
+      },
+    })
 
     vim.api.nvim_buf_set_extmark(lesson_buf, ns, current_closing + 1, 0, {
       virt_lines_above = true,
@@ -162,15 +159,25 @@ M.open = function(sections, runner, filepath)
       end
     end
 
+    if not marker then
+      return nil, nil, nil, nil
+    end
+
+    -- Find the closing ``` that belongs to THIS block (first one after the opening)
     local block_end, closing
-    for i = cursor, #lines - 1 do
-      if lines[i + 1] and lines[i + 1]:match("^```$") then
+    for i = marker + 1, #lines - 1 do
+      if lines[i + 1] and lines[i + 1]:match("^```") then
         closing, block_end = i, i - 1
         break
       end
     end
 
-    if not marker or not closing then
+    if not closing then
+      return nil, nil, nil, nil
+    end
+
+    -- Guard: cursor must actually be inside this block
+    if cursor < block_start or cursor > block_end then
       return nil, nil, nil, nil
     end
 
@@ -182,7 +189,6 @@ M.open = function(sections, runner, filepath)
     end
 
     local section = exercise_ranges[exercise_index] and exercise_ranges[exercise_index].section
-
     local code_lines = vim.api.nvim_buf_get_lines(lesson_buf, block_start, block_end + 1, false)
     return code_lines, section, marker, block_start
   end

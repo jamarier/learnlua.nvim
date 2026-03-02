@@ -26,7 +26,7 @@ A coroutine can be in one of four states:
 Example:
 ```lua
 local co = coroutine.create(function() end)
-coroutine.status(co)   -- not yet started
+print(coroutine.status(co))   -- not yet started
 ```
 ```expected
 suspended
@@ -38,7 +38,7 @@ Example:
 ```lua
 local co = coroutine.create(function() return "done" end)
 coroutine.resume(co)
-coroutine.status(co)   -- finished
+print(coroutine.status(co))   -- finished
 ```
 ```expected
 dead
@@ -59,7 +59,7 @@ local co = coroutine.create(function(a, b)
   return a + b
 end)
 local ok, result = coroutine.resume(co, 10, 20)
-tostring(ok) .. "/" .. tostring(result)
+print(tostring(ok) .. "/" .. tostring(result))
 ```
 ```expected
 true/30
@@ -84,7 +84,7 @@ end)
 local _, a = coroutine.resume(co)          -- starts, gets 1 from yield
 local _, b = coroutine.resume(co, 10)      -- sends 10 in, gets 2 from yield
 local _, c = coroutine.resume(co, 20)      -- sends 20 in, gets x+y = 30
-tostring(a) .. "," .. tostring(b) .. "," .. tostring(c)
+print(tostring(a) .. "," .. tostring(b) .. "," .. tostring(c))
 ```
 ```expected
 1,2,30
@@ -111,7 +111,7 @@ local results = {}
 for i = 1, 5 do
   table.insert(results, gen())
 end
-table.concat(results, ",")
+print(table.concat(results, ","))
 ```
 ```expected
 1,2,3,4,5
@@ -141,7 +141,7 @@ local sum = 0
 for v in range(1, 10) do
   sum = sum + v
 end
-sum
+print(sum)
 ```
 ```expected
 55
@@ -167,7 +167,7 @@ local gen = fibonacci()
 for i = 1, 8 do
   table.insert(results, gen())
 end
-table.concat(results, ",")
+print(table.concat(results, ","))
 ```
 ```expected
 0,1,1,2,3,5,8,13
@@ -200,7 +200,7 @@ local result = {}
 for v in walk({1, {2, {3, 4}}, {5, 6}}) do
   table.insert(result, v)
 end
-table.concat(result, ",")
+print(table.concat(result, ","))
 ```
 ```expected
 1,2,3,4,5,6
@@ -234,7 +234,7 @@ end
 
 local prod = producer({1, 2, 3, 4, 5})
 local output = consume(prod, function(v) return v * v end)
-table.concat(output, ",")
+print(table.concat(output, ","))
 ```
 ```expected
 1,4,9,16,25
@@ -276,7 +276,7 @@ local pipeline = map_co(
 
 local result = {}
 for v in pipeline do table.insert(result, v) end
-table.concat(result, ",")
+print(table.concat(result, ","))
 ```
 ```expected
 4,8,12
@@ -294,7 +294,7 @@ local co = coroutine.create(function()
   error("oops!")
 end)
 local ok, err = coroutine.resume(co)
-tostring(ok)
+print(tostring(ok))
 ```
 ```expected
 false
@@ -309,7 +309,7 @@ local co = coroutine.create(function()
   error("fail")
 end)
 coroutine.resume(co)
-coroutine.status(co)
+print(coroutine.status(co))
 ```
 ```expected
 dead
@@ -319,20 +319,20 @@ dead
 
 ## 10. coroutine.running
 
-`coroutine.running()` returns the running coroutine and a boolean
-indicating whether it's the main thread:
+`coroutine.running()` returns the running coroutine (in Lua 5.2 also 
+a boolean indicating whether it's the main thread):
 
 Example:
 ```lua
 local co = coroutine.create(function()
-  local me, is_main = coroutine.running()
+  local me = coroutine.running()
   coroutine.yield(type(me), is_main)
 end)
-local _, t, is_main = coroutine.resume(co)
-tostring(t) .. "/" .. tostring(is_main)
+local _, t = coroutine.resume(co)
+print(tostring(t))
 ```
 ```expected
-thread/false
+thread
 ```
 
 ---

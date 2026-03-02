@@ -27,7 +27,7 @@ Uppercase versions are the complement: `%A` = non-letter, `%D` = non-digit, etc.
 
 Example:
 ```lua
-string.match("hello123", "%d+")
+print(string.match("hello123", "%d+"))
 ```
 ```expected
 123
@@ -49,7 +49,7 @@ The difference between `*` and `-`:
 Example:
 ```lua
 -- Greedy: matches as much as possible
-string.match("<tag>content</tag>", "<(.+)>")
+print(string.match("<tag>content</tag>", "<(.+)>"))
 ```
 ```expected
 tag>content</tag
@@ -58,7 +58,7 @@ tag>content</tag
 Example:
 ```lua
 -- Non-greedy: matches as little as possible
-string.match("<tag>content</tag>", "<(.-)>")
+print(string.match("<tag>content</tag>", "<(.-)>"))
 ```
 ```expected
 tag
@@ -72,7 +72,7 @@ tag
 
 Example:
 ```lua
-string.match("hello", "^h")
+print(string.match("hello", "^h"))
 ```
 ```expected
 h
@@ -80,7 +80,7 @@ h
 
 Example:
 ```lua
-string.match("hello", "o$")
+print(string.match("hello", "o$"))
 ```
 ```expected
 o
@@ -89,7 +89,7 @@ o
 Example:
 ```lua
 -- Full match
-string.match("hello", "^hello$")
+print(string.match("hello", "^hello$"))
 ```
 ```expected
 hello
@@ -104,7 +104,7 @@ Ranges: `[a-z]`, `[0-9]`:
 
 Example:
 ```lua
-string.match("hello", "[aeiou]")   -- first vowel
+print(string.match("hello", "[aeiou]"))   -- first vowel
 ```
 ```expected
 e
@@ -112,7 +112,7 @@ e
 
 Example:
 ```lua
-string.match("abc123", "[^%a]+")   -- first non-letter sequence
+print(string.match("abc123", "[^%a]+"))   -- first non-letter sequence
 ```
 ```expected
 123
@@ -127,7 +127,7 @@ Parentheses define captures. `string.match` returns them:
 Example:
 ```lua
 local user, domain = string.match("alice@example.com", "(.+)@(.+)")
-user .. " at " .. domain
+print(user .. " at " .. domain)
 ```
 ```expected
 alice at example.com
@@ -140,7 +140,7 @@ alice at example.com
 Example:
 ```lua
 local y, m, d = string.match("2024-03-15", "(%d%d%d%d)-(%d%d)-(%d%d)")
-d .. "/" .. m .. "/" .. y
+print(d .. "/" .. m .. "/" .. y)
 ```
 ```expected
 15/03/2024
@@ -156,7 +156,7 @@ Returns start, end positions (and captures if any).
 Example:
 ```lua
 local s, e = string.find("hello world", "world")
-s .. "-" .. e
+print(s .. "-" .. e)
 ```
 ```expected
 7-11
@@ -166,7 +166,7 @@ Example:
 ```lua
 -- Returning captures too
 local s, e, cap = string.find("foo=bar", "(%w+)$")
-cap
+print(cap)
 ```
 ```expected
 bar
@@ -184,7 +184,7 @@ local words = {}
 for w in string.gmatch("the quick brown fox", "%a+") do
   table.insert(words, w)
 end
-#words
+print(#words)
 ```
 ```expected
 4
@@ -197,7 +197,7 @@ local t = {}
 for k, v in string.gmatch("x=1,y=2,z=3", "(%w+)=(%w+)") do
   t[k] = tonumber(v)
 end
-t.x + t.y + t.z
+print(t.x + t.y + t.z)
 ```
 ```expected
 6
@@ -213,31 +213,33 @@ In string replacements, `%0` = whole match, `%1` = first capture, etc:
 Example:
 ```lua
 -- String replacement with captures
-string.gsub("hello world", "(%w+)", "[%1]")
+print(string.gsub("hello world", "(%w+)", "[%1]"))
 ```
 ```expected
-[hello] [world]
+[hello] [world] 2
 ```
 
 Example:
 ```lua
 -- Function replacement
-string.gsub("1 + 2 = ?", "%d+", function(n)
-  return tostring(tonumber(n) * 2)
-end)
+print(
+  string.gsub("1 + 2 = ?", "%d+", function(n)
+    return tostring(tonumber(n) * 2)
+  end)
+)
 ```
 ```expected
-2 + 4 = ?
+2 + 4 = ? 2
 ```
 
 Example:
 ```lua
 -- Table replacement
 local t = { name = "Lua", year = "1993" }
-string.gsub("$name was created in $year", "%$(%w+)", t)
+print(string.gsub("$name was created in $year", "%$(%w+)", t))
 ```
 ```expected
-Lua was created in 1993
+Lua was created in 1993 2
 ```
 
 ---
@@ -248,7 +250,7 @@ Escape with `%`. Special pattern chars: `( ) . % + - * ? [ ^ $`:
 
 Example:
 ```lua
-string.match("price: $3.99", "%$%d+%.%d+")
+print(string.match("price: $3.99", "%$%d+%.%d+"))
 ```
 ```expected
 $3.99
@@ -263,7 +265,7 @@ An empty capture `()` returns the current position in the string:
 Example:
 ```lua
 local pos = string.find("hello world", "()", 7)
-pos
+print(pos)
 ```
 ```expected
 7

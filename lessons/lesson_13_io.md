@@ -23,10 +23,10 @@ Example:
 ```lua
 local path = vim.fn.tempname()
 local f = io.open(path, "w")
-type(f)
+print(type(f))
 ```
 ```expected
-file
+userdata
 ```
 
 ---
@@ -44,7 +44,7 @@ f:close()
 local r = assert(io.open(path, "r"))
 local content = r:read("*a")
 r:close()
-content
+print(content)
 ```
 ```expected
 hello
@@ -74,7 +74,7 @@ f:close()
 local r = assert(io.open(path, "r"))
 local first = r:read("l")
 r:close()
-first
+print(first)
 ```
 ```expected
 line1
@@ -97,7 +97,7 @@ local lines = {}
 for line in io.lines(path) do
   table.insert(lines, line)
 end
-table.concat(lines, ",")
+print(table.concat(lines, ","))
 ```
 ```expected
 a,b,c
@@ -121,7 +121,7 @@ a:close()
 local r = assert(io.open(path, "r"))
 local content = r:read("*a")
 r:close()
-vim.trim(content)
+print(vim.trim(content))
 ```
 ```expected
 first
@@ -145,7 +145,7 @@ f:write("hello world")
 f:seek("set", 0)
 local s = f:read("*a")
 f:close()
-s
+print(s)
 ```
 ```expected
 hello world
@@ -160,7 +160,7 @@ hello world
 Example:
 ```lua
 local f, err = io.open("/nonexistent/path/file.txt", "r")
-f == nil
+print(f == nil)
 ```
 ```expected
 true
@@ -178,7 +178,7 @@ Example:
 local path = vim.fn.tempname()
 vim.fn.writefile({"line1", "line2", "line3"}, path)
 local lines = vim.fn.readfile(path)
-table.concat(lines, ",")
+print(table.concat(lines, ","))
 ```
 ```expected
 line1,line2,line3
@@ -192,7 +192,7 @@ Example:
 ```lua
 local path = vim.fn.tempname()
 vim.fn.writefile({"test"}, path)
-vim.fn.filereadable(path) == 1
+print(vim.fn.filereadable(path) == 1)
 ```
 ```expected
 true

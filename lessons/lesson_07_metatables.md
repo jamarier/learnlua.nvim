@@ -18,7 +18,7 @@ Example:
 local t = {}
 local mt = { __name = "MyTable" }
 setmetatable(t, mt)
-getmetatable(t) == mt
+print(getmetatable(t) == mt)
 ```
 ```expected
 true
@@ -35,7 +35,7 @@ Example:
 ```lua
 local defaults = { color = "red", size = 10, visible = true }
 local obj = setmetatable({}, { __index = defaults })
-obj.color
+print(obj.color)
 ```
 ```expected
 red
@@ -54,7 +54,7 @@ local env = setmetatable({}, {
     return "undefined: " .. k
   end
 })
-env.foo
+print(env.foo)
 ```
 ```expected
 undefined: foo
@@ -78,7 +78,7 @@ local t = setmetatable({}, {
 })
 t.x = 10
 t.y = 20
-table.concat(log, "|")
+print(table.concat(log, "|"))
 ```
 ```expected
 x=10|y=20
@@ -95,7 +95,7 @@ Example:
 local t = setmetatable({}, {
   __index = function(_, k) return "meta:" .. k end
 })
-rawget(t, "missing")   -- bypasses __index, returns nil
+print(rawget(t, "missing"))   -- bypasses __index, returns nil
 ```
 ```expected
 nil
@@ -114,7 +114,7 @@ local mt = {
     return string.format("[%s, %s]", t[1], t[2])
   end
 }
-tostring(setmetatable({"hello", "world"}, mt))
+print(tostring(setmetatable({"hello", "world"}, mt)))
 ```
 ```expected
 [hello, world]
@@ -145,7 +145,7 @@ end
 Vec.__tostring = function(v) return "("..v.x..","..v.y..")" end
 local v = setmetatable({x=1,y=2}, Vec)
   + setmetatable({x=3,y=4}, Vec)
-tostring(v)
+print(tostring(v))
 ```
 ```expected
 (4,6)
@@ -165,7 +165,7 @@ Mt.__index = Mt
 Mt.__eq = function(a, b) return a.value == b.value end
 local a = setmetatable({value = 42}, Mt)
 local b = setmetatable({value = 42}, Mt)
-a == b
+print(a == b)
 ```
 ```expected
 true
@@ -177,15 +177,14 @@ true
 
 Overrides the `#` operator:
 
+> Only in Lua 5.2+, so we want evaluate this code chunk
+
 Example:
 ```lua
 local t = setmetatable({1, 2, 3}, {
   __len = function(t) return 999 end
 })
-#t
-```
-```expected
-999
+print(#t)
 ```
 
 ---
@@ -204,7 +203,7 @@ local mt = {
 }
 local s1 = setmetatable({value = "hello"}, mt)
 local s2 = setmetatable({value = " world"}, mt)
-tostring(s1 .. s2)
+print(tostring(s1 .. s2))
 ```
 ```expected
 hello world
@@ -223,7 +222,7 @@ local Adder = setmetatable({}, {
     return a + b
   end
 })
-Adder(10, 32)
+print(Adder(10, 32))
 ```
 ```expected
 42
@@ -240,7 +239,7 @@ Example:
 local A = { x = 1 }
 local B = setmetatable({ y = 2 }, { __index = A })
 local C = setmetatable({ z = 3 }, { __index = B })
-C.x  -- walks: C → B → A
+print(C.x)  -- walks: C → B → A
 ```
 ```expected
 1
@@ -264,7 +263,7 @@ local function readonly(t)
 end
 local ro = readonly({ x = 10 })
 local ok = pcall(function() ro.x = 20 end)
-ok
+print(ok)
 ```
 ```expected
 false

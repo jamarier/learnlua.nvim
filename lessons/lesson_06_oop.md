@@ -22,7 +22,7 @@ local dog = {
     return self.name .. " says woof!"
   end
 }
-dog:speak()
+print(dog:speak())
 ```
 ```expected
 Rex says woof!
@@ -48,7 +48,8 @@ function Animal:speak()
   return self.name .. " says " .. self.sound
 end
 
-Animal.new("Cat", "meow"):speak()
+local cat = Animal.new("Cat", "meow")
+print(cat:speak())
 ```
 ```expected
 Cat says meow
@@ -73,7 +74,7 @@ function Dog.new(n) return setmetatable({name=n}, Dog) end
 function Dog:name_upper() return self.name:upper() end
 
 local d = Dog.new("buddy")
-d:name_upper()
+print(d:name_upper())
 ```
 ```expected
 BUDDY
@@ -96,7 +97,7 @@ function Counter.new(n)
 end
 
 local c = Counter.new(5)
-c.class_name .. " | " .. c.count
+print(c.class_name .. " | " .. c.count)
 ```
 ```expected
 Counter | 5
@@ -126,7 +127,8 @@ function Builder:build()
   return table.concat(self.parts, " ")
 end
 
-Builder.new():add("Lua"):add("is"):add("fun"):build()
+local built = Builder.new():add("Lua"):add("is"):add("fun"):build()
+print(built)
 ```
 ```expected
 Lua is fun
@@ -161,7 +163,7 @@ function Circle:area()
 end
 
 local c = Circle.new("blue", 5)
-c:getColor() .. " | area=" .. c:area()
+print(c:getColor() .. " | area=" .. c:area())
 ```
 ```expected
 blue | area=78
@@ -189,7 +191,7 @@ end
 
 local obj = setmetatable(Base.new(), Child)
 obj:init()
-table.concat(obj.log, ",")
+print(table.concat(obj.log, ","))
 ```
 ```expected
 base-init,child-init
@@ -210,7 +212,7 @@ local function instanceof(obj, class)
 end
 
 local c = Cat.new()
-instanceof(c, Cat)
+print(instanceof(c, Cat))
 ```
 ```expected
 true
@@ -230,7 +232,7 @@ end
 function Point.new(x, y)
   return setmetatable({x=x, y=y}, Point)
 end
-tostring(Point.new(3, 7))
+print(tostring(Point.new(3, 7)))
 ```
 ```expected
 (3, 7)

@@ -35,7 +35,7 @@ function M.double(x) return x * 2 end
 function M.square(x) return x * x end
 
 -- What the "user" does:
-M.double(7)
+print(M.double(7))
 ```
 ```expected
 14
@@ -56,7 +56,7 @@ Example:
 -- Manually populate the cache
 package.loaded["mymod"] = { version = "1.0", name = "mymod" }
 local m = require("mymod")
-m.version
+print(m.version)
 ```
 ```expected
 1.0
@@ -70,7 +70,7 @@ Example:
 package.loaded["same"] = { x = 42 }
 local a = require("same")
 local b = require("same")
-a == b   -- same table reference
+print(a == b)   -- same table reference
 ```
 ```expected
 true
@@ -86,7 +86,7 @@ Example:
 ```lua
 package.loaded["reload_test"] = { loaded = true }
 package.loaded["reload_test"] = nil
-package.loaded["reload_test"]
+print(package.loaded["reload_test"])
 ```
 ```expected
 nil
@@ -102,7 +102,7 @@ nil
 Example:
 ```lua
 -- package.path is always a string
-type(package.path)
+print(type(package.path))
 ```
 ```expected
 string
@@ -113,7 +113,7 @@ string
 Example:
 ```lua
 -- It contains ? placeholders
-package.path:find("?") ~= nil
+print(package.path:find("?") ~= nil)
 ```
 ```expected
 true
@@ -144,7 +144,7 @@ end
 M.increment()
 M.increment()
 M.increment()
-M.get()
+print(M.get())
 ```
 ```expected
 3
@@ -173,7 +173,7 @@ function M.get_items()
   return load_data().items
 end
 
-#M.get_items()
+print(#M.get_items())
 ```
 ```expected
 5
@@ -210,7 +210,7 @@ end
 M.setup({ retries = 5, debug = true })
 
 -- timeout preserved from defaults
-M.config().timeout
+print(M.config().timeout)
 ```
 ```expected
 1000
@@ -238,7 +238,7 @@ package.loaded["myplugin.config"] = {
 package.loaded["myplugin"] = {
   config = require("myplugin.config")
 }
-require("myplugin").config.get().width
+print(require("myplugin").config.get().width)
 ```
 ```expected
 80
@@ -253,7 +253,7 @@ When a module might not be installed (e.g. an optional plugin):
 Example:
 ```lua
 local ok, mod = pcall(require, "nonexistent_module_xyz")
-ok
+print(ok)
 ```
 ```expected
 false
@@ -270,7 +270,7 @@ local function safe_require(name)
 end
 
 local m = safe_require("nonexistent_xyz")
-m == nil
+print(m == nil)
 ```
 ```expected
 true
@@ -305,7 +305,7 @@ end
 local r1 = Registry.get_instance()
 local r2 = Registry.get_instance()
 r1:register("key", 42)
-r2:lookup("key")   -- same instance
+print(r2:lookup("key"))   -- same instance
 ```
 ```expected
 42
@@ -337,7 +337,7 @@ setmetatable(M, {
   end
 })
 
-M.utils.trim("  hello  ")
+print(M.utils.trim("  hello  "))
 ```
 ```expected
 hello

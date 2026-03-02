@@ -23,7 +23,7 @@ Example:
 local ok, err = pcall(function()
   error("something went wrong")
 end)
-type(err)
+print(type(err))
 ```
 ```expected
 string
@@ -39,7 +39,7 @@ Returns `true, results...` on success, or `false, error_object` on failure:
 Example:
 ```lua
 local ok, val = pcall(function() return 2 + 2 end)
-ok .. "/" .. val
+print(tostring(ok) .. "/" .. tostring(val))
 ```
 ```expected
 true/4
@@ -48,7 +48,7 @@ true/4
 Example:
 ```lua
 local ok, err = pcall(function() error("oops") end)
-ok
+print(ok)
 ```
 ```expected
 false
@@ -66,7 +66,7 @@ local ok, err = pcall(function()
   error("test error")
 end)
 -- err will be something like "input:2: test error"
-type(err) == "string" and err:find("test error") ~= nil
+print(type(err) == "string" and err:find("test error") ~= nil)
 ```
 ```expected
 true
@@ -83,7 +83,7 @@ Example:
 local ok, err = pcall(function()
   error({ code = 404, msg = "not found" })
 end)
-err.code
+print(err.code)
 ```
 ```expected
 404
@@ -105,7 +105,7 @@ local function expect_string(val, arg_name)
   return val
 end
 local ok, err = pcall(expect_string, 42, "name")
-ok
+print(ok)
 ```
 ```expected
 false
@@ -124,7 +124,7 @@ local ok, err = xpcall(
   function() error("raw") end,
   function(e) return "CAUGHT: " .. tostring(e) end
 )
-err:sub(1, 6)
+print(err:sub(1, 6))
 ```
 ```expected
 CAUGHT
@@ -142,7 +142,7 @@ local ok, err = xpcall(
   function() error("boom") end,
   debug.traceback
 )
-type(err) == "string"
+print(type(err) == "string")
 ```
 ```expected
 true
@@ -162,7 +162,7 @@ local function divide(a, b)
   return a / b
 end
 local ok, err = pcall(divide, 10, 0)
-ok
+print(ok)
 ```
 ```expected
 false
@@ -172,7 +172,7 @@ Example:
 ```lua
 -- assert returns its arguments on success
 local x = assert(42, "won't error")
-x
+print(x)
 ```
 ```expected
 42
@@ -191,7 +191,7 @@ local outer_ok = pcall(function()
   inner_ok = pcall(function() error("inner") end)
   return "outer ok"
 end)
-tostring(outer_ok) .. "/" .. tostring(inner_ok)
+print(tostring(outer_ok) .. "/" .. tostring(inner_ok))
 ```
 ```expected
 true/false
@@ -215,7 +215,7 @@ local function safe_run(fn)
   end
   return "ok"
 end
-safe_run(function() error({code=404}) end)
+print(safe_run(function() error({code=404}) end))
 ```
 ```expected
 not_found
@@ -241,7 +241,7 @@ end
 local ok, err = pcall(function()
   error(AppError.new("AUTH", "not logged in"), 0)
 end)
-tostring(err)
+print(tostring(err))
 ```
 ```expected
 [AUTH] not logged in

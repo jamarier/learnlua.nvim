@@ -25,7 +25,7 @@ Example:
 local t = {"a", "b", "c"}
 local iter, state, init = ipairs(t)
 local i, v = iter(state, init)
-i .. "=" .. v
+print(i .. "=" .. v)
 ```
 ```expected
 1=a
@@ -43,7 +43,7 @@ local result = {}
 for i, v in ipairs({"x", "y", "z"}) do
   table.insert(result, i .. v)
 end
-table.concat(result, ",")
+print(table.concat(result, ","))
 ```
 ```expected
 1x,2y,3z
@@ -62,7 +62,7 @@ Example:
 local t = {a=1, b=2, c=3}
 local sum = 0
 for k, v in pairs(t) do sum = sum + v end
-sum
+print(sum)
 ```
 ```expected
 6
@@ -79,7 +79,7 @@ Example:
 ```lua
 local t = { x = 10 }
 local k, v = next(t, nil)
-k .. "=" .. v
+print(k .. "=" .. v)
 ```
 ```expected
 x=10
@@ -104,7 +104,7 @@ local out = {}
 for i, v in values, {"p", "q", "r"}, 0 do
   table.insert(out, v)
 end
-table.concat(out, "")
+print(table.concat(out, ""))
 ```
 ```expected
 pqr
@@ -128,7 +128,7 @@ end
 
 local sum = 0
 for v in range(5) do sum = sum + v end
-sum
+print(sum)
 ```
 ```expected
 15
@@ -151,7 +151,7 @@ end
 
 local out = {}
 for v in range(0, 10, 2) do table.insert(out, v) end
-table.concat(out, ",")
+print(table.concat(out, ","))
 ```
 ```expected
 0,2,4,6,8,10
@@ -182,7 +182,7 @@ local result = {}
 for v in tree_values({1, {2, 3}, {4, {5, 6}}}) do
   table.insert(result, v)
 end
-table.concat(result, ",")
+print(table.concat(result, ","))
 ```
 ```expected
 1,2,3,4,5,6
@@ -218,7 +218,7 @@ local out = {}
 for v in filter(range(10), function(x) return x % 2 == 0 end) do
   table.insert(out, v)
 end
-table.concat(out, ",")
+print(table.concat(out, ","))
 ```
 ```expected
 2,4,6,8,10
@@ -244,7 +244,7 @@ local out = {}
 for v in map({1,2,3,4}, function(x) return x*x end) do
   table.insert(out, v)
 end
-table.concat(out, ",")
+print(table.concat(out, ","))
 ```
 ```expected
 1,4,9,16

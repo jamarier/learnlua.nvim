@@ -2,7 +2,8 @@
 
 Neovim exposes its entire API through the `vim` global. This namespace
 is the bridge between your Lua code and Neovim's internals.
-Understanding its structure is foundational for all plugin development.
+Understanding its structure is foundational for configuration and
+plugin development.
 
 ---
 
@@ -24,7 +25,7 @@ Understanding its structure is foundational for all plugin development.
 
 Example:
 ```lua
-type(vim.api)
+print(type(vim.api))
 ```
 ```expected
 table
@@ -38,7 +39,7 @@ The most-used debugging tool. Converts any Lua value to a readable string:
 
 Example:
 ```lua
-vim.inspect({ 1, 2, 3 })
+print(vim.inspect({ 1, 2, 3 }))
 ```
 ```expected
 { 1, 2, 3 }
@@ -46,7 +47,7 @@ vim.inspect({ 1, 2, 3 })
 
 Example:
 ```lua
-vim.inspect({ name = "lua", version = 5 })
+print(vim.inspect({ name = "lua", version = 5 }))
 ```
 ```expected
 {
@@ -63,7 +64,7 @@ All of Vimscript's built-in functions are available under `vim.fn`:
 
 Example:
 ```lua
-type(vim.fn.getcwd())
+print(type(vim.fn.getcwd()))
 ```
 ```expected
 string
@@ -71,7 +72,7 @@ string
 
 Example:
 ```lua
-vim.fn.toupper("hello")
+print(vim.fn.toupper("hello"))
 ```
 ```expected
 HELLO
@@ -79,7 +80,7 @@ HELLO
 
 Example:
 ```lua
-vim.fn.has("nvim")
+print(vim.fn.has("nvim"))
 ```
 ```expected
 1
@@ -93,7 +94,7 @@ Returns the handle of the current buffer as a number:
 
 Example:
 ```lua
-type(vim.api.nvim_get_current_buf())
+print(type(vim.api.nvim_get_current_buf()))
 ```
 ```expected
 number
@@ -107,7 +108,7 @@ Returns the handle of the current window:
 
 Example:
 ```lua
-type(vim.api.nvim_get_current_win())
+print(type(vim.api.nvim_get_current_win()))
 ```
 ```expected
 number
@@ -121,7 +122,7 @@ Returns a table with `mode` and `blocking` fields:
 
 Example:
 ```lua
-vim.api.nvim_get_mode().mode
+print(vim.api.nvim_get_mode().mode)
 ```
 ```expected
 n
@@ -136,7 +137,7 @@ n
 
 Example:
 ```lua
-type(vim.bo.filetype)
+print(type(vim.bo.filetype))
 ```
 ```expected
 string
@@ -144,7 +145,7 @@ string
 
 Example:
 ```lua
-type(vim.wo.number)
+print(type(vim.wo.number))
 ```
 ```expected
 boolean
@@ -159,7 +160,7 @@ Maps to Vimscript's `g:` namespace:
 Example:
 ```lua
 vim.g.my_test_var = "hello"
-vim.g.my_test_var
+print(vim.g.my_test_var)
 ```
 ```expected
 hello
@@ -174,7 +175,7 @@ Maps to `b:`:
 Example:
 ```lua
 vim.b.my_buf_var = 42
-vim.b.my_buf_var
+print(vim.b.my_buf_var)
 ```
 ```expected
 42
@@ -188,7 +189,7 @@ vim.b.my_buf_var
 
 Example:
 ```lua
-type(vim.uv.cwd())
+print(type(vim.uv.cwd()))
 ```
 ```expected
 string
@@ -196,7 +197,7 @@ string
 
 Example:
 ```lua
-vim.uv.os_getenv("HOME") ~= nil
+print(vim.uv.os_getenv("HOME") ~= nil)
 ```
 ```expected
 true
@@ -210,7 +211,7 @@ Neovim provides useful table utilities beyond the standard library:
 
 Example:
 ```lua
-vim.tbl_contains({1, 2, 3, 4}, 3)
+print(vim.tbl_contains({1, 2, 3, 4}, 3))
 ```
 ```expected
 true
@@ -219,7 +220,7 @@ true
 Example:
 ```lua
 local evens = vim.tbl_filter(function(v) return v % 2 == 0 end, {1,2,3,4,5,6})
-table.concat(evens, ",")
+print(table.concat(evens, ","))
 ```
 ```expected
 2,4,6
@@ -228,7 +229,7 @@ table.concat(evens, ",")
 Example:
 ```lua
 local doubled = vim.tbl_map(function(v) return v * 2 end, {1,2,3})
-table.concat(doubled, ",")
+print(table.concat(doubled, ","))
 ```
 ```expected
 2,4,6
@@ -245,7 +246,7 @@ Example:
 local orig = { nested = { value = 10 } }
 local copy = vim.deepcopy(orig)
 copy.nested.value = 99
-orig.nested.value
+print(orig.nested.value)
 ```
 ```expected
 10
@@ -262,7 +263,7 @@ Example:
 local a = { x = 1, sub = { y = 2, z = 3 } }
 local b = { sub = { y = 99 } }
 local merged = vim.tbl_deep_extend("force", a, b)
-merged.sub.z   -- preserved from a
+print(merged.sub.z)   -- preserved from a
 ```
 ```expected
 3

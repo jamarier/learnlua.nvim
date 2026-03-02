@@ -13,7 +13,7 @@ Requirements
 With lazy.nvim:
 
 ```lua
-lua{
+return {
   "Urtzienriquez/learnlua.nvim",
   cmd = "Learn",
 }

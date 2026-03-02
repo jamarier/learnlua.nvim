@@ -28,7 +28,7 @@ It handles type coercion and supports list/set operations:
 Example:
 ```lua
 vim.opt.number = true
-vim.o.number
+print(vim.o.number)
 ```
 ```expected
 true
@@ -44,7 +44,7 @@ true
 Example:
 ```lua
 vim.opt.tabstop = 4
-vim.opt.tabstop:get()
+print(vim.opt.tabstop:get())
 ```
 ```expected
 4
@@ -60,7 +60,7 @@ Example:
 ```lua
 vim.opt.completeopt = { "menu", "menuone", "noselect" }
 local v = vim.opt.completeopt:get()
-type(v)
+print(type(v))
 ```
 ```expected
 table
@@ -74,7 +74,7 @@ vim.opt.shortmess:append("I")
 vim.opt.shortmess:prepend("a")
 -- Remove
 vim.opt.shortmess:remove("a")
-type(vim.opt.shortmess:get())
+print(type(vim.opt.shortmess:get()))
 ```
 ```expected
 table
@@ -89,7 +89,7 @@ Use when you want exactly `:set option=value` semantics:
 Example:
 ```lua
 vim.o.laststatus = 2
-vim.o.laststatus
+print(vim.o.laststatus)
 ```
 ```expected
 2
@@ -105,7 +105,7 @@ vim.o.laststatus
 Example:
 ```lua
 vim.bo.expandtab = true
-vim.bo.expandtab
+print(vim.bo.expandtab)
 ```
 ```expected
 true
@@ -115,7 +115,7 @@ Example:
 ```lua
 local buf = vim.api.nvim_create_buf(false, true)
 vim.bo[buf].filetype = "markdown"
-vim.bo[buf].filetype
+print(vim.bo[buf].filetype)
 ```
 ```expected
 markdown
@@ -128,7 +128,7 @@ markdown
 Example:
 ```lua
 vim.wo.wrap = false
-vim.wo.wrap
+print(vim.wo.wrap)
 ```
 ```expected
 false
@@ -144,7 +144,7 @@ options on the current buffer/window:
 Example:
 ```lua
 vim.opt_local.textwidth = 80
-vim.bo.textwidth
+print(vim.bo.textwidth)
 ```
 ```expected
 80
@@ -159,7 +159,7 @@ vim.bo.textwidth
 Example:
 ```lua
 vim.g.loaded_netrw = 1
-vim.g.loaded_netrw
+print(vim.g.loaded_netrw)
 ```
 ```expected
 1
@@ -174,7 +174,7 @@ vim.g.loaded_netrw
 Example:
 ```lua
 vim.b.my_plugin_state = { ready = true }
-vim.b.my_plugin_state.ready
+print(vim.b.my_plugin_state.ready)
 ```
 ```expected
 true
@@ -186,7 +186,7 @@ true
 
 Example:
 ```lua
-type(vim.env.HOME)
+print(type(vim.env.HOME))
 ```
 ```expected
 string
@@ -201,7 +201,7 @@ string
 Example:
 ```lua
 local info = vim.api.nvim_get_option_info2("number", {})
-info.scope
+print(info.scope)
 ```
 ```expected
 win
@@ -210,7 +210,7 @@ win
 Example:
 ```lua
 local info = vim.api.nvim_get_option_info2("expandtab", {})
-info.scope
+print(info.scope)
 ```
 ```expected
 buf
@@ -233,7 +233,7 @@ local options = {
 for k, v in pairs(options) do
   vim.opt[k] = v
 end
-vim.opt.shiftwidth:get()
+print(vim.opt.shiftwidth:get())
 ```
 ```expected
 2

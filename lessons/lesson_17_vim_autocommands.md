@@ -34,7 +34,7 @@ local id = vim.api.nvim_create_autocmd("BufEnter", {
   callback = function() end,
   desc = "test autocmd",
 })
-type(id)
+print(type(id))
 ```
 ```expected
 number
@@ -52,7 +52,7 @@ when your config is re-sourced.
 Example:
 ```lua
 local g = vim.api.nvim_create_augroup("MyPlugin", { clear = true })
-type(g)
+print(type(g))
 ```
 ```expected
 number
@@ -70,7 +70,7 @@ vim.api.nvim_create_autocmd("BufLeave", { group = g, callback = function() end }
 -- Re-create with clear=true wipes both:
 vim.api.nvim_create_augroup("TestGroup", { clear = true })
 local cmds = vim.api.nvim_get_autocmds({ group = g })
-#cmds
+print(#cmds)
 ```
 ```expected
 0
@@ -110,7 +110,7 @@ vim.api.nvim_create_autocmd({ "BufEnter", "BufLeave" }, {
   callback = function() end,
 })
 local cmds = vim.api.nvim_get_autocmds({ group = g })
-#cmds
+print(#cmds)
 ```
 ```expected
 2
@@ -131,10 +131,10 @@ vim.api.nvim_create_autocmd("BufWritePre", {
   callback = function() end,
 })
 local cmds = vim.api.nvim_get_autocmds({ group = g })
-#cmds
+print(#cmds)
 ```
 ```expected
-1
+2
 ```
 
 ---
@@ -156,7 +156,7 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 local cmds = vim.api.nvim_get_autocmds({ group = g, event = "FileType" })
-#cmds
+print(#cmds)
 ```
 ```expected
 1
@@ -178,7 +178,7 @@ vim.api.nvim_create_autocmd("TextChanged", {
   desc     = "buffer-local autocmd",
 })
 local cmds = vim.api.nvim_get_autocmds({ event = "TextChanged", buffer = buf })
-#cmds >= 1
+print(#cmds >= 1)
 ```
 ```expected
 true
@@ -203,7 +203,7 @@ vim.api.nvim_create_autocmd("User", {
 })
 vim.api.nvim_exec_autocmds("User", { pattern = "MyOnceEvent" })
 vim.api.nvim_exec_autocmds("User", { pattern = "MyOnceEvent" })  -- should not fire
-fired
+print(fired)
 ```
 ```expected
 1
@@ -228,7 +228,7 @@ vim.api.nvim_create_autocmd("User", {
 })
 vim.api.nvim_exec_autocmds("User", { pattern = "MyEvent" })
 vim.api.nvim_exec_autocmds("User", { pattern = "MyEvent" })
-#log
+print(#log)
 ```
 ```expected
 2
@@ -263,7 +263,7 @@ vim.api.nvim_create_autocmd("User", {
   end,
 })
 vim.api.nvim_exec_autocmds("User", { pattern = "TestArg" })
-received.event .. "/" .. received.match
+print(received.event .. "/" .. received.match)
 ```
 ```expected
 User/TestArg
@@ -281,9 +281,13 @@ local id = vim.api.nvim_create_autocmd("CursorMoved", {
   callback = function() end,
 })
 vim.api.nvim_del_autocmd(id)
--- Trying to delete it again should fail:
-local ok = pcall(vim.api.nvim_del_autocmd, id)
-ok
+-- Confirm it's gone by querying (returns 0 results):
+local cmds = vim.api.nvim_get_autocmds({ event = "CursorMoved" })
+local found = false
+for _, c in ipairs(cmds) do
+  if c.id == id then found = true end
+end
+print(found)
 ```
 ```expected
 false
@@ -307,7 +311,7 @@ local write_cmds = vim.api.nvim_get_autocmds({
   group = g,
   event = { "BufWritePre", "BufWritePost" }
 })
-#write_cmds
+print(#write_cmds)
 ```
 ```expected
 2

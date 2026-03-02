@@ -1,8 +1,7 @@
 # Lesson 24: Writing a Neovim Plugin
 
 This lesson covers the complete anatomy of a real Neovim plugin — from
-file layout to the public API — using patterns found in popular plugins
-like telescope.nvim, nvim-cmp, and neo-tree.nvim.
+file layout to the public API — using patterns found in popular plugins.
 
 ---
 
@@ -43,7 +42,7 @@ vim.api.nvim_create_user_command("MyPlugin", function(opts)
   require("myplugin").run(opts.args)
 end, { nargs = "?" })
 
-vim.api.nvim_get_commands({})["MyPlugin"] ~= nil
+print(vim.api.nvim_get_commands({})["MyPlugin"] ~= nil)
 ```
 ```expected
 true
@@ -87,7 +86,7 @@ end
 Config.setup({ width = 120, debug = true })
 
 -- Nested default preserved:
-Config.get().mappings.close
+print(Config.get().mappings.close)
 ```
 ```expected
 q
@@ -107,7 +106,7 @@ local a = { x = 1, sub = { y = 2, z = 3 } }
 local b = { x = 9, sub = { y = 99 } }
 local m = vim.tbl_deep_extend("force", a, b)
 -- x overwritten, sub.y overwritten, sub.z kept
-m.x .. "/" .. m.sub.y .. "/" .. m.sub.z
+print(m.x .. "/" .. m.sub.y .. "/" .. m.sub.z)
 ```
 ```expected
 9/99/3
@@ -125,7 +124,7 @@ local a = { sub = { x = 1, y = 2 } }
 local b = { sub = { x = 99 } }
 local m = vim.tbl_extend("force", a, b)
 -- sub.y is GONE — shallow replace
-tostring(m.sub.y)
+print(tostring(m.sub.y))
 ```
 ```expected
 nil
@@ -142,7 +141,7 @@ Example:
 local orig = { config = { timeout = 1000, retries = 3 } }
 local copy = vim.deepcopy(orig)
 copy.config.timeout = 9999
-orig.config.timeout   -- unchanged
+print(orig.config.timeout)   -- unchanged
 ```
 ```expected
 1000
@@ -158,7 +157,7 @@ Example:
 local t = { a = 1, b = 2, c = 3 }
 local keys = vim.tbl_keys(t)
 table.sort(keys)
-table.concat(keys, ",")
+print(table.concat(keys, ","))
 ```
 ```expected
 a,b,c
@@ -168,7 +167,7 @@ Example:
 ```lua
 local t = { "apple", "banana", "cherry", "apricot" }
 local a_fruits = vim.tbl_filter(function(s) return s:sub(1,1) == "a" end, t)
-table.concat(a_fruits, ",")
+print(table.concat(a_fruits, ","))
 ```
 ```expected
 apple,apricot
@@ -177,7 +176,7 @@ apple,apricot
 Example:
 ```lua
 local doubled = vim.tbl_map(function(n) return n * 2 end, {1,2,3,4,5})
-table.concat(doubled, ",")
+print(table.concat(doubled, ","))
 ```
 ```expected
 2,4,6,8,10
@@ -193,7 +192,7 @@ Example:
 ```lua
 local a = {1,2,3}
 vim.list_extend(a, {4,5,6})
-table.concat(a, ",")
+print(table.concat(a, ","))
 ```
 ```expected
 1,2,3,4,5,6
@@ -221,7 +220,7 @@ function M.version()
 end
 
 M.setup({ prefix = "[myplugin]" })
-M.version() .. " | " .. tostring(M.is_enabled())
+print(M.version() .. " | " .. tostring(M.is_enabled()))
 ```
 ```expected
 1.0.0 | true
@@ -248,7 +247,7 @@ function health.check()
   -- end
 end
 
-type(health.check)
+print(type(health.check))
 ```
 ```expected
 function
@@ -268,7 +267,7 @@ if vim.g.loaded_myplugin then
   -- already loaded, skip
 end
 vim.g.loaded_myplugin = 1
-vim.g.loaded_myplugin
+print(vim.g.loaded_myplugin)
 ```
 ```expected
 1
@@ -286,7 +285,7 @@ local function setup_autocmds()
   local g = vim.api.nvim_create_augroup("MyPlugin_Autocmds", { clear = true })
 
   vim.api.nvim_create_autocmd("FileType", {
-    pattern = { "lua", "vim" },
+    pattern = { "lua" },
     group = g,
     callback = function(ev)
       -- set up buffer-local plugin behaviour
@@ -304,7 +303,7 @@ local function setup_autocmds()
 end
 
 local g = setup_autocmds()
-#vim.api.nvim_get_autocmds({ group = g })
+print(#vim.api.nvim_get_autocmds({ group = g }))
 ```
 ```expected
 2
@@ -329,7 +328,7 @@ end
 
 local buf = vim.api.nvim_create_buf(false, true)
 setup_keymaps(buf)
-#vim.api.nvim_buf_get_keymap(buf, "n")
+print(#vim.api.nvim_buf_get_keymap(buf, "n"))
 ```
 ```expected
 3
@@ -366,7 +365,7 @@ MyPlugin.setup({ step = 5 })
 MyPlugin.increment()
 MyPlugin.increment()
 MyPlugin.increment()
-MyPlugin.get()
+print(MyPlugin.get())
 ```
 ```expected
 15

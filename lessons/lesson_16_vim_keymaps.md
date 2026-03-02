@@ -29,7 +29,7 @@ local found = false
 for _, m in ipairs(maps) do
   if m.desc == "Say hello" then found = true end
 end
-found
+print(found)
 ```
 ```expected
 true
@@ -61,7 +61,7 @@ local found = false
 for _, m in ipairs(maps) do
   if m.desc == "test multi" then found = true end
 end
-found
+print(found)
 ```
 ```expected
 true
@@ -92,7 +92,7 @@ local found = false
 for _, m in ipairs(maps) do
   if m.desc == "Quit Neovim" then found = true end
 end
-found
+print(found)
 ```
 ```expected
 true
@@ -118,7 +118,7 @@ local found = false
 for _, m in ipairs(maps) do
   if m.desc == "buffer-local test" then found = true end
 end
-found
+print(found)
 ```
 ```expected
 true
@@ -139,7 +139,7 @@ local found = false
 for _, m in ipairs(maps) do
   if m.lhs == " tmp1" then found = true end
 end
-found
+print(found)
 ```
 ```expected
 false
@@ -158,7 +158,7 @@ local found = false
 for _, m in ipairs(maps) do
   if m.lhs == " bldel" then found = true end
 end
-found
+print(found)
 ```
 ```expected
 false
@@ -175,7 +175,7 @@ Each entry is a table with fields: `lhs`, `rhs`, `desc`, `noremap`, `silent`, et
 
 Example:
 ```lua
-type(vim.api.nvim_get_keymap("n"))
+print(type(vim.api.nvim_get_keymap("n")))
 ```
 ```expected
 table
@@ -195,7 +195,7 @@ for _, m in ipairs(maps) do
     break
   end
 end
-result ~= nil
+print(result ~= nil)
 ```
 ```expected
 true
@@ -214,7 +214,7 @@ vim.keymap.set("i", "<Tab>", function()
   -- In a real plugin: check for completion popup, etc.
   return "<Tab>"
 end, { expr = true, desc = "smart tab" })
-type(vim.keymap.set)
+print(type(vim.keymap.set))
 ```
 ```expected
 function
@@ -233,7 +233,7 @@ Example:
 vim.keymap.set("n", "<Plug>(MyAction)", function() end, { noremap = false })
 -- User can remap it to their preferred key:
 -- vim.keymap.set("n", "ga", "<Plug>(MyAction)")
-type(vim.keymap.set)
+print(type(vim.keymap.set))
 ```
 ```expected
 function
@@ -260,7 +260,7 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 local cmds = vim.api.nvim_get_autocmds({ group = g })
-#cmds
+print(#cmds)
 ```
 ```expected
 1
@@ -296,7 +296,7 @@ for _, m in ipairs(maps) do
     count = count + 1
   end
 end
-count
+print(count)
 ```
 ```expected
 3

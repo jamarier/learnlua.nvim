@@ -29,7 +29,7 @@ Returns all active LSP clients. Filter by buffer, name, method, etc:
 Example:
 ```lua
 local clients = vim.lsp.get_clients()
-type(clients)
+print(type(clients))
 ```
 ```expected
 table
@@ -45,7 +45,7 @@ Returns the client id (integer) or nil if already running:
 Example:
 ```lua
 -- Just verify the function exists
-type(vim.lsp.start)
+print(type(vim.lsp.start))
 ```
 ```expected
 function
@@ -59,7 +59,7 @@ Example:
 ```lua
 local buf = vim.api.nvim_get_current_buf()
 local clients = vim.lsp.get_clients({ bufnr = buf })
-type(clients) == "table"
+print(type(clients) == "table")
 ```
 ```expected
 true
@@ -74,7 +74,7 @@ of whether an LSP is active. Plugins can create diagnostics programmatically:
 
 Example:
 ```lua
-type(vim.diagnostic)
+print(type(vim.diagnostic))
 ```
 ```expected
 table
@@ -93,7 +93,7 @@ table
 
 Example:
 ```lua
-vim.diagnostic.severity.ERROR
+print(vim.diagnostic.severity.ERROR)
 ```
 ```expected
 1
@@ -130,7 +130,7 @@ vim.diagnostic.set(ns, buf, {
     source = "my_linter",
   },
 })
-#vim.diagnostic.get(buf)
+print(#vim.diagnostic.get(buf))
 ```
 ```expected
 2
@@ -153,7 +153,7 @@ vim.diagnostic.set(ns, buf, {
   { lnum=0, col=0, severity=vim.diagnostic.severity.INFO,  message="i1" },
 })
 local errors = vim.diagnostic.get(buf, { severity = vim.diagnostic.severity.ERROR })
-#errors
+print(#errors)
 ```
 ```expected
 1
@@ -174,7 +174,7 @@ vim.diagnostic.set(ns, buf, {
   { lnum=0, col=0, severity=vim.diagnostic.severity.ERROR, message="x" }
 })
 vim.diagnostic.reset(ns, buf)
-#vim.diagnostic.get(buf, { namespace = ns })
+print(#vim.diagnostic.get(buf, { namespace = ns }))
 ```
 ```expected
 0
@@ -198,7 +198,7 @@ vim.diagnostic.config({
   update_in_insert = false,
   severity_sort = true,
 })
-type(vim.diagnostic.config)
+print(type(vim.diagnostic.config))
 ```
 ```expected
 function
@@ -221,7 +221,7 @@ vim.diagnostic.set(ns, buf, {
   { lnum=0, col=0, severity=vim.diagnostic.severity.WARN,  message="c" },
 })
 local counts = vim.diagnostic.count(buf)
-counts[vim.diagnostic.severity.ERROR]
+print(counts[vim.diagnostic.severity.ERROR])
 ```
 ```expected
 2
@@ -246,7 +246,7 @@ They send requests to the server and handle responses asynchronously:
 
 Example:
 ```lua
-type(vim.lsp.buf.hover)
+print(type(vim.lsp.buf.hover))
 ```
 ```expected
 function
@@ -270,7 +270,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
     vim.keymap.set("n", "gr", vim.lsp.buf.references,  { buffer = buf })
   end,
 })
-#vim.api.nvim_get_autocmds({ group = g })
+print(#vim.api.nvim_get_autocmds({ group = g }))
 ```
 ```expected
 1

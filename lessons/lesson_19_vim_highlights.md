@@ -25,7 +25,7 @@ vim.api.nvim_set_hl(0, "MyPlugin_Error", {
   underline = true,
 })
 local hl = vim.api.nvim_get_hl(0, { name = "MyPlugin_Error" })
-hl.bold
+print(hl.bold)
 ```
 ```expected
 true
@@ -58,7 +58,7 @@ Example:
 ```lua
 vim.api.nvim_set_hl(0, "MyWarning", { link = "DiagnosticWarn" })
 local hl = vim.api.nvim_get_hl(0, { name = "MyWarning" })
-hl.link
+print(hl.link)
 ```
 ```expected
 DiagnosticWarn
@@ -74,7 +74,7 @@ clobber each other. Create one per plugin or per feature:
 Example:
 ```lua
 local ns = vim.api.nvim_create_namespace("myplugin.hints")
-type(ns)
+print(type(ns))
 ```
 ```expected
 number
@@ -96,7 +96,7 @@ local buf = vim.api.nvim_create_buf(false, true)
 vim.api.nvim_buf_set_lines(buf, 0, -1, false, {"hello world"})
 local ns = vim.api.nvim_create_namespace("test_add_hl")
 local id = vim.api.nvim_buf_add_highlight(buf, ns, "Comment", 0, 0, 5)
-id >= 0
+print(id >= 0)
 ```
 ```expected
 true
@@ -135,7 +135,7 @@ local id = vim.api.nvim_buf_set_extmark(buf, ns, 0, 0, {
   hl_group = "Keyword",
   end_col = 8,  -- highlight "function"
 })
-id > 0
+print(id > 0)
 ```
 ```expected
 true
@@ -158,7 +158,7 @@ vim.api.nvim_buf_set_extmark(buf, ns, 0, 0, {
 })
 -- Retrieve the extmark and confirm it has virt_text
 local marks = vim.api.nvim_buf_get_extmarks(buf, ns, 0, -1, { details = true })
-marks[1][4].virt_text ~= nil
+print(marks[1][4].virt_text ~= nil)
 ```
 ```expected
 true
@@ -182,7 +182,7 @@ local id = vim.api.nvim_buf_set_extmark(buf, ns, 0, 0, {
   },
   virt_lines_above = false,
 })
-id > 0
+print(id > 0)
 ```
 ```expected
 true
@@ -205,7 +205,7 @@ for i = 0, 2 do
   vim.api.nvim_buf_set_extmark(buf, ns, i, 0, {})
 end
 local marks = vim.api.nvim_buf_get_extmarks(buf, ns, 0, -1, {})
-#marks
+print(#marks)
 ```
 ```expected
 3
@@ -226,7 +226,7 @@ local id = vim.api.nvim_buf_set_extmark(buf, ns, 0, 0, {})
 -- Move to row 2
 vim.api.nvim_buf_set_extmark(buf, ns, 2, 0, { id = id })
 local marks = vim.api.nvim_buf_get_extmarks(buf, ns, 0, -1, {})
-marks[1][2]   -- row of the (now moved) mark
+print(marks[1][2])   -- row of the (now moved) mark
 ```
 ```expected
 2
@@ -246,7 +246,7 @@ local ns = vim.api.nvim_create_namespace("em_clear")
 vim.api.nvim_buf_set_extmark(buf, ns, 0, 0, {})
 vim.api.nvim_buf_set_extmark(buf, ns, 1, 0, {})
 vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
-#vim.api.nvim_buf_get_extmarks(buf, ns, 0, -1, {})
+print(#vim.api.nvim_buf_get_extmarks(buf, ns, 0, -1, {}))
 ```
 ```expected
 0
@@ -267,7 +267,7 @@ local id = vim.api.nvim_buf_set_extmark(buf, ns, 0, 0, {
   sign_text = "E>",
   sign_hl_group = "DiagnosticError",
 })
-id > 0
+print(id > 0)
 ```
 ```expected
 true

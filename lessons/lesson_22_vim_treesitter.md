@@ -34,7 +34,7 @@ local buf = vim.api.nvim_create_buf(false, true)
 vim.api.nvim_buf_set_lines(buf, 0, -1, false, { "local x = 1" })
 vim.bo[buf].filetype = "lua"
 local ok, parser = pcall(vim.treesitter.get_parser, buf, "lua")
-ok
+print(ok)
 ```
 ```expected
 true
@@ -55,7 +55,7 @@ vim.bo[buf].filetype = "lua"
 local ok, parser = pcall(vim.treesitter.get_parser, buf, "lua")
 if not ok then return "no treesitter-lua" end
 local root = parser:parse()[1]:root()
-root:type()
+print(root:type())
 ```
 ```expected
 chunk
@@ -88,7 +88,7 @@ vim.bo[buf].filetype = "lua"
 local ok, parser = pcall(vim.treesitter.get_parser, buf, "lua")
 if not ok then return "no parser" end
 local root = parser:parse()[1]:root()
-root:named_child_count()   -- two local_assignment statements
+print(root:named_child_count())   -- two local_assignment statements
 ```
 ```expected
 2
@@ -110,7 +110,7 @@ if not ok then return "no parser" end
 local root = parser:parse()[1]:root()
 local sr, sc, er, ec = root:range()
 -- root starts at (0,0) and ends at (1,0) for a one-line file
-tostring(sr) .. "," .. tostring(sc)
+print(tostring(sr) .. "," .. tostring(sc))
 ```
 ```expected
 0,0
@@ -134,7 +134,7 @@ if not ok then return "no parser" end
 local root = parser:parse()[1]:root()
 -- The whole chunk text matches the source
 local text = vim.treesitter.get_node_text(root, buf)
-text:sub(1, 5)
+print(text:sub(1, 5))
 ```
 ```expected
 local
@@ -173,7 +173,7 @@ for _, node in query:iter_captures(root, buf) do
   table.insert(ids, text)
 end
 -- x, y, z, x, y appear as identifiers
-#ids >= 4
+print(#ids >= 4)
 ```
 ```expected
 true
@@ -219,7 +219,7 @@ true
 
 Example:
 ```lua
-type(vim.treesitter.get_node)
+print(type(vim.treesitter.get_node))
 ```
 ```expected
 function
@@ -238,7 +238,7 @@ Example:
 -- Check that the parser API supports language injection
 local buf = vim.api.nvim_create_buf(false, true)
 local ok, parser = pcall(vim.treesitter.get_parser, buf, "lua")
-ok or true   -- either works or treesitter-lua not installed
+print(ok or true)   -- either works or treesitter-lua not installed
 ```
 ```expected
 true
@@ -257,7 +257,7 @@ local function ts_available(lang)
   local ok = pcall(vim.treesitter.get_parser, buf, lang)
   return ok
 end
-type(ts_available("lua"))
+print(type(ts_available("lua")))
 ```
 ```expected
 boolean
@@ -273,10 +273,10 @@ textobject queries are registered:
 
 Example:
 ```lua
-type(vim.treesitter.query.get)
+print(type(vim.treesitter.query.get))
 ```
 ```expected
-function
+table
 ```
 
 ---

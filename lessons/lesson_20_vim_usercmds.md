@@ -20,7 +20,7 @@ Example:
 vim.api.nvim_create_user_command("Ping", function()
 end, {})
 local cmds = vim.api.nvim_get_commands({})
-cmds["Ping"] ~= nil
+print(cmds["Ping"] ~= nil)
 ```
 ```expected
 true
@@ -65,7 +65,7 @@ vim.api.nvim_create_user_command("EchoTest", function(opts)
   received = opts.args
 end, { nargs = "?" })
 vim.cmd("EchoTest hello")
-received
+print(received)
 ```
 ```expected
 hello
@@ -84,7 +84,7 @@ vim.api.nvim_create_user_command("MultiArg", function(opts)
   got = opts.fargs
 end, { nargs = "*" })
 vim.cmd("MultiArg one two three")
-#got
+print(#got)
 ```
 ```expected
 3
@@ -103,7 +103,7 @@ vim.api.nvim_create_user_command("BangTest", function(opts)
   banged = opts.bang
 end, { bang = true })
 vim.cmd("BangTest!")
-banged
+print(banged)
 ```
 ```expected
 true
@@ -122,7 +122,7 @@ vim.api.nvim_create_user_command("RangeCmd", function(opts)
   r1 = opts.line1
   r2 = opts.line2
 end, { range = true })
-type(vim.api.nvim_create_user_command)
+print(type(vim.api.nvim_create_user_command))
 ```
 ```expected
 function
@@ -149,7 +149,7 @@ end, {
   end,
 })
 local cmds = vim.api.nvim_get_commands({})
-cmds["SetTheme"] ~= nil
+print(cmds["SetTheme"] ~= nil)
 ```
 ```expected
 true
@@ -167,7 +167,7 @@ Example:
 local buf = vim.api.nvim_get_current_buf()
 vim.api.nvim_buf_create_user_command(buf, "BufCmd", function() end, {})
 local cmds = vim.api.nvim_buf_get_commands(buf, {})
-cmds["BufCmd"] ~= nil
+print(cmds["BufCmd"] ~= nil)
 ```
 ```expected
 true
@@ -184,7 +184,7 @@ Example:
 ```lua
 vim.api.nvim_create_user_command("TempDel", function() end, {})
 vim.api.nvim_del_user_command("TempDel")
-vim.api.nvim_get_commands({})["TempDel"] == nil
+print(vim.api.nvim_get_commands({})["TempDel"] == nil)
 ```
 ```expected
 true
@@ -202,7 +202,7 @@ Example:
 local result = ""
 vim.api.nvim_create_user_command("Echo2", function(o) result = o.args end, { nargs = "?" })
 vim.cmd.Echo2("world")
-result
+print(result)
 ```
 ```expected
 world
@@ -233,7 +233,7 @@ end, {
 
 -- Test dispatch
 local r = cmd_open()
-r
+print(r)
 ```
 ```expected
 opened

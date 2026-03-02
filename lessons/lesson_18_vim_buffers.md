@@ -25,7 +25,7 @@ window handles, tabpages get tabpage handles.
 Example:
 ```lua
 local buf = vim.api.nvim_create_buf(false, true)
-vim.api.nvim_buf_is_valid(buf)
+print(vim.api.nvim_buf_is_valid(buf))
 ```
 ```expected
 true
@@ -40,7 +40,7 @@ Returns all buffer handles (including unlisted ones):
 Example:
 ```lua
 local bufs = vim.api.nvim_list_bufs()
-type(bufs) == "table" and #bufs >= 1
+print(type(bufs) == "table" and #bufs >= 1)
 ```
 ```expected
 true
@@ -67,7 +67,7 @@ vim.api.nvim_buf_set_lines(buf, 0, -1, false, {
   "line three",
 })
 local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
-#lines
+print(#lines)
 ```
 ```expected
 3
@@ -86,7 +86,7 @@ vim.api.nvim_buf_set_lines(buf, 0, -1, false, {"a","b","c","d","e"})
 -- Replace lines 1-3 (0-indexed) with two lines
 vim.api.nvim_buf_set_lines(buf, 1, 4, false, {"X", "Y"})
 local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
-table.concat(lines, ",")
+print(table.concat(lines, ","))
 ```
 ```expected
 a,X,Y,e
@@ -104,7 +104,7 @@ local buf = vim.api.nvim_create_buf(false, true)
 vim.api.nvim_buf_set_lines(buf, 0, -1, false, {"hello world"})
 -- Replace bytes 6-11 on line 0 with "Lua"
 vim.api.nvim_buf_set_text(buf, 0, 6, 0, 11, {"Lua"})
-vim.api.nvim_buf_get_lines(buf, 0, -1, false)[1]
+print(vim.api.nvim_buf_get_lines(buf, 0, -1, false)[1])
 ```
 ```expected
 hello Lua
@@ -122,7 +122,7 @@ Example:
 local buf = vim.api.nvim_create_buf(false, true)
 vim.api.nvim_buf_set_name(buf, "my-scratch-buffer")
 local name = vim.api.nvim_buf_get_name(buf)
-vim.fn.fnamemodify(name, ":t")
+print(vim.fn.fnamemodify(name, ":t"))
 ```
 ```expected
 my-scratch-buffer
@@ -139,7 +139,7 @@ Example:
 local buf = vim.api.nvim_create_buf(false, true)
 vim.bo[buf].filetype = "lua"
 vim.bo[buf].modifiable = false
-vim.bo[buf].modifiable
+print(vim.bo[buf].modifiable)
 ```
 ```expected
 false
@@ -155,7 +155,7 @@ Example:
 ```lua
 local buf = vim.api.nvim_create_buf(false, true)
 vim.b[buf].my_flag = "active"
-vim.b[buf].my_flag
+print(vim.b[buf].my_flag)
 ```
 ```expected
 active
@@ -172,7 +172,7 @@ Example:
 ```lua
 local buf = vim.api.nvim_create_buf(false, true)
 vim.api.nvim_buf_delete(buf, { force = true })
-vim.api.nvim_buf_is_valid(buf)
+print(vim.api.nvim_buf_is_valid(buf))
 ```
 ```expected
 false
@@ -187,7 +187,7 @@ Returns all window handles:
 Example:
 ```lua
 local wins = vim.api.nvim_list_wins()
-type(wins) == "table" and #wins >= 1
+print(type(wins) == "table" and #wins >= 1)
 ```
 ```expected
 true
@@ -203,7 +203,7 @@ Example:
 ```lua
 local win = vim.api.nvim_get_current_win()
 local buf = vim.api.nvim_win_get_buf(win)
-vim.api.nvim_buf_is_valid(buf)
+print(vim.api.nvim_buf_is_valid(buf))
 ```
 ```expected
 true
@@ -220,7 +220,7 @@ Example:
 ```lua
 local win = vim.api.nvim_get_current_win()
 local pos = vim.api.nvim_win_get_cursor(win)
-type(pos) == "table" and #pos == 2
+print(type(pos) == "table" and #pos == 2)
 ```
 ```expected
 true
@@ -234,7 +234,7 @@ Example:
 ```lua
 local win = vim.api.nvim_get_current_win()
 vim.wo[win].number = false
-vim.wo[win].number
+print(vim.wo[win].number)
 ```
 ```expected
 false
@@ -264,7 +264,14 @@ local win = vim.api.nvim_open_win(buf, false, {
   style = "minimal",
   border = "rounded",
 })
-vim.api.nvim_win_is_valid(win)
+print(vim.api.nvim_win_is_valid(win))
+
+-- to remove the created example floating window
+vim.defer_fn(function()
+  if vim.api.nvim_win_is_valid(win) then
+    vim.api.nvim_win_close(win, true)
+  end
+end, 1000)
 ```
 ```expected
 true
@@ -284,7 +291,7 @@ local win = vim.api.nvim_open_win(buf, false, {
   width = 10, height = 3, style = "minimal",
 })
 vim.api.nvim_win_close(win, true)
-vim.api.nvim_win_is_valid(win)
+print(vim.api.nvim_win_is_valid(win))
 ```
 ```expected
 false
@@ -305,7 +312,14 @@ local win = vim.api.nvim_open_win(buf, false, {
   width = 20, height = 5, style = "minimal",
 })
 local config = vim.api.nvim_win_get_config(win)
-config.width
+print(config.width)
+
+-- to remove the created example floating window
+vim.defer_fn(function()
+  if vim.api.nvim_win_is_valid(win) then
+    vim.api.nvim_win_close(win, true)
+  end
+end, 1000)
 ```
 ```expected
 20
@@ -320,7 +334,7 @@ config.width
 Example:
 ```lua
 local tabs = vim.api.nvim_list_tabpages()
-type(tabs) == "table" and #tabs >= 1
+print(type(tabs) == "table" and #tabs >= 1)
 ```
 ```expected
 true

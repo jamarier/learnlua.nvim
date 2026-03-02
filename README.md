@@ -43,27 +43,50 @@ Open a specific lesson:
 
 ### Table of contents
 
-| Key | Action |
-|---|---|
+| Key  | Action                           |
+| ---- | -------------------------------- |
 | `gf` | Open the lesson under the cursor |
-| `gl` | Jump to Part I — Lua language |
-| `gn` | Jump to Part II — Neovim API |
-| `q` | Close |
+| `gl` | Jump to Part I — Lua language    |
+| `gn` | Jump to Part II — Neovim API     |
+| `q`  | Close                            |
 
 ### Inside a lesson
 
-| Key | Action |
-|---|---|
+| Key    | Action                                                  |
+| ------ | ------------------------------------------------------- |
 | `<CR>` | Open the exercise editor for the block under the cursor |
-| `gO` | Return to the table of contents |
-| `q` | Close the lesson |
+| `gO`   | Return to the table of contents                         |
+| `q`    | Close the lesson                                        |
 
 ### Inside the exercise editor
 
-| Key | Action |
-|---|---|
+| Key    | Action                             |
+| ------ | ---------------------------------- |
 | `<CR>` | Run your code and check the result |
-| `q` | Close and return to the lesson |
+| `q`    | Close and return to the lesson     |
+
+### change default keymaps
+
+```lua
+return {
+  "urtzienriquez/learnlua.nvim",
+  dev = true,
+  cmd = "Learn",
+  opts = {
+    -- default keymaps
+    mappings = {
+      open_editor = "<CR>", -- Inside code block
+      submit_code = "<CR>", -- Inside editor
+      close_editor = "q",
+      close_lesson = "q",
+      go_welcome = "gO",
+      jump_lua = "gl",
+      jump_nvim = "gn",
+      jump_lesson = "<CR>", -- In lesson list
+    },
+  },
+}
+```
 
 ---
 
@@ -73,11 +96,12 @@ Each lesson is a markdown file with embedded code blocks and expected outputs. P
 
 LSP completions and diagnostics are available in the exercise editor if lua-language-server is installed.
 
---- 
+---
 
 ## Lessons
 
 Part I — Lua Language
+
 - basics
 - strings
 - tables
@@ -93,6 +117,7 @@ Part I — Lua Language
 - io
 
 Part II — Neovim API
+
 - vim_api
 - vim_options
 - vim_keymaps

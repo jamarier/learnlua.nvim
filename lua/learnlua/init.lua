@@ -4,8 +4,14 @@ local plugin_path = vim.fn.fnamemodify(debug.getinfo(1, "S").source:sub(2), ":p:
 local parser = require("learnlua.parser")
 local ui = require("learnlua.ui")
 local runner = require("learnlua.runner")
+local config = require("learnlua.config")
+
+M.setup = function(opts)
+  config.setup(opts)
+end
 
 M.start = function(args)
+  local cfg = config.get()
   if not args then
     local filepath = plugin_path .. "/lessons/lesson_00_welcome.md"
     -- welcome has no exercises, just display it raw
@@ -32,7 +38,7 @@ M.start = function(args)
     vim.opt_local.path = plugin_path .. "/lessons/"
 
     -- 1. Jump to Part I (Lua)
-    vim.keymap.set("n", "gl", function()
+    vim.keymap.set("n", cfg.mappings.jump_lua, function()
       vim.fn.cursor(1, 1)
       if vim.fn.search([[### Part I]], "W") == 0 then
         print("Section 'Part I' not found")
@@ -41,7 +47,7 @@ M.start = function(args)
     end, {})
 
     -- 2. Jump to Part II (Neovim API)
-    vim.keymap.set("n", "gn", function()
+    vim.keymap.set("n", cfg.mappings.jump_nvim, function()
       vim.fn.cursor(1, 1)
       if vim.fn.search([[### Part II]], "W") == 0 then
         print("Section 'Part II' not found")
@@ -50,7 +56,7 @@ M.start = function(args)
     end, {})
 
     -- gf opens the lesson under cursor
-    vim.keymap.set("n", "gf", function()
+    vim.keymap.set("n", cfg.mappings.jump_lesson, function()
       local word = vim.fn.expand("<cWORD>")
       -- strip surrounding backticks and any punctuation
       local lesson = word:match("`([%w_%-]+)`")
@@ -64,7 +70,7 @@ M.start = function(args)
       end
     end, { buffer = buf, noremap = true })
 
-    vim.keymap.set("n", "q", function()
+    vim.keymap.set("n", cfg.mappings.close_lesson, function()
       vim.api.nvim_buf_delete(buf, { force = true })
     end, { buffer = buf })
     return

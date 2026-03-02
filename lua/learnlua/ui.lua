@@ -72,6 +72,7 @@ local function close_editor(win, buf, lesson_win)
 end
 
 M.open = function(sections, runner, filepath)
+  local cfg = require("learnlua.config").get()
   local ns = vim.api.nvim_create_namespace("learnlua")
   local lesson_buf = vim.api.nvim_create_buf(false, true)
   local exercise_ranges = {}
@@ -230,7 +231,7 @@ M.open = function(sections, runner, filepath)
     local editor_win = vim.api.nvim_get_current_win()
     vim.api.nvim_win_set_buf(editor_win, editor_buf)
 
-    vim.keymap.set("n", "<CR>", function()
+    vim.keymap.set("n", cfg.mappings.submit_code, function()
       local lines = vim.api.nvim_buf_get_lines(editor_buf, 0, -1, false)
       local correct, msg, result = runner.check(lines, section.expected)
       show_feedback(marker, correct, msg, result)
@@ -239,12 +240,12 @@ M.open = function(sections, runner, filepath)
       end
     end, { buffer = editor_buf })
 
-    vim.keymap.set("n", "q", function()
+    vim.keymap.set("n", cfg.mappings.close_editor, function()
       close_editor(editor_win, editor_buf, lesson_win)
     end, { buffer = editor_buf })
   end
 
-  vim.keymap.set("n", "<CR>", function()
+  vim.keymap.set("n", cfg.mappings.open_editor, function()
     local code_lines, section, marker, block_start = get_block_at_cursor()
     if not code_lines or not section then
       print("Place your cursor inside a code block and press <CR>")
@@ -253,11 +254,11 @@ M.open = function(sections, runner, filepath)
     open_editor(code_lines, section, marker, block_start)
   end, { buffer = lesson_buf })
 
-  vim.keymap.set("n", "q", function()
+  vim.keymap.set("n", cfg.mappings.close_lesson, function()
     vim.api.nvim_buf_delete(lesson_buf, { force = true })
   end, { buffer = lesson_buf })
 
-  vim.keymap.set("n", "gO", function()
+  vim.keymap.set("n", cfg.mappings.go_welcome, function()
     vim.cmd("Learn")
   end, { buffer = lesson_buf })
 end

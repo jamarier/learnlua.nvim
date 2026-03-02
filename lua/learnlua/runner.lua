@@ -25,6 +25,16 @@ M.check = function(code_lines, expected)
     last_printed = table.concat(parts, "\t")
   end
 
+  local sandbox_table = {}
+  for k, v in pairs(table) do
+    sandbox_table[k] = v
+  end
+  sandbox_table.unpack = sandbox_table.unpack or _G.unpack
+  -- Polyfill for table.pack (Missing in Lua 5.1/LuaJIT)
+  sandbox_table.pack = function(...)
+    return { n = select("#", ...), ... }
+  end
+
   local sandbox = {
     vim = setmetatable({}, {
       __index = function(_, k)
@@ -34,9 +44,10 @@ M.check = function(code_lines, expected)
         return vim[k]
       end,
     }),
+    _G = _G,
     print = capture_output,
     string = string,
-    table = table,
+    table = sandbox_table,
     math = math,
     io = io,
     os = os,
@@ -47,7 +58,6 @@ M.check = function(code_lines, expected)
     ipairs = ipairs,
     next = next,
     select = select,
-    unpack = unpack or table.unpack,
     pcall = pcall,
     error = error,
     assert = assert,
@@ -58,14 +68,17 @@ M.check = function(code_lines, expected)
     getmetatable = getmetatable,
   }
 
+  sandbox._G = sandbox
+  setmetatable(sandbox, { __index = _G })
+
   local fn, err
 
-  -- 1. If it's a single line and doesn't have 'return', try adding it
-  -- don't know if it is a good idea
-  if #code_lines == 1 and not code:match("^%s*return%s") then
-    local return_code = "return " .. code
-    fn = load(return_code, "exercise", "t", sandbox)
-  end
+  -- -- 1. If it's a single line and doesn't have 'return', try adding it
+  -- -- don't know if it is a good idea
+  -- if #code_lines == 1 and not code:match("^%s*return%s") then
+  --   local return_code = "return " .. code
+  --   fn = load(return_code, "exercise", "t", sandbox)
+  -- end
 
   -- 2. If #1 failed or it's multi-line, load the code exactly as written
   if not fn then

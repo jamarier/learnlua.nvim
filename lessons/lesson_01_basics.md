@@ -5,8 +5,9 @@ embedding. According to the Lua 5.4 reference manual, it is "a powerful,
 efficient, lightweight, embeddable scripting language". Neovim uses LuaJIT
 (Lua 5.1 compatible with some 5.2 features) for its configuration and plugin API.
 
-> **Note:** All values in Lua are *first-class* — variables, table fields,
-> and function arguments all hold the same kinds of values with no restrictions.
+> **Note:** All values in Lua are *first-class*. This means that all values
+> can be stored in variables, passed as arguments to other functions, and
+> returned as results.
 
 ---
 
@@ -27,7 +28,9 @@ Lua has exactly eight types. `type(v)` returns the type name as a string.
 
 Example:
 ```lua
-type("hello")
+-- remeber: to `return` a value you need to use:
+-- print(), vim.print() or return
+print(type("hello"))
 ```
 ```expected
 string
@@ -37,7 +40,7 @@ string
 
 Example:
 ```lua
-type(42)
+print(type(42))
 ```
 ```expected
 number
@@ -47,7 +50,7 @@ number
 
 Example:
 ```lua
-type(nil)
+print(type(nil))
 ```
 ```expected
 nil
@@ -57,7 +60,7 @@ nil
 
 Example:
 ```lua
-type({})
+print(type({}))
 ```
 ```expected
 table
@@ -67,7 +70,7 @@ table
 
 Example:
 ```lua
-type(print)
+print(type(print))
 ```
 ```expected
 function
@@ -80,7 +83,7 @@ function
 Lua has two kinds of variables: **global** (default) and **local**.
 Always prefer `local` — globals are slower and pollute the global table `_G`.
 
-```
+```lua
 local name = value          -- declares a local variable
 name = value                -- assigns to an existing variable (or creates a global!)
 ```
@@ -89,7 +92,7 @@ Example:
 ```lua
 local x = 10
 local y = 20
-x + y
+print(x + y)
 ```
 ```expected
 30
@@ -105,7 +108,7 @@ Extra values are discarded; missing values become nil.
 Example:
 ```lua
 local a, b, c = 1, 2, 3
-b
+print(b)
 ```
 ```expected
 2
@@ -116,7 +119,7 @@ b
 Example:
 ```lua
 local a, b = 1, 2, 3   -- 3 is discarded
-a + b
+print(a + b)
 ```
 ```expected
 3
@@ -127,7 +130,7 @@ a + b
 Example:
 ```lua
 local a, b, c = 1, 2   -- c becomes nil
-c == nil
+print(c == nil)
 ```
 ```expected
 true
@@ -144,7 +147,7 @@ Example:
 ```lua
 local a, b = 10, 20
 a, b = b, a
-tostring(a) .. "/" .. tostring(b)
+print(tostring(a) .. "/" .. tostring(b))
 ```
 ```expected
 20/10
@@ -161,7 +164,7 @@ Any variable that has not been assigned is `nil`.
 Example:
 ```lua
 local x
-x == nil
+print(x == nil)
 ```
 ```expected
 true
@@ -172,7 +175,7 @@ true
 Example:
 ```lua
 local t = { a = 1 }
-t.b == nil
+print(t.b == nil)
 ```
 ```expected
 true
@@ -235,7 +238,7 @@ This is because they use *short-circuit evaluation*:
 Example:
 ```lua
 -- "and" returns first falsy or last value
-1 and 2
+print(1 and 2)
 ```
 ```expected
 2
@@ -245,7 +248,7 @@ Example:
 
 Example:
 ```lua
-false and 2
+print(false and 2)
 ```
 ```expected
 false
@@ -256,7 +259,7 @@ false
 Example:
 ```lua
 -- "or" returns first truthy or last value
-nil or "default"
+print(nil or "default")
 ```
 ```expected
 default
@@ -269,7 +272,7 @@ Example:
 -- Classic default-value idiom
 local x = nil
 local result = x or "fallback"
-result
+print(result)
 ```
 ```expected
 fallback
@@ -283,7 +286,7 @@ Example:
 -- (only safe when val_if_true is never false/nil)
 local n = 5
 local msg = n > 3 and "big" or "small"
-msg
+print(msg)
 ```
 ```expected
 big
@@ -300,7 +303,7 @@ integers are represented exactly up to 2^53.
 Example:
 ```lua
 -- Integer arithmetic stays integer
-type(3 + 4)
+print(type(3 + 4))
 ```
 ```expected
 number
@@ -311,7 +314,7 @@ number
 Example:
 ```lua
 -- Any float operation makes the result a float
-type(3 + 0.0)
+print(type(3 + 0.0))
 ```
 ```expected
 number
@@ -329,12 +332,12 @@ number
 | `/` | float division (always float) | `7 / 2` → `3.5` |
 | `//` | floor division | `7 // 2` → `3` |
 | `%` | modulo | `7 % 3` → `1` |
-| `^` | exponentiation (float) | `2 ^ 8` → `256.0` |
+| `^` | exponentiation (float) | `2 ^ 8` → `256` |
 | `-` | unary negation | `-5` → `-5` |
 
 Example:
 ```lua
-7 / 2
+print(7 / 2)
 ```
 ```expected
 3.5
@@ -344,7 +347,10 @@ Example:
 
 Example:
 ```lua
-7 // 2
+-- NOTE: not supported in LuaJIT:
+-- print(7 // 2)
+-- instead use:
+print(math.floor(7 / 2))
 ```
 ```expected
 3
@@ -354,10 +360,10 @@ Example:
 
 Example:
 ```lua
-2 ^ 10
+print(2 ^ 10)
 ```
 ```expected
-1024.0
+1024
 ```
 
 ---
@@ -366,7 +372,8 @@ Example:
 
 Example:
 ```lua
-math.max(3, 1, 4, 1, 5, 9, 2, 6)
+local my_max = math.max(3, 1, 4, 1, 5, 9, 2, 6)
+print(my_max)
 ```
 ```expected
 9
@@ -376,7 +383,7 @@ math.max(3, 1, 4, 1, 5, 9, 2, 6)
 
 Example:
 ```lua
-math.floor(3.7)
+print(math.floor(3.7))
 ```
 ```expected
 3
@@ -386,7 +393,7 @@ math.floor(3.7)
 
 Example:
 ```lua
-math.abs(-42)
+print(math.abs(-42))
 ```
 ```expected
 42
@@ -406,7 +413,7 @@ String literals can be written with:
 
 Example:
 ```lua
-"hello" == 'hello'
+print("hello" == 'hello')
 ```
 ```expected
 true
@@ -420,7 +427,7 @@ The `..` operator concatenates strings. Numbers are automatically converted:
 
 Example:
 ```lua
-"hello" .. " " .. "world"
+print("hello" .. " " .. "world")
 ```
 ```expected
 hello world
@@ -431,7 +438,7 @@ hello world
 Example:
 ```lua
 -- Numbers are coerced to strings by ..
-"value: " .. 42
+print("value: " .. 42)
 ```
 ```expected
 value: 42
@@ -443,7 +450,7 @@ value: 42
 
 Example:
 ```lua
-#"hello"
+print(#"hello")
 ```
 ```expected
 5
@@ -458,7 +465,7 @@ Example:
 
 Example:
 ```lua
-tostring(3.14)
+print(tostring(3.14))
 ```
 ```expected
 3.14
@@ -468,7 +475,7 @@ tostring(3.14)
 
 Example:
 ```lua
-tonumber("42") + 8
+print(tonumber("42") + 8)
 ```
 ```expected
 50
@@ -478,7 +485,7 @@ tonumber("42") + 8
 
 Example:
 ```lua
-tonumber("ff", 16)   -- hex
+print(tonumber("ff", 16))   -- hex
 ```
 ```expected
 255
@@ -488,7 +495,7 @@ tonumber("ff", 16)   -- hex
 
 Example:
 ```lua
-tonumber("not a number")
+print(tonumber("not a number"))
 ```
 ```expected
 nil
@@ -511,7 +518,7 @@ nil
 
 Example:
 ```lua
-1 == "1"
+print(1 == "1")
 ```
 ```expected
 false
@@ -521,7 +528,7 @@ false
 
 Example:
 ```lua
-1 ~= 2
+print(1 ~= 2)
 ```
 ```expected
 true
@@ -537,7 +544,7 @@ as accessing the global `x`. This is useful for dynamic variable names:
 Example:
 ```lua
 my_global = 99
-_G["my_global"]
+print(_G["my_global"])
 ```
 ```expected
 99
@@ -547,7 +554,7 @@ _G["my_global"]
 
 Example:
 ```lua
-type(_G)
+print(type(_G))
 ```
 ```expected
 table
@@ -563,7 +570,7 @@ to strings in concatenation. However, it is better practice to use
 
 Example:
 ```lua
-"10" + 5   -- string coerced to number
+print("10" + 5)   -- string coerced to number
 ```
 ```expected
 15
@@ -575,7 +582,7 @@ Example:
 ```lua
 -- Concatenation does NOT work directly on numbers without ..
 -- But tostring is cleaner than relying on coercion
-tostring(100) .. "%"
+print(tostring(100) .. "%")
 ```
 ```expected
 100%
@@ -590,7 +597,7 @@ For tables with holes (gaps in integer keys), the result is undefined.
 
 Example:
 ```lua
-#"Neovim"
+print(#"Neovim")
 ```
 ```expected
 6
@@ -600,7 +607,7 @@ Example:
 
 Example:
 ```lua
-#{10, 20, 30, 40}
+print(#{10, 20, 30, 40})
 ```
 ```expected
 4

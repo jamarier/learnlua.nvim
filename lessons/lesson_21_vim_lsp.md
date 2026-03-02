@@ -1,8 +1,8 @@
 # Lesson 21: LSP — Language Server Protocol
 
-Neovim has a built-in LSP client since version 0.5. It implements the
-Language Server Protocol, which defines a standard communication layer
-between editors and language-specific tools (Go, Rust, Python, Lua, etc.).
+Neovim has a built-in LSP client. It implements the Language Server Protocol, 
+which defines a standard communication layer between editors and 
+language-specific tools (Go, Rust, Python, Lua, etc.).
 
 The Neovim LSP documentation says: "Neovim supports the Language Server
 Protocol (LSP), which means it acts as a client to LSP servers and includes

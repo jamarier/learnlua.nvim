@@ -1,7 +1,8 @@
 # Lesson 10: Error Handling
 
-The Lua reference manual explains: "Lua uses the throw/catch mechanism
-for error handling via the functions error, pcall, and xpcall."
+Lua handles errors through protected calls. Any value can be thrown as an
+error — it doesn't have to be a string. The key functions are `error()`,
+`pcall()`, and `xpcall()`.
 
 Unlike languages with exception hierarchies, Lua errors are just values —
 any type can be thrown. The absence of a stack unwinding mechanism means

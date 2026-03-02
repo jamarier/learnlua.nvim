@@ -1,12 +1,11 @@
-# Lesson 02: Control Flow
+# Lesson 04: Control Flow
 
 Lua's control structures are: `if`, `while`, `repeat/until`, and `for`
 (in two flavours: numeric and generic). Lua also has `break`, `goto`,
 and uses `do...end` blocks for explicit scope control.
 
-> From the reference manual: *"Lua is a free-form language. It ignores
-> spaces (including new lines) and comments between lexical elements."*
-> Semicolons are optional statement separators.
+> Lua is a free-form language: it ignores spaces and comments between lexical
+> elements (tokens). Semicolons are optional statement separators.
 
 ---
 
@@ -54,7 +53,7 @@ elseif score >= 60 then
 else
   grade = "F"
 end
-grade
+print(grade)
 ```
 ```expected
 C
@@ -70,7 +69,7 @@ Example:
 ```lua
 local n = 7
 local result = (n % 2 == 0) and "even" or "odd"
-result
+print(result)
 ```
 ```expected
 odd
@@ -97,7 +96,7 @@ while i <= 5 do
   sum = sum + i
   i = i + 1
 end
-sum
+print(sum)
 ```
 ```expected
 15
@@ -125,7 +124,7 @@ repeat
   result = result + i
   i = i + 1
 until i > 5
-result
+print(result)
 ```
 ```expected
 15
@@ -136,13 +135,12 @@ result
 Example:
 ```lua
 -- Variables declared inside repeat are visible in until
-local found = false
 local tries = 0
 repeat
   tries = tries + 1
   local ok = (tries == 3)  -- declared inside
 until ok                    -- ok is visible here!
-tries
+print(tries)
 ```
 ```expected
 3
@@ -168,7 +166,7 @@ local sum = 0
 for i = 1, 10 do
   sum = sum + i
 end
-sum
+print(sum)
 ```
 ```expected
 55
@@ -183,7 +181,7 @@ local result = {}
 for i = 5, 1, -1 do
   table.insert(result, i)
 end
-table.concat(result, ", ")
+print(table.concat(result, ", "))
 ```
 ```expected
 5, 4, 3, 2, 1
@@ -198,7 +196,7 @@ local result = {}
 for i = 0, 10, 2 do
   table.insert(result, i)
 end
-table.concat(result, " ")
+print(table.concat(result, " "))
 ```
 ```expected
 0 2 4 6 8 10
@@ -223,7 +221,7 @@ local sum = 0
 for i, v in ipairs({10, 20, 30}) do
   sum = sum + v
 end
-sum
+print(sum)
 ```
 ```expected
 60
@@ -239,7 +237,7 @@ local sum = 0
 for k, v in pairs(t) do
   sum = sum + v
 end
-sum
+print(sum)
 ```
 ```expected
 6
@@ -260,7 +258,7 @@ for i = 1, 100 do
     break
   end
 end
-found
+print(found)
 ```
 ```expected
 8
@@ -282,7 +280,7 @@ for i = 1, 8 do
   table.insert(result, i)
   ::continue::
 end
-table.concat(result, ", ")
+print(table.concat(result, ", "))
 ```
 ```expected
 2, 4, 6, 8
@@ -302,7 +300,7 @@ do
   local result = "inner"  -- shadows the outer 'result'
   -- inner result is "inner" here
 end
-result  -- back to the outer result
+print(result)  -- back to the outer result
 ```
 ```expected
 outer
@@ -327,7 +325,7 @@ for i = 1, 5 do
   end
 end
 ::done::
-tostring(found_i) .. "x" .. tostring(found_j)
+print(tostring(found_i) .. "x" .. tostring(found_j))
 ```
 ```expected
 3x4

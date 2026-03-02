@@ -4,9 +4,9 @@ Autocommands run Lua callbacks automatically in response to Neovim events.
 They are the backbone of plugin behaviour — triggered by file opens, saves,
 cursor movement, mode changes, and dozens of other events.
 
-The Neovim documentation says: *"Autocommands are a way to tell Vim to
-execute commands automatically when reading or writing a file, or when
-entering or leaving a buffer or window."*
+Autocommands run Lua callbacks automatically in response to Neovim events —
+file opens, saves, cursor movement, mode changes, buffer entry, and dozens
+of other triggers.
 
 ---
 

@@ -1,4 +1,4 @@
-# Lesson 03: Strings
+# Lesson 02: Strings
 
 Lua strings are immutable sequences of bytes. They can contain any byte
 value including embedded NUL bytes. The reference manual notes that Lua
@@ -20,7 +20,7 @@ Example:
 ```lua
 local a = "double quotes"
 local b = 'single quotes'
-a == b
+print(a == b)
 ```
 ```expected
 false
@@ -39,7 +39,7 @@ local s = [[
 line one
 line two]]
 -- Note: leading newline after [[ is ignored
-s:sub(1, 9)
+print(s:sub(1, 9))
 ```
 ```expected
 line one
@@ -63,7 +63,7 @@ line one
 
 Example:
 ```lua
-"tab:\there\nnewline"
+print("tab:\there\nnewline")
 ```
 ```expected
 tab:	here
@@ -78,7 +78,7 @@ Example:
 ```lua
 local first = "Lua"
 local last = "JIT"
-first .. " " .. last
+print(first .. " " .. last)
 ```
 ```expected
 Lua JIT
@@ -88,10 +88,10 @@ Lua JIT
 
 Example:
 ```lua
-#"Neovim rocks!"
+print(#"Neovim rocks!")
 ```
 ```expected
-14
+13
 ```
 
 ---
@@ -106,7 +106,7 @@ local parts = {}
 for i = 1, 5 do
   parts[i] = tostring(i)
 end
-table.concat(parts, "-")
+print(table.concat(parts, "-"))
 ```
 ```expected
 1-2-3-4-5
@@ -134,7 +134,7 @@ to build formatted strings:
 
 Example:
 ```lua
-string.format("Hello, %s! You are %d years old.", "Ada", 36)
+print(string.format("Hello, %s! You are %d years old.", "Ada", 36))
 ```
 ```expected
 Hello, Ada! You are 36 years old.
@@ -144,7 +144,7 @@ Hello, Ada! You are 36 years old.
 
 Example:
 ```lua
-string.format("Pi is approximately %.4f", math.pi)
+print(string.format("Pi is approximately %.4f", math.pi))
 ```
 ```expected
 Pi is approximately 3.1416
@@ -154,7 +154,7 @@ Pi is approximately 3.1416
 
 Example:
 ```lua
-string.format("%08x", 255)
+print(string.format("%08x", 255))
 ```
 ```expected
 000000ff
@@ -164,7 +164,7 @@ string.format("%08x", 255)
 
 Example:
 ```lua
-string.format("%-10s|%10s", "left", "right")
+print(string.format("%-10s|%10s", "left", "right"))
 ```
 ```expected
 left      |     right
@@ -176,7 +176,7 @@ left      |     right
 
 Example:
 ```lua
-string.upper("hello world")
+print(string.upper("hello world"))
 ```
 ```expected
 HELLO WORLD
@@ -186,7 +186,7 @@ HELLO WORLD
 
 Example:
 ```lua
-string.lower("NEOVIM")
+print(string.lower("NEOVIM"))
 ```
 ```expected
 neovim
@@ -201,7 +201,7 @@ Indices start at 1. Negative indices count from the end (`-1` is the last byte).
 
 Example:
 ```lua
-string.sub("hello world", 7)
+print(string.sub("hello world", 7))
 ```
 ```expected
 world
@@ -211,7 +211,7 @@ world
 
 Example:
 ```lua
-string.sub("hello world", 1, 5)
+print(string.sub("hello world", 1, 5))
 ```
 ```expected
 hello
@@ -221,7 +221,7 @@ hello
 
 Example:
 ```lua
-string.sub("hello", -3)   -- last 3 bytes
+print(string.sub("hello", -3))   -- last 3 bytes
 ```
 ```expected
 llo
@@ -237,7 +237,7 @@ llo
 Example:
 ```lua
 local s, e = string.find("hello world", "world")
-tostring(s) .. "-" .. tostring(e)
+print(tostring(s) .. "-" .. tostring(e))
 ```
 ```expected
 7-11
@@ -247,7 +247,7 @@ tostring(s) .. "-" .. tostring(e)
 
 Example:
 ```lua
-string.match("2024-03-15", "%d+")   -- first match
+print(string.match("2024-03-15", "%d+"))   -- first match
 ```
 ```expected
 2024
@@ -259,7 +259,7 @@ Example:
 ```lua
 -- Captures with ()
 local y, m, d = string.match("2024-03-15", "(%d+)-(%d+)-(%d+)")
-y .. "/" .. m .. "/" .. d
+print(y .. "/" .. m .. "/" .. d)
 ```
 ```expected
 2024/03/15
@@ -275,7 +275,7 @@ matching and do a literal substring search:
 Example:
 ```lua
 local s, e = string.find("1+2=3", "+", 1, true)
-tostring(s)
+print(tostring(s))
 ```
 ```expected
 2
@@ -293,7 +293,7 @@ local words = {}
 for w in string.gmatch("one two three", "%a+") do
   table.insert(words, w)
 end
-table.concat(words, "|")
+print(table.concat(words, "|"))
 ```
 ```expected
 one|two|three
@@ -308,7 +308,7 @@ local pairs_found = {}
 for k, v in string.gmatch("a=1, b=2, c=3", "(%a)=(%d)") do
   table.insert(pairs_found, k .. ":" .. v)
 end
-table.concat(pairs_found, " ")
+print(table.concat(pairs_found, " "))
 ```
 ```expected
 a:1 b:2 c:3
@@ -327,10 +327,10 @@ Returns the new string AND the number of replacements made.
 
 Example:
 ```lua
-string.gsub("hello world", "(%a+)", function(w) return w:upper() end)
+print(string.gsub("hello world", "(%a+)", function(w) return w:upper() end))
 ```
 ```expected
-HELLO WORLD
+HELLO WORLD 2
 ```
 
 ---
@@ -339,10 +339,10 @@ Example:
 ```lua
 -- Table replacement
 local vars = { name = "Lua", version = "5.4" }
-string.gsub("$name v$version", "%$(%a+)", vars)
+print(string.gsub("$name v$version", "%$(%a+)", vars))
 ```
 ```expected
-Lua v5.4
+Lua v5.4 2
 ```
 
 ---
@@ -351,7 +351,7 @@ Example:
 ```lua
 -- Count replacements (second return value)
 local result, count = string.gsub("banana", "a", "o")
-tostring(count)
+print(tostring(count))
 ```
 ```expected
 3
@@ -362,10 +362,10 @@ tostring(count)
 Example:
 ```lua
 -- Limit replacements with 4th argument
-string.gsub("banana", "a", "o", 2)
+print(string.gsub("banana", "a", "o", 2))
 ```
 ```expected
-bonona
+bonona 2
 ```
 
 ---
@@ -374,7 +374,7 @@ bonona
 
 Example:
 ```lua
-string.rep("ab", 4, "-")   -- with separator
+print(string.rep("ab", 4, "-"))   -- with separator
 ```
 ```expected
 ab-ab-ab-ab
@@ -384,7 +384,7 @@ ab-ab-ab-ab
 
 Example:
 ```lua
-string.reverse("Neovim")
+print(string.reverse("Neovim"))
 ```
 ```expected
 mivoeN
@@ -399,7 +399,7 @@ mivoeN
 
 Example:
 ```lua
-string.byte("A")
+print(string.byte("A"))
 ```
 ```expected
 65
@@ -409,7 +409,7 @@ string.byte("A")
 
 Example:
 ```lua
-string.char(65, 66, 67)
+print(string.char(65, 66, 67))
 ```
 ```expected
 ABC
@@ -420,10 +420,10 @@ ABC
 Example:
 ```lua
 -- All bytes of "Lua"
-string.byte("Lua", 1, -1)
+print(string.byte("Lua", 1, -1))
 ```
 ```expected
-76
+76 117 97
 ```
 
 ---
@@ -435,7 +435,7 @@ metatable with `__index = string`:
 
 Example:
 ```lua
-("hello world"):upper():sub(1, 5)
+print(("hello world"):upper():sub(1, 5))
 ```
 ```expected
 HELLO

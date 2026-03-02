@@ -1,8 +1,8 @@
 # Lesson 05: Functions
 
-The reference manual states: *"Functions are first-class values in Lua.
-This means that functions can be stored in variables, passed as arguments
-to other functions, and returned as results."*
+In Lua, functions are first-class values: they can be stored in variables,
+passed as arguments to other functions, and returned as results — just like
+numbers, strings, or tables.
 
 Every function in Lua is a *closure*: it captures references to the
 variables in its enclosing scope (called *upvalues*). This is true even
@@ -31,7 +31,7 @@ Example:
 local function square(x)
   return x * x
 end
-square(7)
+print(square(7))
 ```
 ```expected
 49
@@ -51,7 +51,7 @@ local ops = {
   sub = function(a, b) return a - b end,
   mul = function(a, b) return a * b end,
 }
-ops.mul(6, 7)
+print(ops.mul(6, 7))
 ```
 ```expected
 42
@@ -67,10 +67,10 @@ after `return`. This avoids the need for output parameters or wrapper tables.
 Example:
 ```lua
 local function divmod(a, b)
-  return a // b, a % b
+  return math.floor(a / b), a % b
 end
 local q, r = divmod(17, 5)
-tostring(q) .. " remainder " .. tostring(r)
+print(tostring(q) .. " remainder " .. tostring(r))
 ```
 ```expected
 3 remainder 2
@@ -86,11 +86,11 @@ When a multi-return call is not at the end of an expression list, it is
 Example:
 ```lua
 local function two() return 1, 2 end
-local a, b, c = two(), 3   -- two() adjusted to 1 (not at end)
-tostring(a) .. tostring(b) .. tostring(c)
+local a, b, c = two(), 5   -- two() adjusted to 1 (not at end)
+print(tostring(a) .. " " .. tostring(b) .. " " .. tostring(c))
 ```
 ```expected
-133
+1 5 nil
 ```
 
 ---
@@ -99,7 +99,7 @@ Example:
 ```lua
 local function two() return 1, 2 end
 local a, b, c = 0, two()   -- two() at end: all values kept
-tostring(a) .. tostring(b) .. tostring(c)
+print(tostring(a) .. tostring(b) .. tostring(c))
 ```
 ```expected
 012
@@ -121,7 +121,7 @@ local function sum(...)
   end
   return total
 end
-sum(1, 2, 3, 4, 5)
+print(sum(1, 2, 3, 4, 5))
 ```
 ```expected
 15
@@ -139,7 +139,7 @@ Example:
 local function count(...)
   return select('#', ...)
 end
-count(10, nil, 30, nil)   -- counts nil arguments too!
+print(count(10, nil, 30, nil))   -- counts nil arguments too!
 ```
 ```expected
 4
@@ -152,10 +152,10 @@ Example:
 local function third(...)
   return select(3, ...)
 end
-third("a", "b", "c", "d")
+print(third("a", "b", "c", "d"))
 ```
 ```expected
-c
+c d
 ```
 
 ---
@@ -170,7 +170,7 @@ local function show_args(...)
   local t = table.pack(...)
   return t.n
 end
-show_args(10, 20, 30)
+print(show_args(10, 20, 30))
 ```
 ```expected
 3
@@ -196,7 +196,7 @@ local c = make_counter(10)
 c.inc()
 c.inc()
 c.inc()
-c.get()
+print(c.get())
 ```
 ```expected
 13
@@ -218,7 +218,7 @@ local function make_pair()
 end
 local set, get = make_pair()
 set(42)
-get()
+print(get())
 ```
 ```expected
 42
@@ -240,7 +240,7 @@ local function map(t, fn)
   return result
 end
 local doubled = map({1,2,3,4,5}, function(x) return x*2 end)
-table.concat(doubled, ",")
+print(table.concat(doubled, ","))
 ```
 ```expected
 2,4,6,8,10
@@ -258,7 +258,7 @@ local function filter(t, fn)
   return result
 end
 local evens = filter({1,2,3,4,5,6}, function(x) return x%2==0 end)
-table.concat(evens, ",")
+print(table.concat(evens, ","))
 ```
 ```expected
 2,4,6
@@ -275,7 +275,8 @@ local function reduce(t, fn, init)
   end
   return acc
 end
-reduce({1,2,3,4,5}, function(a, b) return a+b end, 0)
+local red = reduce({1,2,3,4,5}, function(a, b) return a+b end, 0)
+print(red)
 ```
 ```expected
 15
@@ -295,7 +296,7 @@ end
 local double = function(x) return x * 2 end
 local inc    = function(x) return x + 1 end
 local double_then_inc = compose(inc, double)
-double_then_inc(5)
+print(double_then_inc(5))
 ```
 ```expected
 11
@@ -328,7 +329,7 @@ local fast_square = memoize(slow_square)
 fast_square(5)
 fast_square(5)   -- cached
 fast_square(5)   -- cached
-calls            -- only called once
+print(calls)            -- only called once
 ```
 ```expected
 1
@@ -344,7 +345,7 @@ local function factorial(n)
   if n <= 1 then return 1 end
   return n * factorial(n - 1)
 end
-factorial(10)
+print(factorial(10))
 ```
 ```expected
 3628800
@@ -374,7 +375,7 @@ local function sum_tail(n, acc)
   if n == 0 then return acc end
   return sum_tail(n - 1, acc + n)
 end
-sum_tail(100)
+print(sum_tail(100))
 ```
 ```expected
 5050
@@ -398,7 +399,7 @@ end
 
 local add = function(a, b) return a + b end
 local add5 = partial(add, 5)
-add5(10)
+print(add5(10))
 ```
 ```expected
 15
@@ -529,7 +530,7 @@ local fn = once(function() calls = calls + 1; return calls end)
 fn()
 fn()
 fn()
-calls
+print(calls)
 ```
 ```expected
 1
@@ -569,7 +570,7 @@ local process = pipeline({
   function(s) return s:upper() end,
   function(s) return s:reverse() end,
 })
-process("  hello  ")
+print(process("  hello  "))
 ```
 ```expected
 OLLEH

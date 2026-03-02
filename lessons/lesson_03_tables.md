@@ -1,9 +1,9 @@
-# Lesson 04: Tables
+# Lesson 03: Tables
 
-Tables are the only compound data structure in Lua. The reference manual says:
-*"Tables are the main (and only) data structuring mechanism in Lua, and a
-powerful one. We use tables to represent ordinary arrays, sequences, symbol
-tables, sets, records, graphs, trees, and many other data structures."*
+Tables are the only compound data structure in Lua. The reference manual
+describes them as "the sole data-structuring mechanism in Lua" — they can
+represent arrays, sequences, symbol tables, sets, records, graphs, trees,
+and many other data structures.
 
 A table is an associative array: it maps keys to values. Keys can be any
 value except `nil` and `NaN`. Integer keys starting at 1 form a *sequence*
@@ -16,7 +16,7 @@ value except `nil` and `NaN`. Integer keys starting at 1 form a *sequence*
 Example:
 ```lua
 local empty = {}
-type(empty)
+print(type(empty))
 ```
 ```expected
 table
@@ -29,7 +29,7 @@ table
 Example:
 ```lua
 local fruits = { "apple", "banana", "cherry" }
-fruits[2]
+print(fruits[2])
 ```
 ```expected
 banana
@@ -42,7 +42,7 @@ banana
 Example:
 ```lua
 local person = { name = "Ada", age = 36, lang = "Lua" }
-person.name
+print(person.name)
 ```
 ```expected
 Ada
@@ -57,7 +57,7 @@ Example:
 local t = { 10, 20, x = 30, 40 }
 -- array part: t[1]=10, t[2]=20, t[3]=40
 -- hash part:  t.x=30
-tostring(t[1]) .. "," .. tostring(t[2]) .. "," .. tostring(t[3])
+print(tostring(t[1]) .. "," .. tostring(t[2]) .. "," .. tostring(t[3]))
 ```
 ```expected
 10,20,40
@@ -70,7 +70,7 @@ tostring(t[1]) .. "," .. tostring(t[2]) .. "," .. tostring(t[3])
 Example:
 ```lua
 local t = { [1] = "a", [3] = "c", [2] = "b" }
-t[2]
+print(t[2])
 ```
 ```expected
 b
@@ -82,15 +82,15 @@ b
 
 There are two syntaxes for field access, which are equivalent:
 
-```lua
+```
 t["key"]   -- bracket notation — works for any key
-t.key      -- dot notation — syntactic sugar for string keys only
+print(t.key)      -- dot notation — syntactic sugar for string keys only
 ```
 
 Example:
 ```lua
 local t = { hello = "world" }
-t["hello"] == t.hello
+print(t["hello"] == t.hello)
 ```
 ```expected
 true
@@ -102,7 +102,7 @@ Example:
 ```lua
 -- Dot notation requires a valid identifier key
 local t = { ["my-key"] = 99 }
-t["my-key"]   -- must use brackets
+print(t["my-key"])   -- must use brackets
 ```
 ```expected
 99
@@ -121,7 +121,7 @@ integer keys). Always use tables without gaps if you need a reliable length.
 Example:
 ```lua
 local t = {10, 20, 30, 40, 50}
-#t
+print(#t)
 ```
 ```expected
 5
@@ -138,7 +138,7 @@ Example:
 ```lua
 local t = {1, 2, 3}
 table.insert(t, 4)
-#t
+print(#t)
 ```
 ```expected
 4
@@ -150,7 +150,7 @@ Example:
 ```lua
 local t = {1, 2, 3, 4}
 table.insert(t, 2, 99)  -- insert at position 2
-table.concat(t, ",")
+print(table.concat(t, ","))
 ```
 ```expected
 1,99,2,3,4
@@ -162,7 +162,7 @@ Example:
 ```lua
 local t = {1, 2, 3, 4, 5}
 local removed = table.remove(t)   -- removes last
-tostring(removed) .. " / " .. tostring(#t)
+print(tostring(removed) .. " / " .. tostring(#t))
 ```
 ```expected
 5 / 4
@@ -174,7 +174,7 @@ Example:
 ```lua
 local t = {1, 2, 3, 4, 5}
 table.remove(t, 2)   -- removes index 2
-table.concat(t, ",")
+print(table.concat(t, ","))
 ```
 ```expected
 1,3,4,5
@@ -191,7 +191,7 @@ Example:
 ```lua
 local t = {5, 3, 1, 4, 2}
 table.sort(t)
-table.concat(t, " ")
+print(table.concat(t, " "))
 ```
 ```expected
 1 2 3 4 5
@@ -204,7 +204,7 @@ Example:
 -- Custom comparator: sort descending
 local t = {5, 3, 1, 4, 2}
 table.sort(t, function(a, b) return a > b end)
-table.concat(t, " ")
+print(table.concat(t, " "))
 ```
 ```expected
 5 4 3 2 1
@@ -217,7 +217,7 @@ Example:
 -- Sort strings by length
 local t = { "banana", "fig", "apple", "kiwi" }
 table.sort(t, function(a, b) return #a < #b end)
-table.concat(t, " ")
+print(table.concat(t, " "))
 ```
 ```expected
 fig kiwi apple banana
@@ -233,7 +233,7 @@ Much faster than repeated `..` for large arrays.
 Example:
 ```lua
 local t = {"a", "b", "c", "d"}
-table.concat(t, "-")
+print(table.concat(t, "-"))
 ```
 ```expected
 a-b-c-d
@@ -245,7 +245,7 @@ Example:
 ```lua
 -- With range
 local t = {"a", "b", "c", "d", "e"}
-table.concat(t, ",", 2, 4)
+print(table.concat(t, ",", 2, 4))
 ```
 ```expected
 b,c,d
@@ -265,7 +265,7 @@ local sum = 0
 for i, v in ipairs({10, 20, 30}) do
   sum = sum + v
 end
-sum
+print(sum)
 ```
 ```expected
 60
@@ -284,7 +284,7 @@ local t = { x=1, y=2, z=3 }
 for k, v in pairs(t) do
   counts[k] = v * 2
 end
-counts.y
+print(counts.y)
 ```
 ```expected
 4
@@ -301,7 +301,7 @@ Example:
 ```lua
 local t = { a = 1 }
 local k, v = next(t, nil)   -- first pair
-tostring(k) .. "=" .. tostring(v)
+print(tostring(k) .. "=" .. tostring(v))
 ```
 ```expected
 a=1
@@ -318,7 +318,7 @@ Example:
 ```lua
 local t = {10, 20, 30}
 local a, b, c = table.unpack(t)
-b
+print(b)
 ```
 ```expected
 20
@@ -331,7 +331,7 @@ Example:
 -- With range
 local t = {1, 2, 3, 4, 5}
 local a, b, c = table.unpack(t, 2, 4)
-tostring(a) .. tostring(b) .. tostring(c)
+print(tostring(a) .. tostring(b) .. tostring(c))
 ```
 ```expected
 234
@@ -349,7 +349,7 @@ Example:
 local t = {1, 2, 3, 4, 5}
 local dst = {}
 table.move(t, 2, 4, 1, dst)
-table.concat(dst, ",")
+print(table.concat(dst, ","))
 ```
 ```expected
 2,3,4
@@ -368,7 +368,7 @@ local matrix = {
   {4, 5, 6},
   {7, 8, 9},
 }
-matrix[2][3]
+print(matrix[2][3])
 ```
 ```expected
 6
@@ -382,7 +382,7 @@ local config = {
   server = { host = "localhost", port = 8080 },
   debug = true,
 }
-config.server.port
+print(config.server.port)
 ```
 ```expected
 8080
@@ -403,7 +403,7 @@ end
 -- count unique elements
 local count = 0
 for _ in pairs(set) do count = count + 1 end
-count
+print(count)
 ```
 ```expected
 3
@@ -421,7 +421,7 @@ table.insert(stack, "a")
 table.insert(stack, "b")
 table.insert(stack, "c")
 table.remove(stack)   -- pop
-table.concat(stack, "")
+print(table.concat(stack, ""))
 ```
 ```expected
 ab
@@ -437,7 +437,7 @@ table.insert(queue, "first")
 table.insert(queue, "second")
 table.insert(queue, "third")
 table.remove(queue, 1)   -- dequeue
-queue[1]
+print(queue[1])
 ```
 ```expected
 second

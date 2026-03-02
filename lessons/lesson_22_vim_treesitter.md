@@ -1,10 +1,10 @@
 # Lesson 22: Treesitter
 
 Treesitter is an incremental parsing library. Neovim embeds it to build
-concrete syntax trees from source code in real time. The Neovim documentation
-says: *"Neovim provides an API layer to Treesitter parsers and query language.
-Features such as syntax highlighting, selection, folding, and navigation
-can be built on top of it."*
+concrete syntax trees from source code in real time. Neovim embeds Treesitter
+and exposes it through the `vim.treesitter` API. It provides access to parsers,
+syntax trees, nodes, and a query language. Features like syntax highlighting,
+code navigation, and text objects are all built on top of it.
 
 Trees are updated incrementally — only the changed region is re-parsed —
 making it fast enough to use on every keystroke.

@@ -71,6 +71,23 @@ local function close_editor(win, buf, lesson_win)
   vim.api.nvim_set_current_win(lesson_win)
 end
 
+local function jump_lesson(direction)
+  local current_lesson = vim.api.nvim_buf_get_name(0)
+  local num = string.match(current_lesson, "lesson_(%d+)_")
+  local next_num
+  if direction == "next" then
+    next_num = tonumber(num) + 1
+  else
+    next_num = tonumber(num) - 1
+  end
+  local pattern = string.format("lesson_%02d_*.md", next_num)
+  local plugin_path = vim.fn.fnamemodify(current_lesson, ":h")
+  local matches = vim.fn.glob(plugin_path .. "/" .. pattern, false, true)
+  if matches[1] then
+    require("learnlua").start(string.match(matches[1], "lesson_%d+_(.-)%.md"))
+  end
+end
+
 M.open = function(sections, runner, filepath)
   local cfg = require("learnlua.config").get()
   local ns = vim.api.nvim_create_namespace("learnlua")
@@ -92,11 +109,11 @@ M.open = function(sections, runner, filepath)
 
   for _, section in ipairs(sections) do
     vim.list_extend(all_lines, section.prose)
-    vim.list_extend(all_lines, { "", "```lua" })
+    vim.list_extend(all_lines, { "```lua" })
     local code_start = #all_lines + 1
     vim.list_extend(all_lines, section.code)
     local code_end = #all_lines
-    vim.list_extend(all_lines, { "```", "" })
+    vim.list_extend(all_lines, { "```" })
     table.insert(exercise_ranges, {
       start = code_start - 1,
       finish = code_end - 1,
@@ -253,6 +270,14 @@ M.open = function(sections, runner, filepath)
 
   vim.keymap.set("n", cfg.mappings.go_welcome, function()
     vim.cmd("Learn")
+  end, { buffer = lesson_buf })
+
+  vim.keymap.set("n", cfg.mappings.jump_next, function()
+    jump_lesson("next")
+  end, { buffer = lesson_buf })
+
+  vim.keymap.set("n", cfg.mappings.jump_previous, function()
+    jump_lesson("previous")
   end, { buffer = lesson_buf })
 end
 

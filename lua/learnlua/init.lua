@@ -45,7 +45,7 @@ M.start = function(args)
         print("Section 'Part I' not found")
       end
       vim.cmd("normal! zt")
-    end, {})
+    end, { buffer = buf })
 
     -- 2. Jump to Part II (Neovim API)
     vim.keymap.set("n", cfg.mappings.jump_nvim, function()
@@ -54,7 +54,7 @@ M.start = function(args)
         print("Section 'Part II' not found")
       end
       vim.cmd("normal! zt")
-    end, {})
+    end, { buffer = buf })
 
     -- gf opens the lesson under cursor
     vim.keymap.set("n", cfg.mappings.jump_lesson, function()

@@ -9,6 +9,8 @@ M.defaults = {
     go_welcome = "gO",
     jump_lua = "gl",
     jump_nvim = "gn",
+    jump_next = "gn",
+    jump_previous = "gp",
     jump_lesson = "<CR>", -- In lesson list
   },
 }

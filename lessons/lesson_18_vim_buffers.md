@@ -1,6 +1,10 @@
+
+`gn` next lesson `gp` previous lesson `gO` go to ToC
+
 # Lesson 18: Buffers, Windows, and Tabpages
 
 Neovim's display model has three layers:
+
 - **Buffers** — in-memory text (may or may not be visible)
 - **Windows** — viewports that display a buffer
 - **Tabpages** — collections of windows
@@ -19,14 +23,17 @@ window handles, tabpages get tabpage handles.
 ## Buffers — creating and querying
 
 `nvim_create_buf(listed, scratch)` creates a new buffer:
+
 - `listed = true` → appears in `:ls` buffer list
 - `scratch = true` → no file association, won't ask to save
 
 Example:
+
 ```lua
 local buf = vim.api.nvim_create_buf(false, true)
 print(vim.api.nvim_buf_is_valid(buf))
 ```
+
 ```expected
 true
 ```
@@ -38,10 +45,12 @@ true
 Returns all buffer handles (including unlisted ones):
 
 Example:
+
 ```lua
 local bufs = vim.api.nvim_list_bufs()
 print(type(bufs) == "table" and #bufs >= 1)
 ```
+
 ```expected
 true
 ```
@@ -51,14 +60,17 @@ true
 ## Buffer content — set_lines / get_lines
 
 `nvim_buf_set_lines(buf, start, end, strict_indexing, lines)`:
+
 - Lines are 0-indexed
 - `end = -1` means the last line
 - The lines table replaces the range
 
 `nvim_buf_get_lines(buf, start, end, strict_indexing)`:
+
 - Returns a table of strings (without newlines)
 
 Example:
+
 ```lua
 local buf = vim.api.nvim_create_buf(false, true)
 vim.api.nvim_buf_set_lines(buf, 0, -1, false, {
@@ -69,6 +81,7 @@ vim.api.nvim_buf_set_lines(buf, 0, -1, false, {
 local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
 print(#lines)
 ```
+
 ```expected
 3
 ```
@@ -80,6 +93,7 @@ print(#lines)
 To replace only some lines, set start/end accordingly:
 
 Example:
+
 ```lua
 local buf = vim.api.nvim_create_buf(false, true)
 vim.api.nvim_buf_set_lines(buf, 0, -1, false, {"a","b","c","d","e"})
@@ -88,6 +102,7 @@ vim.api.nvim_buf_set_lines(buf, 1, 4, false, {"X", "Y"})
 local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
 print(table.concat(lines, ","))
 ```
+
 ```expected
 a,X,Y,e
 ```
@@ -99,6 +114,7 @@ a,X,Y,e
 Unlike `set_lines`, `nvim_buf_set_text` works at character level:
 
 Example:
+
 ```lua
 local buf = vim.api.nvim_create_buf(false, true)
 vim.api.nvim_buf_set_lines(buf, 0, -1, false, {"hello world"})
@@ -106,6 +122,7 @@ vim.api.nvim_buf_set_lines(buf, 0, -1, false, {"hello world"})
 vim.api.nvim_buf_set_text(buf, 0, 6, 0, 11, {"Lua"})
 print(vim.api.nvim_buf_get_lines(buf, 0, -1, false)[1])
 ```
+
 ```expected
 hello Lua
 ```
@@ -118,12 +135,14 @@ hello Lua
 is just cosmetic (no file on disk):
 
 Example:
+
 ```lua
 local buf = vim.api.nvim_create_buf(false, true)
 vim.api.nvim_buf_set_name(buf, "my-scratch-buffer")
 local name = vim.api.nvim_buf_get_name(buf)
 print(vim.fn.fnamemodify(name, ":t"))
 ```
+
 ```expected
 my-scratch-buffer
 ```
@@ -135,12 +154,14 @@ my-scratch-buffer
 Set buffer-local options on any buffer by handle:
 
 Example:
+
 ```lua
 local buf = vim.api.nvim_create_buf(false, true)
 vim.bo[buf].filetype = "lua"
 vim.bo[buf].modifiable = false
 print(vim.bo[buf].modifiable)
 ```
+
 ```expected
 false
 ```
@@ -152,11 +173,13 @@ false
 `vim.b[buf]` accesses `b:` variables for a specific buffer:
 
 Example:
+
 ```lua
 local buf = vim.api.nvim_create_buf(false, true)
 vim.b[buf].my_flag = "active"
 print(vim.b[buf].my_flag)
 ```
+
 ```expected
 active
 ```
@@ -166,14 +189,17 @@ active
 ## Deleting a buffer
 
 `nvim_buf_delete(buf, opts)`:
+
 - `force = true` abandons unsaved changes
 
 Example:
+
 ```lua
 local buf = vim.api.nvim_create_buf(false, true)
 vim.api.nvim_buf_delete(buf, { force = true })
 print(vim.api.nvim_buf_is_valid(buf))
 ```
+
 ```expected
 false
 ```
@@ -185,10 +211,12 @@ false
 Returns all window handles:
 
 Example:
+
 ```lua
 local wins = vim.api.nvim_list_wins()
 print(type(wins) == "table" and #wins >= 1)
 ```
+
 ```expected
 true
 ```
@@ -200,11 +228,13 @@ true
 `nvim_win_get_buf(win)` and `nvim_win_set_buf(win, buf)`:
 
 Example:
+
 ```lua
 local win = vim.api.nvim_get_current_win()
 local buf = vim.api.nvim_win_get_buf(win)
 print(vim.api.nvim_buf_is_valid(buf))
 ```
+
 ```expected
 true
 ```
@@ -217,11 +247,13 @@ true
 `nvim_win_set_cursor(win, {row, col})` moves the cursor:
 
 Example:
+
 ```lua
 local win = vim.api.nvim_get_current_win()
 local pos = vim.api.nvim_win_get_cursor(win)
 print(type(pos) == "table" and #pos == 2)
 ```
+
 ```expected
 true
 ```
@@ -231,11 +263,13 @@ true
 ## Window options via vim.wo[win]
 
 Example:
+
 ```lua
 local win = vim.api.nvim_get_current_win()
 vim.wo[win].number = false
 print(vim.wo[win].number)
 ```
+
 ```expected
 false
 ```
@@ -246,14 +280,15 @@ false
 
 Floating windows overlay the editor. `nvim_open_win` with `relative` set:
 
-| `relative` value | Anchor point |
-|-----------------|--------------|
-| `"editor"` | whole editor |
-| `"win"` | a specific window |
-| `"cursor"` | cursor position |
-| `"mouse"` | mouse position |
+| `relative` value | Anchor point      |
+| ---------------- | ----------------- |
+| `"editor"`       | whole editor      |
+| `"win"`          | a specific window |
+| `"cursor"`       | cursor position   |
+| `"mouse"`        | mouse position    |
 
 Example:
+
 ```lua
 local buf = vim.api.nvim_create_buf(false, true)
 vim.api.nvim_buf_set_lines(buf, 0, -1, false, {"  Hello from float!  "})
@@ -273,6 +308,7 @@ vim.defer_fn(function()
   end
 end, 1000)
 ```
+
 ```expected
 true
 ```
@@ -284,6 +320,7 @@ true
 `nvim_win_close(win, force)`:
 
 Example:
+
 ```lua
 local buf = vim.api.nvim_create_buf(false, true)
 local win = vim.api.nvim_open_win(buf, false, {
@@ -293,6 +330,7 @@ local win = vim.api.nvim_open_win(buf, false, {
 vim.api.nvim_win_close(win, true)
 print(vim.api.nvim_win_is_valid(win))
 ```
+
 ```expected
 false
 ```
@@ -305,6 +343,7 @@ false
 For floating windows this includes all the `open_win` options:
 
 Example:
+
 ```lua
 local buf = vim.api.nvim_create_buf(false, true)
 local win = vim.api.nvim_open_win(buf, false, {
@@ -321,6 +360,7 @@ vim.defer_fn(function()
   end
 end, 1000)
 ```
+
 ```expected
 20
 ```
@@ -332,10 +372,12 @@ end, 1000)
 `nvim_list_tabpages()`, `nvim_get_current_tabpage()`:
 
 Example:
+
 ```lua
 local tabs = vim.api.nvim_list_tabpages()
 print(type(tabs) == "table" and #tabs >= 1)
 ```
+
 ```expected
 true
 ```
@@ -350,11 +392,13 @@ true
 
 Create a scratch buffer, write four lines into it, then read them back.
 Return the line count.
+
 > Tip: nvim_buf_set_lines with 4 strings, then #nvim_buf_get_lines(...).
 
 ```lua
 -- your code here
 ```
+
 ```expected
 4
 ```
@@ -366,11 +410,13 @@ Return the line count.
 Create a buffer with lines "a","b","c","d","e". Replace lines at index 1–3
 (the "b","c","d" section) with a single line "replaced".
 Return the resulting lines joined by commas.
+
 > Tip: nvim_buf_set_lines(buf, 1, 4, false, {"replaced"}).
 
 ```lua
 -- your code here
 ```
+
 ```expected
 a,replaced,e
 ```
@@ -381,11 +427,13 @@ a,replaced,e
 
 Create a floating window with border = "single" and width = 30.
 Read back its config and return the width.
+
 > Tip: nvim_win_get_config(win).width.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 30
 ```
@@ -397,11 +445,13 @@ Read back its config and return the width.
 Create a buffer, write "hello world" as the first line, then use
 nvim_buf_set_text to replace "world" with "Neovim".
 Return the new first line.
+
 > Tip: "world" starts at column 6 and ends at column 11 on row 0.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 hello Neovim
 ```
@@ -412,11 +462,13 @@ hello Neovim
 
 Create a buffer, set its filetype to "lua" and a buffer variable
 `b:lesson = "buffers"`. Return the value of b:lesson.
+
 > Tip: vim.b[buf].lesson = "buffers" then read it back.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 buffers
 ```
@@ -428,11 +480,13 @@ buffers
 Write a function `open_popup(lines)` that creates a floating window with
 rounded borders, centred in the editor, showing the given lines.
 Return the text of the first line from the buffer backing that window.
+
 > Tip: nvim_open_win with relative="editor"; read back with nvim_buf_get_lines.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 hello popup
 ```

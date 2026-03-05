@@ -1,3 +1,6 @@
+
+`gn` next lesson `gp` previous lesson `gO` go to ToC
+
 # Lesson 24: Writing a Neovim Plugin
 
 This lesson covers the complete anatomy of a real Neovim plugin — from
@@ -35,6 +38,7 @@ Heavy work goes in `lua/`.
 ## The plugin entry point — plugin/myplugin.lua
 
 Example:
+
 ```lua
 -- Simulating plugin/myplugin.lua
 -- Only runs once; registers the user-facing command
@@ -44,6 +48,7 @@ end, { nargs = "?" })
 
 print(vim.api.nvim_get_commands({})["MyPlugin"] ~= nil)
 ```
+
 ```expected
 true
 ```
@@ -55,6 +60,7 @@ true
 Stores defaults and merges user options:
 
 Example:
+
 ```lua
 local Config = {}
 
@@ -88,6 +94,7 @@ Config.setup({ width = 120, debug = true })
 -- Nested default preserved:
 print(Config.get().mappings.close)
 ```
+
 ```expected
 q
 ```
@@ -101,6 +108,7 @@ q
 `"error"` raises on conflicts:
 
 Example:
+
 ```lua
 local a = { x = 1, sub = { y = 2, z = 3 } }
 local b = { x = 9, sub = { y = 99 } }
@@ -108,6 +116,7 @@ local m = vim.tbl_deep_extend("force", a, b)
 -- x overwritten, sub.y overwritten, sub.z kept
 print(m.x .. "/" .. m.sub.y .. "/" .. m.sub.z)
 ```
+
 ```expected
 9/99/3
 ```
@@ -119,6 +128,7 @@ print(m.x .. "/" .. m.sub.y .. "/" .. m.sub.z)
 Shallow merge — replaces entire nested tables rather than merging them:
 
 Example:
+
 ```lua
 local a = { sub = { x = 1, y = 2 } }
 local b = { sub = { x = 99 } }
@@ -126,6 +136,7 @@ local m = vim.tbl_extend("force", a, b)
 -- sub.y is GONE — shallow replace
 print(tostring(m.sub.y))
 ```
+
 ```expected
 nil
 ```
@@ -137,21 +148,24 @@ nil
 Creates a fully independent deep clone:
 
 Example:
+
 ```lua
 local orig = { config = { timeout = 1000, retries = 3 } }
 local copy = vim.deepcopy(orig)
 copy.config.timeout = 9999
 print(orig.config.timeout)   -- unchanged
 ```
+
 ```expected
 1000
 ```
 
 ---
 
-## Utility functions from vim.*
+## Utility functions from vim.\*
 
 Example:
+
 ```lua
 -- vim.tbl_keys / vim.tbl_values
 local t = { a = 1, b = 2, c = 3 }
@@ -159,25 +173,30 @@ local keys = vim.tbl_keys(t)
 table.sort(keys)
 print(table.concat(keys, ","))
 ```
+
 ```expected
 a,b,c
 ```
 
 Example:
+
 ```lua
 local t = { "apple", "banana", "cherry", "apricot" }
 local a_fruits = vim.tbl_filter(function(s) return s:sub(1,1) == "a" end, t)
 print(table.concat(a_fruits, ","))
 ```
+
 ```expected
 apple,apricot
 ```
 
 Example:
+
 ```lua
 local doubled = vim.tbl_map(function(n) return n * 2 end, {1,2,3,4,5})
 print(table.concat(doubled, ","))
 ```
+
 ```expected
 2,4,6,8,10
 ```
@@ -189,11 +208,13 @@ print(table.concat(doubled, ","))
 Appends `src` into `dst` in-place:
 
 Example:
+
 ```lua
 local a = {1,2,3}
 vim.list_extend(a, {4,5,6})
 print(table.concat(a, ","))
 ```
+
 ```expected
 1,2,3,4,5,6
 ```
@@ -203,6 +224,7 @@ print(table.concat(a, ","))
 ## The init.lua public API
 
 Example:
+
 ```lua
 local M = {}
 local _config = { enabled = true, prefix = "[plugin]" }
@@ -222,6 +244,7 @@ end
 M.setup({ prefix = "[myplugin]" })
 print(M.version() .. " | " .. tostring(M.is_enabled()))
 ```
+
 ```expected
 1.0.0 | true
 ```
@@ -234,6 +257,7 @@ print(M.version() .. " | " .. tostring(M.is_enabled()))
 The health module uses `vim.health.*`:
 
 Example:
+
 ```lua
 -- A minimal health module
 local health = {}
@@ -249,6 +273,7 @@ end
 
 print(type(health.check))
 ```
+
 ```expected
 function
 ```
@@ -262,6 +287,7 @@ Modern Lua plugins can skip this (require() is idempotent), but
 it is still conventional for VimScript-era interop:
 
 Example:
+
 ```lua
 if vim.g.loaded_myplugin then
   -- already loaded, skip
@@ -269,6 +295,7 @@ end
 vim.g.loaded_myplugin = 1
 print(vim.g.loaded_myplugin)
 ```
+
 ```expected
 1
 ```
@@ -280,6 +307,7 @@ print(vim.g.loaded_myplugin)
 Group all plugin autocommands under a named group with `clear = true`:
 
 Example:
+
 ```lua
 local function setup_autocmds()
   local g = vim.api.nvim_create_augroup("MyPlugin_Autocmds", { clear = true })
@@ -305,6 +333,7 @@ end
 local g = setup_autocmds()
 print(#vim.api.nvim_get_autocmds({ group = g }))
 ```
+
 ```expected
 2
 ```
@@ -316,6 +345,7 @@ print(#vim.api.nvim_get_autocmds({ group = g }))
 Set up all keymaps in one place, buffer-local when possible:
 
 Example:
+
 ```lua
 local function setup_keymaps(buf)
   local map = function(mode, lhs, rhs, desc)
@@ -330,6 +360,7 @@ local buf = vim.api.nvim_create_buf(false, true)
 setup_keymaps(buf)
 print(#vim.api.nvim_buf_get_keymap(buf, "n"))
 ```
+
 ```expected
 3
 ```
@@ -339,6 +370,7 @@ print(#vim.api.nvim_buf_get_keymap(buf, "n"))
 ## Complete minimal plugin example
 
 Example:
+
 ```lua
 -- Full minimal plugin in one block (init.lua equivalent)
 local MyPlugin = {}
@@ -367,6 +399,7 @@ MyPlugin.increment()
 MyPlugin.increment()
 print(MyPlugin.get())
 ```
+
 ```expected
 15
 ```
@@ -382,11 +415,13 @@ print(MyPlugin.get())
 Use vim.tbl_deep_extend("force", ...) to merge defaults
 `{ a=1, b={ x=1, y=2 } }` with `{ b={ x=99 } }`.
 Return b.y (should be preserved).
+
 > Tip: nested tables are merged, not replaced.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 2
 ```
@@ -397,11 +432,13 @@ Return b.y (should be preserved).
 
 Use vim.tbl_filter to keep only strings longer than 3 chars
 from `{ "hi", "hello", "yo", "world", "ok" }`. Return the count.
+
 > Tip: #s > 3.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 2
 ```
@@ -412,11 +449,13 @@ from `{ "hi", "hello", "yo", "world", "ok" }`. Return the count.
 
 Use vim.tbl_map to square every number in {1,2,3,4,5}.
 Return the sum.
+
 > Tip: vim.tbl_map(fn, t) returns a new table.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 55
 ```
@@ -428,11 +467,13 @@ Return the sum.
 Build a Config module with defaults `{ timeout=1000, retries=3 }`,
 a `setup(opts)` function, and a `get()` function.
 Call setup({ retries=5 }). Return timeout (should stay 1000).
+
 > Tip: vim.tbl_deep_extend preserves keys not in opts.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 1000
 ```
@@ -443,11 +484,13 @@ Call setup({ retries=5 }). Return timeout (should stay 1000).
 
 Set up 3 buffer-local keymaps using a helper function.
 Return the count of buffer keymaps in "n" mode.
+
 > Tip: vim.api.nvim_buf_get_keymap(buf, "n").
 
 ```lua
 -- your code here
 ```
+
 ```expected
 3
 ```
@@ -457,17 +500,20 @@ Return the count of buffer keymaps in "n" mode.
 ### Exercise 6 — Challenge
 
 Build a complete mini-plugin with:
+
 - `setup(opts)` merging into defaults { prefix=">>", enabled=true }
 - `format(msg)` that returns prefix .. " " .. msg if enabled, else msg
 - `disable()` that sets enabled=false
 
 Call setup({ prefix="--" }), call format("hello"), then disable(),
 call format("world"). Return both results joined by "|".
-> Tip: _config.enabled controls format behaviour.
+
+> Tip: \_config.enabled controls format behaviour.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 -- hello|world
 ```

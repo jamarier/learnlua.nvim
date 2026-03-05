@@ -1,3 +1,6 @@
+
+`gn` next lesson `gp` previous lesson `gO` go to ToC
+
 # Lesson 09: Patterns and String Matching
 
 Lua has its own pattern language — not POSIX regex. The Lua reference
@@ -9,26 +12,28 @@ with much simpler rules.
 
 ## Character classes
 
-| Class | Matches |
-|-------|---------|
-| `.` | any character |
-| `%a` | letters (a-z, A-Z) |
-| `%l` | lowercase letters |
-| `%u` | uppercase letters |
-| `%d` | digits (0-9) |
-| `%w` | alphanumeric (%a + %d) |
-| `%s` | whitespace (space, tab, newline, etc.) |
-| `%p` | punctuation |
-| `%c` | control characters |
-| `%x` | hexadecimal digits |
-| `%z` | the zero byte |
+| Class | Matches                                |
+| ----- | -------------------------------------- |
+| `.`   | any character                          |
+| `%a`  | letters (a-z, A-Z)                     |
+| `%l`  | lowercase letters                      |
+| `%u`  | uppercase letters                      |
+| `%d`  | digits (0-9)                           |
+| `%w`  | alphanumeric (%a + %d)                 |
+| `%s`  | whitespace (space, tab, newline, etc.) |
+| `%p`  | punctuation                            |
+| `%c`  | control characters                     |
+| `%x`  | hexadecimal digits                     |
+| `%z`  | the zero byte                          |
 
 Uppercase versions are the complement: `%A` = non-letter, `%D` = non-digit, etc.
 
 Example:
+
 ```lua
 print(string.match("hello123", "%d+"))
 ```
+
 ```expected
 123
 ```
@@ -37,29 +42,33 @@ print(string.match("hello123", "%d+"))
 
 ## Quantifiers
 
-| Quantifier | Meaning |
-|------------|---------|
-| `+` | one or more (greedy) |
-| `*` | zero or more (greedy) |
-| `?` | zero or one |
-| `-` | zero or more (non-greedy / lazy) |
+| Quantifier | Meaning                          |
+| ---------- | -------------------------------- |
+| `+`        | one or more (greedy)             |
+| `*`        | zero or more (greedy)            |
+| `?`        | zero or one                      |
+| `-`        | zero or more (non-greedy / lazy) |
 
 The difference between `*` and `-`:
 
 Example:
+
 ```lua
 -- Greedy: matches as much as possible
 print(string.match("<tag>content</tag>", "<(.+)>"))
 ```
+
 ```expected
 tag>content</tag
 ```
 
 Example:
+
 ```lua
 -- Non-greedy: matches as little as possible
 print(string.match("<tag>content</tag>", "<(.-)>"))
 ```
+
 ```expected
 tag
 ```
@@ -71,26 +80,32 @@ tag
 `^` anchors to start of string. `$` anchors to end:
 
 Example:
+
 ```lua
 print(string.match("hello", "^h"))
 ```
+
 ```expected
 h
 ```
 
 Example:
+
 ```lua
 print(string.match("hello", "o$"))
 ```
+
 ```expected
 o
 ```
 
 Example:
+
 ```lua
 -- Full match
 print(string.match("hello", "^hello$"))
 ```
+
 ```expected
 hello
 ```
@@ -103,17 +118,21 @@ hello
 Ranges: `[a-z]`, `[0-9]`:
 
 Example:
+
 ```lua
 print(string.match("hello", "[aeiou]"))   -- first vowel
 ```
+
 ```expected
 e
 ```
 
 Example:
+
 ```lua
 print(string.match("abc123", "[^%a]+"))   -- first non-letter sequence
 ```
+
 ```expected
 123
 ```
@@ -125,10 +144,12 @@ print(string.match("abc123", "[^%a]+"))   -- first non-letter sequence
 Parentheses define captures. `string.match` returns them:
 
 Example:
+
 ```lua
 local user, domain = string.match("alice@example.com", "(.+)@(.+)")
 print(user .. " at " .. domain)
 ```
+
 ```expected
 alice at example.com
 ```
@@ -138,10 +159,12 @@ alice at example.com
 ## Multiple captures
 
 Example:
+
 ```lua
 local y, m, d = string.match("2024-03-15", "(%d%d%d%d)-(%d%d)-(%d%d)")
 print(d .. "/" .. m .. "/" .. y)
 ```
+
 ```expected
 15/03/2024
 ```
@@ -154,20 +177,24 @@ Returns start, end positions (and captures if any).
 `plain = true` treats the pattern as a literal string:
 
 Example:
+
 ```lua
 local s, e = string.find("hello world", "world")
 print(s .. "-" .. e)
 ```
+
 ```expected
 7-11
 ```
 
 Example:
+
 ```lua
 -- Returning captures too
 local s, e, cap = string.find("foo=bar", "(%w+)$")
 print(cap)
 ```
+
 ```expected
 bar
 ```
@@ -179,6 +206,7 @@ bar
 Iterates over all non-overlapping matches:
 
 Example:
+
 ```lua
 local words = {}
 for w in string.gmatch("the quick brown fox", "%a+") do
@@ -186,11 +214,13 @@ for w in string.gmatch("the quick brown fox", "%a+") do
 end
 print(#words)
 ```
+
 ```expected
 4
 ```
 
 Example:
+
 ```lua
 -- Key-value pairs
 local t = {}
@@ -199,6 +229,7 @@ for k, v in string.gmatch("x=1,y=2,z=3", "(%w+)=(%w+)") do
 end
 print(t.x + t.y + t.z)
 ```
+
 ```expected
 6
 ```
@@ -211,15 +242,18 @@ print(t.x + t.y + t.z)
 In string replacements, `%0` = whole match, `%1` = first capture, etc:
 
 Example:
+
 ```lua
 -- String replacement with captures
 print(string.gsub("hello world", "(%w+)", "[%1]"))
 ```
+
 ```expected
 [hello] [world] 2
 ```
 
 Example:
+
 ```lua
 -- Function replacement
 print(
@@ -228,16 +262,19 @@ print(
   end)
 )
 ```
+
 ```expected
 2 + 4 = ? 2
 ```
 
 Example:
+
 ```lua
 -- Table replacement
 local t = { name = "Lua", year = "1993" }
 print(string.gsub("$name was created in $year", "%$(%w+)", t))
 ```
+
 ```expected
 Lua was created in 1993 2
 ```
@@ -249,9 +286,11 @@ Lua was created in 1993 2
 Escape with `%`. Special pattern chars: `( ) . % + - * ? [ ^ $`:
 
 Example:
+
 ```lua
 print(string.match("price: $3.99", "%$%d+%.%d+"))
 ```
+
 ```expected
 $3.99
 ```
@@ -263,10 +302,12 @@ $3.99
 An empty capture `()` returns the current position in the string:
 
 Example:
+
 ```lua
 local pos = string.find("hello world", "()", 7)
 print(pos)
 ```
+
 ```expected
 7
 ```
@@ -281,12 +322,14 @@ print(pos)
 
 Extract the protocol from a URL "https://example.com/path".
 Return "https".
+
 > Tip: match everything before "://".
 
 ```lua
 local url = "https://example.com/path"
 -- your code here
 ```
+
 ```expected
 https
 ```
@@ -296,12 +339,14 @@ https
 ### Exercise 2
 
 Count all digits in the string "a1b2c3d4e5".
+
 > Tip: use gmatch with %d.
 
 ```lua
 local s = "a1b2c3d4e5"
 -- your code here
 ```
+
 ```expected
 5
 ```
@@ -311,13 +356,15 @@ local s = "a1b2c3d4e5"
 ### Exercise 3
 
 Replace all runs of whitespace with a single space and trim the result.
-Input: "  hello   world  "
+Input: " hello world "
+
 > Tip: gsub %s+ with " ", then match the trimmed content.
 
 ```lua
 local s = "  hello   world  "
 -- your code here
 ```
+
 ```expected
 hello world
 ```
@@ -328,12 +375,14 @@ hello world
 
 Parse "key1=val1;key2=val2;key3=val3" into a table.
 Return the value for "key2".
+
 > Tip: gmatch with (%w+)=(%w+) pattern.
 
 ```lua
 local s = "key1=val1;key2=val2;key3=val3"
 -- your code here
 ```
+
 ```expected
 val2
 ```
@@ -344,6 +393,7 @@ val2
 
 Validate that a string is a valid integer (only digits, optionally
 preceded by a minus sign). Return true for "-42" and false for "12.5".
+
 > Tip: match("^-?%d+$") returns nil if it doesn't match.
 
 ```lua
@@ -352,6 +402,7 @@ local function is_integer(s)
 end
 tostring(is_integer("-42")) .. "," .. tostring(is_integer("12.5"))
 ```
+
 ```expected
 true,false
 ```
@@ -364,11 +415,13 @@ Write a simple `template(s, vars)` function that replaces `{{key}}`
 placeholders with values from the vars table.
 Test with "Hello, {{name}}! You have {{count}} messages."
 and vars = { name="Ada", count="3" }.
+
 > Tip: gsub with {{(%w+)}} pattern and a function looking up vars.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 Hello, Ada! You have 3 messages.
 ```

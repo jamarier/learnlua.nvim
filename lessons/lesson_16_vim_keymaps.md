@@ -1,3 +1,6 @@
+
+`gn` next lesson `gp` previous lesson `gO` go to ToC
+
 # Lesson 16: Keymaps and Key Bindings
 
 Neovim's keymap API lets you register, query, and remove key mappings
@@ -11,14 +14,15 @@ Lua functions directly.
 
 `vim.keymap.set(mode, lhs, rhs, opts)` is the recommended entry point.
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `mode` | string or table | Vim mode(s) |
-| `lhs` | string | Left-hand side: the key sequence |
-| `rhs` | string or function | Right-hand side: what to run |
-| `opts` | table | Options (see below) |
+| Parameter | Type               | Description                      |
+| --------- | ------------------ | -------------------------------- |
+| `mode`    | string or table    | Vim mode(s)                      |
+| `lhs`     | string             | Left-hand side: the key sequence |
+| `rhs`     | string or function | Right-hand side: what to run     |
+| `opts`    | table              | Options (see below)              |
 
 Example:
+
 ```lua
 vim.keymap.set("n", "<leader>h", function()
   return "hello"
@@ -31,6 +35,7 @@ for _, m in ipairs(maps) do
 end
 print(found)
 ```
+
 ```expected
 true
 ```
@@ -39,20 +44,21 @@ true
 
 ## 2. Mode Strings
 
-| Mode | Vim name | Description |
-|------|----------|-------------|
-| `"n"` | Normal | Normal mode |
-| `"i"` | Insert | Insert mode |
-| `"v"` | Visual+Select | Visual and Select mode |
-| `"x"` | Visual | Visual mode only (not Select) |
-| `"s"` | Select | Select mode |
+| Mode  | Vim name         | Description                       |
+| ----- | ---------------- | --------------------------------- |
+| `"n"` | Normal           | Normal mode                       |
+| `"i"` | Insert           | Insert mode                       |
+| `"v"` | Visual+Select    | Visual and Select mode            |
+| `"x"` | Visual           | Visual mode only (not Select)     |
+| `"s"` | Select           | Select mode                       |
 | `"o"` | Operator-pending | After an operator like `d` or `y` |
-| `"t"` | Terminal | Terminal mode |
-| `"c"` | Command | Command-line mode |
-| `"l"` | Lang-arg | `i`, `r`, `?`, and more |
-| `""` | Normal+Visual+Op | Catch-all (`:map`) |
+| `"t"` | Terminal         | Terminal mode                     |
+| `"c"` | Command          | Command-line mode                 |
+| `"l"` | Lang-arg         | `i`, `r`, `?`, and more           |
+| `""`  | Normal+Visual+Op | Catch-all (`:map`)                |
 
 Example:
+
 ```lua
 -- Multiple modes at once
 vim.keymap.set({ "n", "v" }, "<leader>test", function() end, { desc = "test multi" })
@@ -63,6 +69,7 @@ for _, m in ipairs(maps) do
 end
 print(found)
 ```
+
 ```expected
 true
 ```
@@ -71,17 +78,18 @@ true
 
 ## 3. Key Options
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `noremap` | bool | `true` | Don't expand rhs recursively |
-| `silent` | bool | `false` | Don't echo the mapping |
-| `expr` | bool | `false` | rhs is an expression; its return value is used |
-| `buffer` | bool/number | `false` | Buffer-local mapping |
-| `desc` | string | `nil` | Description (shown in which-key, `:map`) |
-| `nowait` | bool | `false` | Don't wait for more keys |
-| `remap` | bool | `false` | Allow remapping (inverse of noremap) |
+| Option    | Type        | Default | Description                                    |
+| --------- | ----------- | ------- | ---------------------------------------------- |
+| `noremap` | bool        | `true`  | Don't expand rhs recursively                   |
+| `silent`  | bool        | `false` | Don't echo the mapping                         |
+| `expr`    | bool        | `false` | rhs is an expression; its return value is used |
+| `buffer`  | bool/number | `false` | Buffer-local mapping                           |
+| `desc`    | string      | `nil`   | Description (shown in which-key, `:map`)       |
+| `nowait`  | bool        | `false` | Don't wait for more keys                       |
+| `remap`   | bool        | `false` | Allow remapping (inverse of noremap)           |
 
 Example:
+
 ```lua
 vim.keymap.set("n", "<leader>q", ":quit<CR>", {
   silent  = true,
@@ -94,6 +102,7 @@ for _, m in ipairs(maps) do
 end
 print(found)
 ```
+
 ```expected
 true
 ```
@@ -107,6 +116,7 @@ true
 Buffer-local maps take precedence over global maps.
 
 Example:
+
 ```lua
 local buf = vim.api.nvim_get_current_buf()
 vim.keymap.set("n", "<leader>bl", function() end, {
@@ -120,6 +130,7 @@ for _, m in ipairs(maps) do
 end
 print(found)
 ```
+
 ```expected
 true
 ```
@@ -131,6 +142,7 @@ true
 `vim.keymap.del(mode, lhs, opts)` removes a keymap:
 
 Example:
+
 ```lua
 vim.keymap.set("n", "<leader>tmp1", function() end, {})
 vim.keymap.del("n", "<leader>tmp1")
@@ -141,6 +153,7 @@ for _, m in ipairs(maps) do
 end
 print(found)
 ```
+
 ```expected
 false
 ```
@@ -148,6 +161,7 @@ false
 ---
 
 Example:
+
 ```lua
 -- Delete buffer-local mapping
 local buf = vim.api.nvim_get_current_buf()
@@ -160,6 +174,7 @@ for _, m in ipairs(maps) do
 end
 print(found)
 ```
+
 ```expected
 false
 ```
@@ -174,9 +189,11 @@ false
 Each entry is a table with fields: `lhs`, `rhs`, `desc`, `noremap`, `silent`, etc.
 
 Example:
+
 ```lua
 print(type(vim.api.nvim_get_keymap("n")))
 ```
+
 ```expected
 table
 ```
@@ -184,6 +201,7 @@ table
 ---
 
 Example:
+
 ```lua
 -- Find a keymap by desc
 vim.keymap.set("n", "<leader>findme", function() end, { desc = "findme-desc" })
@@ -197,6 +215,7 @@ for _, m in ipairs(maps) do
 end
 print(result ~= nil)
 ```
+
 ```expected
 true
 ```
@@ -209,6 +228,7 @@ true
 return value becomes the keys to execute. Useful for context-sensitive maps:
 
 Example:
+
 ```lua
 vim.keymap.set("i", "<Tab>", function()
   -- In a real plugin: check for completion popup, etc.
@@ -216,6 +236,7 @@ vim.keymap.set("i", "<Tab>", function()
 end, { expr = true, desc = "smart tab" })
 print(type(vim.keymap.set))
 ```
+
 ```expected
 function
 ```
@@ -228,6 +249,7 @@ function
 This is a plugin convention that lets users remap plugin actions:
 
 Example:
+
 ```lua
 -- Plugin defines the action:
 vim.keymap.set("n", "<Plug>(MyAction)", function() end, { noremap = false })
@@ -235,6 +257,7 @@ vim.keymap.set("n", "<Plug>(MyAction)", function() end, { noremap = false })
 -- vim.keymap.set("n", "ga", "<Plug>(MyAction)")
 print(type(vim.keymap.set))
 ```
+
 ```expected
 function
 ```
@@ -247,6 +270,7 @@ Register keymaps inside a FileType autocommand so they apply only to
 specific filetypes:
 
 Example:
+
 ```lua
 local g = vim.api.nvim_create_augroup("LuaKeymaps", { clear = true })
 vim.api.nvim_create_autocmd("FileType", {
@@ -262,6 +286,7 @@ vim.api.nvim_create_autocmd("FileType", {
 local cmds = vim.api.nvim_get_autocmds({ group = g })
 print(#cmds)
 ```
+
 ```expected
 1
 ```
@@ -273,6 +298,7 @@ print(#cmds)
 A convenient pattern for defining many mappings at once:
 
 Example:
+
 ```lua
 local function set_maps(maps, global_opts)
   for _, map in ipairs(maps) do
@@ -298,6 +324,7 @@ for _, m in ipairs(maps) do
 end
 print(count)
 ```
+
 ```expected
 3
 ```
@@ -314,11 +341,13 @@ print(count)
 
 Register a global normal-mode keymap for `<leader>ex1` with desc "ex1-test".
 Verify it appears in nvim_get_keymap("n"). Return true if found.
+
 > Tip: search the maps table for m.desc == "ex1-test".
 
 ```lua
 -- your code here
 ```
+
 ```expected
 true
 ```
@@ -330,11 +359,13 @@ true
 Register a buffer-local keymap for the current buffer.
 Verify it appears in nvim_buf_get_keymap but NOT in nvim_get_keymap.
 Return true if buffer-local is found.
+
 > Tip: use buffer = true in opts.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 true
 ```
@@ -344,11 +375,13 @@ true
 ### Exercise 3 — Delete
 
 Register then delete a keymap. Return false if it's no longer found.
+
 > Tip: vim.keymap.del(mode, lhs).
 
 ```lua
 -- your code here
 ```
+
 ```expected
 false
 ```
@@ -360,11 +393,13 @@ false
 Register the same keymap in both "n" and "i" modes in a single call.
 Check that it appears in both nvim_get_keymap("n") and nvim_get_keymap("i").
 Return true if found in both.
+
 > Tip: pass { "n", "i" } as the first argument.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 true
 ```
@@ -374,12 +409,14 @@ true
 ### Exercise 5 — Count by desc prefix
 
 Register 5 keymaps with desc starting with "myplugin-".
-Count how many global normal-mode maps have desc matching "myplugin-.*".
+Count how many global normal-mode maps have desc matching "myplugin-.\*".
+
 > Tip: m.desc and m.desc:match("^myplugin%-") in the loop.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 5
 ```
@@ -390,11 +427,13 @@ Count how many global normal-mode maps have desc matching "myplugin-.*".
 
 Register an expr keymap that returns "<Esc>" if the current line is empty
 and "<CR>" otherwise. Verify the mapping has expr=1.
+
 > Tip: `expr = true` in opts; access m.expr in the verification.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 true
 ```

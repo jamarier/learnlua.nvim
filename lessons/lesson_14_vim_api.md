@@ -1,4 +1,7 @@
-# Lesson 14: The vim.* Namespace
+
+`gn` next lesson `gp` previous lesson `gO` go to ToC
+
+# Lesson 14: The vim.\* Namespace
 
 Neovim exposes its entire API through the `vim` global. This namespace
 is the bridge between your Lua code and Neovim's internals.
@@ -9,24 +12,26 @@ plugin development.
 
 ## The vim namespace structure
 
-| Namespace | Purpose |
-|-----------|---------|
-| `vim.api` | Raw C API (nvim_*) |
-| `vim.fn` | Vimscript functions |
-| `vim.opt` | Options (modern) |
-| `vim.o/bo/wo` | Options (direct) |
-| `vim.g/b/w/t` | Variables |
-| `vim.env` | Environment variables |
-| `vim.lsp` | LSP client |
-| `vim.diagnostic` | Diagnostics |
-| `vim.treesitter` | Treesitter |
-| `vim.keymap` | Keymaps |
-| `vim.uv` | libuv bindings |
+| Namespace        | Purpose               |
+| ---------------- | --------------------- |
+| `vim.api`        | Raw C API (nvim_*)  |
+| `vim.fn`         | Vimscript functions   |
+| `vim.opt`        | Options (modern)      |
+| `vim.o/bo/wo`    | Options (direct)      |
+| `vim.g/b/w/t`    | Variables             |
+| `vim.env`        | Environment variables |
+| `vim.lsp`        | LSP client            |
+| `vim.diagnostic` | Diagnostics           |
+| `vim.treesitter` | Treesitter            |
+| `vim.keymap`     | Keymaps               |
+| `vim.uv`         | libuv bindings        |
 
 Example:
+
 ```lua
 print(type(vim.api))
 ```
+
 ```expected
 table
 ```
@@ -38,17 +43,21 @@ table
 The most-used debugging tool. Converts any Lua value to a readable string:
 
 Example:
+
 ```lua
 print(vim.inspect({ 1, 2, 3 }))
 ```
+
 ```expected
 { 1, 2, 3 }
 ```
 
 Example:
+
 ```lua
 print(vim.inspect({ name = "lua", version = 5 }))
 ```
+
 ```expected
 {
   name = "lua",
@@ -63,25 +72,31 @@ print(vim.inspect({ name = "lua", version = 5 }))
 All of Vimscript's built-in functions are available under `vim.fn`:
 
 Example:
+
 ```lua
 print(type(vim.fn.getcwd()))
 ```
+
 ```expected
 string
 ```
 
 Example:
+
 ```lua
 print(vim.fn.toupper("hello"))
 ```
+
 ```expected
 HELLO
 ```
 
 Example:
+
 ```lua
 print(vim.fn.has("nvim"))
 ```
+
 ```expected
 1
 ```
@@ -93,9 +108,11 @@ print(vim.fn.has("nvim"))
 Returns the handle of the current buffer as a number:
 
 Example:
+
 ```lua
 print(type(vim.api.nvim_get_current_buf()))
 ```
+
 ```expected
 number
 ```
@@ -107,9 +124,11 @@ number
 Returns the handle of the current window:
 
 Example:
+
 ```lua
 print(type(vim.api.nvim_get_current_win()))
 ```
+
 ```expected
 number
 ```
@@ -121,9 +140,11 @@ number
 Returns a table with `mode` and `blocking` fields:
 
 Example:
+
 ```lua
 print(vim.api.nvim_get_mode().mode)
 ```
+
 ```expected
 n
 ```
@@ -136,17 +157,21 @@ n
 `vim.wo` reads/writes window-local options:
 
 Example:
+
 ```lua
 print(type(vim.bo.filetype))
 ```
+
 ```expected
 string
 ```
 
 Example:
+
 ```lua
 print(type(vim.wo.number))
 ```
+
 ```expected
 boolean
 ```
@@ -158,10 +183,12 @@ boolean
 Maps to Vimscript's `g:` namespace:
 
 Example:
+
 ```lua
 vim.g.my_test_var = "hello"
 print(vim.g.my_test_var)
 ```
+
 ```expected
 hello
 ```
@@ -173,10 +200,12 @@ hello
 Maps to `b:`:
 
 Example:
+
 ```lua
 vim.b.my_buf_var = 42
 print(vim.b.my_buf_var)
 ```
+
 ```expected
 42
 ```
@@ -188,17 +217,21 @@ print(vim.b.my_buf_var)
 `vim.uv` (formerly `vim.loop`) exposes libuv for async work and system calls:
 
 Example:
+
 ```lua
 print(type(vim.uv.cwd()))
 ```
+
 ```expected
 string
 ```
 
 Example:
+
 ```lua
 print(vim.uv.os_getenv("HOME") ~= nil)
 ```
+
 ```expected
 true
 ```
@@ -210,27 +243,33 @@ true
 Neovim provides useful table utilities beyond the standard library:
 
 Example:
+
 ```lua
 print(vim.tbl_contains({1, 2, 3, 4}, 3))
 ```
+
 ```expected
 true
 ```
 
 Example:
+
 ```lua
 local evens = vim.tbl_filter(function(v) return v % 2 == 0 end, {1,2,3,4,5,6})
 print(table.concat(evens, ","))
 ```
+
 ```expected
 2,4,6
 ```
 
 Example:
+
 ```lua
 local doubled = vim.tbl_map(function(v) return v * 2 end, {1,2,3})
 print(table.concat(doubled, ","))
 ```
+
 ```expected
 2,4,6
 ```
@@ -242,12 +281,14 @@ print(table.concat(doubled, ","))
 Creates a fully independent deep copy of a table:
 
 Example:
+
 ```lua
 local orig = { nested = { value = 10 } }
 local copy = vim.deepcopy(orig)
 copy.nested.value = 99
 print(orig.nested.value)
 ```
+
 ```expected
 10
 ```
@@ -259,12 +300,14 @@ print(orig.nested.value)
 Recursively merges tables. "force" means later tables win:
 
 Example:
+
 ```lua
 local a = { x = 1, sub = { y = 2, z = 3 } }
 local b = { sub = { y = 99 } }
 local merged = vim.tbl_deep_extend("force", a, b)
 print(merged.sub.z)   -- preserved from a
 ```
+
 ```expected
 3
 ```
@@ -279,11 +322,13 @@ print(merged.sub.z)   -- preserved from a
 
 Use vim.inspect to return a readable version of `{ a=1, b=2 }`.
 Check that the result is a string.
+
 > Tip: type(vim.inspect({...})).
 
 ```lua
 -- your code here
 ```
+
 ```expected
 string
 ```
@@ -294,11 +339,13 @@ string
 
 Get the current working directory using vim.fn.getcwd().
 Return its type.
+
 > Tip: type() of the result.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 string
 ```
@@ -309,11 +356,13 @@ string
 
 Use vim.tbl_deep_extend to merge `{a=1, b={x=10}}` and `{b={x=99, y=20}}`.
 Return b.x from the merged result.
+
 > Tip: "force" means second table wins on conflict.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 99
 ```
@@ -324,11 +373,13 @@ Return b.x from the merged result.
 
 Use vim.tbl_filter to keep only values > 5 from {2, 4, 6, 8, 10}.
 Return their sum.
+
 > Tip: filter, then sum with a for loop.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 24
 ```
@@ -339,11 +390,13 @@ Return their sum.
 
 Create a scratch buffer, set its filetype to "lua" using vim.bo[buf].
 Return the filetype to confirm.
+
 > Tip: vim.api.nvim_create_buf(false, true) makes a scratch buffer.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 lua
 ```
@@ -354,11 +407,13 @@ lua
 
 Use vim.inspect on a nested table `{users={{name="alice"},{name="bob"}}}`.
 Return whether the result string contains "alice".
+
 > Tip: use string.find on the inspect output.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 true
 ```

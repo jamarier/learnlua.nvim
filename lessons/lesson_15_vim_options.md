@@ -1,3 +1,6 @@
+
+`gn` next lesson `gp` previous lesson `gO` go to ToC
+
 # Lesson 15: Options and Settings
 
 Neovim options control editor behaviour. There are three scopes:
@@ -9,14 +12,14 @@ Lua provides multiple interfaces to set them.
 
 ## The four interfaces
 
-| Interface | Equivalent | Scope |
-|-----------|------------|-------|
-| `vim.opt` | `:set` | smart (auto-scopes) |
-| `vim.o` | `:set` | global |
-| `vim.bo` | `:setlocal` | current buffer |
-| `vim.wo` | `:setlocal` | current window |
-| `vim.bo[buf]` | | specific buffer |
-| `vim.wo[win]` | | specific window |
+| Interface     | Equivalent  | Scope               |
+| ------------- | ----------- | ------------------- |
+| `vim.opt`     | `:set`      | smart (auto-scopes) |
+| `vim.o`       | `:set`      | global              |
+| `vim.bo`      | `:setlocal` | current buffer      |
+| `vim.wo`      | `:setlocal` | current window      |
+| `vim.bo[buf]` |             | specific buffer     |
+| `vim.wo[win]` |             | specific window     |
 
 ---
 
@@ -26,10 +29,12 @@ Lua provides multiple interfaces to set them.
 It handles type coercion and supports list/set operations:
 
 Example:
+
 ```lua
 vim.opt.number = true
 print(vim.o.number)
 ```
+
 ```expected
 true
 ```
@@ -42,10 +47,12 @@ true
 (boolean, number, table, string):
 
 Example:
+
 ```lua
 vim.opt.tabstop = 4
 print(vim.opt.tabstop:get())
 ```
+
 ```expected
 4
 ```
@@ -57,16 +64,19 @@ print(vim.opt.tabstop:get())
 For comma-separated options (like `path`, `shortmess`, `completeopt`):
 
 Example:
+
 ```lua
 vim.opt.completeopt = { "menu", "menuone", "noselect" }
 local v = vim.opt.completeopt:get()
 print(type(v))
 ```
+
 ```expected
 table
 ```
 
 Example:
+
 ```lua
 -- Append to a list
 vim.opt.shortmess:append("I")
@@ -76,6 +86,7 @@ vim.opt.shortmess:prepend("a")
 vim.opt.shortmess:remove("a")
 print(type(vim.opt.shortmess:get()))
 ```
+
 ```expected
 table
 ```
@@ -87,10 +98,12 @@ table
 Use when you want exactly `:set option=value` semantics:
 
 Example:
+
 ```lua
 vim.o.laststatus = 2
 print(vim.o.laststatus)
 ```
+
 ```expected
 2
 ```
@@ -103,20 +116,24 @@ print(vim.o.laststatus)
 `vim.bo[bufnr].option` sets it on a specific buffer:
 
 Example:
+
 ```lua
 vim.bo.expandtab = true
 print(vim.bo.expandtab)
 ```
+
 ```expected
 true
 ```
 
 Example:
+
 ```lua
 local buf = vim.api.nvim_create_buf(false, true)
 vim.bo[buf].filetype = "markdown"
 print(vim.bo[buf].filetype)
 ```
+
 ```expected
 markdown
 ```
@@ -126,10 +143,12 @@ markdown
 ## vim.wo — window-local
 
 Example:
+
 ```lua
 vim.wo.wrap = false
 print(vim.wo.wrap)
 ```
+
 ```expected
 false
 ```
@@ -142,10 +161,12 @@ false
 options on the current buffer/window:
 
 Example:
+
 ```lua
 vim.opt_local.textwidth = 80
 print(vim.bo.textwidth)
 ```
+
 ```expected
 80
 ```
@@ -157,10 +178,12 @@ print(vim.bo.textwidth)
 `vim.g` is for `g:` variables, not options. Used by plugins for flags:
 
 Example:
+
 ```lua
 vim.g.loaded_netrw = 1
 print(vim.g.loaded_netrw)
 ```
+
 ```expected
 1
 ```
@@ -172,10 +195,12 @@ print(vim.g.loaded_netrw)
 `vim.b` is for `b:` variables (distinct from buffer-local OPTIONS):
 
 Example:
+
 ```lua
 vim.b.my_plugin_state = { ready = true }
 print(vim.b.my_plugin_state.ready)
 ```
+
 ```expected
 true
 ```
@@ -185,9 +210,11 @@ true
 ## vim.env — environment variables
 
 Example:
+
 ```lua
 print(type(vim.env.HOME))
 ```
+
 ```expected
 string
 ```
@@ -199,19 +226,23 @@ string
 `vim.api.nvim_get_option_info2` returns metadata about an option:
 
 Example:
+
 ```lua
 local info = vim.api.nvim_get_option_info2("number", {})
 print(info.scope)
 ```
+
 ```expected
 win
 ```
 
 Example:
+
 ```lua
 local info = vim.api.nvim_get_option_info2("expandtab", {})
 print(info.scope)
 ```
+
 ```expected
 buf
 ```
@@ -223,6 +254,7 @@ buf
 A common config pattern:
 
 Example:
+
 ```lua
 local options = {
   expandtab = true,
@@ -235,6 +267,7 @@ for k, v in pairs(options) do
 end
 print(vim.opt.shiftwidth:get())
 ```
+
 ```expected
 2
 ```
@@ -248,11 +281,13 @@ print(vim.opt.shiftwidth:get())
 ### Exercise 1
 
 Set tabstop to 4 and shiftwidth to 4. Return shiftwidth.
+
 > Tip: vim.opt or vim.o.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 4
 ```
@@ -263,11 +298,13 @@ Set tabstop to 4 and shiftwidth to 4. Return shiftwidth.
 
 Create a scratch buffer, set its filetype to "python" using vim.bo[buf].
 Return the filetype.
+
 > Tip: vim.api.nvim_create_buf(false, true) then vim.bo[buf].filetype.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 python
 ```
@@ -278,11 +315,13 @@ python
 
 Check the scope of the "wrap" option using nvim_get_option_info2.
 Return the scope string.
+
 > Tip: info.scope will be "win".
 
 ```lua
 -- your code here
 ```
+
 ```expected
 win
 ```
@@ -293,11 +332,13 @@ win
 
 Set a buffer-local variable `vim.b.my_counter = 0`, increment it 3 times,
 return its final value.
+
 > Tip: vim.b.my_counter = vim.b.my_counter + 1.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 3
 ```
@@ -310,11 +351,13 @@ Write a `set_ft_options(ft, opts)` function that, given a filetype and
 an options table, creates a FileType autocommand that applies those options.
 Call it for "lua" with { tabstop=2, expandtab=true }.
 Return the number of autocmds registered.
+
 > Tip: nvim_create_augroup + nvim_create_autocmd with FileType pattern.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 1
 ```

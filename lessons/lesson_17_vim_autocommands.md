@@ -1,3 +1,6 @@
+
+`gn` next lesson `gp` previous lesson `gO` go to ToC
+
 # Lesson 17: Autocommands
 
 Autocommands run Lua callbacks automatically in response to Neovim events.
@@ -14,21 +17,22 @@ of other triggers.
 
 `vim.api.nvim_create_autocmd(events, opts)` creates one or more autocommands:
 
-| Key | Type | Description |
-|-----|------|-------------|
-| `events` | string or list | Event name(s) |
-| `group` | string or number | Augroup to add to |
-| `pattern` | string or list | File pattern(s) to match |
-| `buffer` | number | Buffer-local (exclusive with pattern) |
-| `callback` | function | Lua callback |
-| `command` | string | Vimscript command (alternative to callback) |
-| `once` | bool | Delete after first trigger |
-| `nested` | bool | Allow nested autocommands |
-| `desc` | string | Human-readable description |
+| Key        | Type             | Description                                 |
+| ---------- | ---------------- | ------------------------------------------- |
+| `events`   | string or list   | Event name(s)                               |
+| `group`    | string or number | Augroup to add to                           |
+| `pattern`  | string or list   | File pattern(s) to match                    |
+| `buffer`   | number           | Buffer-local (exclusive with pattern)       |
+| `callback` | function         | Lua callback                                |
+| `command`  | string           | Vimscript command (alternative to callback) |
+| `once`     | bool             | Delete after first trigger                  |
+| `nested`   | bool             | Allow nested autocommands                   |
+| `desc`     | string           | Human-readable description                  |
 
 Returns: the integer ID of the created autocommand.
 
 Example:
+
 ```lua
 local id = vim.api.nvim_create_autocmd("BufEnter", {
   callback = function() end,
@@ -36,6 +40,7 @@ local id = vim.api.nvim_create_autocmd("BufEnter", {
 })
 print(type(id))
 ```
+
 ```expected
 number
 ```
@@ -50,10 +55,12 @@ this removes any existing autocommands in that group, preventing duplicates
 when your config is re-sourced.
 
 Example:
+
 ```lua
 local g = vim.api.nvim_create_augroup("MyPlugin", { clear = true })
 print(type(g))
 ```
+
 ```expected
 number
 ```
@@ -61,6 +68,7 @@ number
 ---
 
 Example:
+
 ```lua
 -- clear = true removes existing cmds; prevents accumulation on re-source
 local g = vim.api.nvim_create_augroup("TestGroup", { clear = true })
@@ -72,6 +80,7 @@ vim.api.nvim_create_augroup("TestGroup", { clear = true })
 local cmds = vim.api.nvim_get_autocmds({ group = g })
 print(#cmds)
 ```
+
 ```expected
 0
 ```
@@ -80,29 +89,30 @@ print(#cmds)
 
 ## 3. Common Events
 
-| Event | Triggered when |
-|-------|---------------|
-| `BufEnter` | entering a buffer |
-| `BufLeave` | leaving a buffer |
-| `BufWritePre` | before writing a file |
-| `BufWritePost` | after writing a file |
-| `BufReadPost` | after reading a file into a buffer |
-| `BufNewFile` | creating a new file |
-| `FileType` | filetype is detected/changed |
-| `InsertEnter` | entering Insert mode |
-| `InsertLeave` | leaving Insert mode |
-| `CursorMoved` | cursor moved in Normal mode |
-| `CursorMovedI` | cursor moved in Insert mode |
-| `WinEnter` | entering a window |
-| `WinLeave` | leaving a window |
-| `VimEnter` | Vim has fully started |
-| `VimLeave` | Vim is about to exit |
-| `User` | custom user events (with pattern) |
-| `TextChanged` | text changed in Normal mode |
-| `TextChangedI` | text changed in Insert mode |
-| `LspAttach` | LSP client attached to buffer |
+| Event          | Triggered when                     |
+| -------------- | ---------------------------------- |
+| `BufEnter`     | entering a buffer                  |
+| `BufLeave`     | leaving a buffer                   |
+| `BufWritePre`  | before writing a file              |
+| `BufWritePost` | after writing a file               |
+| `BufReadPost`  | after reading a file into a buffer |
+| `BufNewFile`   | creating a new file                |
+| `FileType`     | filetype is detected/changed       |
+| `InsertEnter`  | entering Insert mode               |
+| `InsertLeave`  | leaving Insert mode                |
+| `CursorMoved`  | cursor moved in Normal mode        |
+| `CursorMovedI` | cursor moved in Insert mode        |
+| `WinEnter`     | entering a window                  |
+| `WinLeave`     | leaving a window                   |
+| `VimEnter`     | Vim has fully started              |
+| `VimLeave`     | Vim is about to exit               |
+| `User`         | custom user events (with pattern)  |
+| `TextChanged`  | text changed in Normal mode        |
+| `TextChangedI` | text changed in Insert mode        |
+| `LspAttach`    | LSP client attached to buffer      |
 
 Example:
+
 ```lua
 local g = vim.api.nvim_create_augroup("Events", { clear = true })
 vim.api.nvim_create_autocmd({ "BufEnter", "BufLeave" }, {
@@ -112,6 +122,7 @@ vim.api.nvim_create_autocmd({ "BufEnter", "BufLeave" }, {
 local cmds = vim.api.nvim_get_autocmds({ group = g })
 print(#cmds)
 ```
+
 ```expected
 2
 ```
@@ -123,6 +134,7 @@ print(#cmds)
 `pattern` limits which files trigger the autocommand. Supports glob patterns:
 
 Example:
+
 ```lua
 local g = vim.api.nvim_create_augroup("PatTest", { clear = true })
 vim.api.nvim_create_autocmd("BufWritePre", {
@@ -133,6 +145,7 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 local cmds = vim.api.nvim_get_autocmds({ group = g })
 print(#cmds)
 ```
+
 ```expected
 2
 ```
@@ -145,6 +158,7 @@ print(#cmds)
 buffer-local settings per language:
 
 Example:
+
 ```lua
 local g = vim.api.nvim_create_augroup("FtConfig", { clear = true })
 vim.api.nvim_create_autocmd("FileType", {
@@ -158,6 +172,7 @@ vim.api.nvim_create_autocmd("FileType", {
 local cmds = vim.api.nvim_get_autocmds({ group = g, event = "FileType" })
 print(#cmds)
 ```
+
 ```expected
 1
 ```
@@ -170,6 +185,7 @@ print(#cmds)
 These are automatically cleaned up when the buffer is deleted:
 
 Example:
+
 ```lua
 local buf = vim.api.nvim_get_current_buf()
 vim.api.nvim_create_autocmd("TextChanged", {
@@ -180,6 +196,7 @@ vim.api.nvim_create_autocmd("TextChanged", {
 local cmds = vim.api.nvim_get_autocmds({ event = "TextChanged", buffer = buf })
 print(#cmds >= 1)
 ```
+
 ```expected
 true
 ```
@@ -192,6 +209,7 @@ true
 Ideal for one-time initialization after VimEnter, or guarding first-run logic:
 
 Example:
+
 ```lua
 local g   = vim.api.nvim_create_augroup("OnceTest", { clear = true })
 local fired = 0
@@ -205,6 +223,7 @@ vim.api.nvim_exec_autocmds("User", { pattern = "MyOnceEvent" })
 vim.api.nvim_exec_autocmds("User", { pattern = "MyOnceEvent" })  -- should not fire
 print(fired)
 ```
+
 ```expected
 1
 ```
@@ -216,6 +235,7 @@ print(fired)
 You can fire autocommands from Lua using `nvim_exec_autocmds`:
 
 Example:
+
 ```lua
 local g = vim.api.nvim_create_augroup("ExecTest", { clear = true })
 local log = {}
@@ -230,6 +250,7 @@ vim.api.nvim_exec_autocmds("User", { pattern = "MyEvent" })
 vim.api.nvim_exec_autocmds("User", { pattern = "MyEvent" })
 print(#log)
 ```
+
 ```expected
 2
 ```
@@ -240,17 +261,18 @@ print(#log)
 
 The callback receives a table `ev` with information about the event:
 
-| Field | Description |
-|-------|-------------|
-| `ev.id` | autocommand ID |
-| `ev.event` | event name string |
-| `ev.group` | augroup ID (may be nil) |
+| Field      | Description                             |
+| ---------- | --------------------------------------- |
+| `ev.id`    | autocommand ID                          |
+| `ev.event` | event name string                       |
+| `ev.group` | augroup ID (may be nil)                 |
 | `ev.match` | matched string (pattern or buffer name) |
-| `ev.buf` | buffer number |
-| `ev.file` | file name |
-| `ev.data` | extra data passed by exec_autocmds |
+| `ev.buf`   | buffer number                           |
+| `ev.file`  | file name                               |
+| `ev.data`  | extra data passed by exec_autocmds      |
 
 Example:
+
 ```lua
 local g = vim.api.nvim_create_augroup("EvArgTest", { clear = true })
 local received = {}
@@ -265,6 +287,7 @@ vim.api.nvim_create_autocmd("User", {
 vim.api.nvim_exec_autocmds("User", { pattern = "TestArg" })
 print(received.event .. "/" .. received.match)
 ```
+
 ```expected
 User/TestArg
 ```
@@ -276,6 +299,7 @@ User/TestArg
 Delete a specific autocommand by its numeric ID:
 
 Example:
+
 ```lua
 local id = vim.api.nvim_create_autocmd("CursorMoved", {
   callback = function() end,
@@ -289,6 +313,7 @@ for _, c in ipairs(cmds) do
 end
 print(found)
 ```
+
 ```expected
 false
 ```
@@ -301,6 +326,7 @@ false
 Filter by `event`, `group`, `buffer`, or `pattern`:
 
 Example:
+
 ```lua
 local g = vim.api.nvim_create_augroup("QueryTest", { clear = true })
 vim.api.nvim_create_autocmd("BufWritePre", { group = g, callback = function() end })
@@ -313,6 +339,7 @@ local write_cmds = vim.api.nvim_get_autocmds({
 })
 print(#write_cmds)
 ```
+
 ```expected
 2
 ```
@@ -329,11 +356,13 @@ print(#write_cmds)
 
 Create an augroup "Ex1" with clear=true, add 3 BufEnter autocommands.
 Return the count.
+
 > Tip: nvim_get_autocmds({ group = g }) after adding.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 3
 ```
@@ -344,11 +373,13 @@ Return the count.
 
 Create a group, add 2 autocmds, then re-create with clear=true.
 Return the count after clearing.
+
 > Tip: re-creating with clear=true removes all existing commands.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 0
 ```
@@ -359,11 +390,13 @@ Return the count after clearing.
 
 Create a `once = true` User autocmd. Fire it 3 times.
 Return how many times the callback actually ran.
+
 > Tip: once=true deletes the autocmd after first fire.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 1
 ```
@@ -374,11 +407,13 @@ Return how many times the callback actually ran.
 
 Create a User autocmd and fire it. Capture ev.event in the callback.
 Return the captured event name.
+
 > Tip: ev.event is the string "User".
 
 ```lua
 -- your code here
 ```
+
 ```expected
 User
 ```
@@ -389,11 +424,13 @@ User
 
 Create one BufWritePre and two BufReadPost autocmds in a group.
 Query only BufReadPost ones. Return the count.
+
 > Tip: nvim_get_autocmds({ group = g, event = "BufReadPost" }).
 
 ```lua
 -- your code here
 ```
+
 ```expected
 2
 ```
@@ -404,11 +441,13 @@ Query only BufReadPost ones. Return the count.
 
 Pass custom data through exec_autocmds.
 In the callback, read ev.data.message. Return that string.
+
 > Tip: nvim_exec_autocmds("User", { pattern="X", data={ message="hi" } }).
 
 ```lua
 -- your code here
 ```
+
 ```expected
 hi
 ```
@@ -418,13 +457,15 @@ hi
 ### Exercise 7 — Challenge: autocmd wrapper
 
 Write a function `on_filetype(ft, fn)` that registers a FileType autocmd
-for `ft` in a group named "on_ft_" .. ft.
+for `ft` in a group named "on*ft*" .. ft.
 Call it for "python", then return the count of autocmds in the resulting group.
+
 > Tip: create the augroup then create_autocmd with pattern=ft.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 1
 ```

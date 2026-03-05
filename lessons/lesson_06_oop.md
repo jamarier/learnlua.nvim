@@ -1,3 +1,6 @@
+
+`gn` next lesson `gp` previous lesson `gO` go to ToC
+
 # Lesson 06: Object-Oriented Programming
 
 Lua has no built-in class system. Instead, the Lua reference manual says:
@@ -15,6 +18,7 @@ deliberate design that lets you build exactly the OOP model you need.
 The simplest object: a table with data and functions:
 
 Example:
+
 ```lua
 local dog = {
   name = "Rex",
@@ -24,6 +28,7 @@ local dog = {
 }
 print(dog:speak())
 ```
+
 ```expected
 Rex says woof!
 ```
@@ -36,6 +41,7 @@ The standard idiom sets the table as its own metatable index,
 so all instances share methods but have their own data:
 
 Example:
+
 ```lua
 local Animal = {}
 Animal.__index = Animal
@@ -51,6 +57,7 @@ end
 local cat = Animal.new("Cat", "meow")
 print(cat:speak())
 ```
+
 ```expected
 Cat says meow
 ```
@@ -60,6 +67,7 @@ Cat says meow
 ## Why __index = Animal
 
 When you access `obj.speak`, Lua:
+
 1. Looks in `obj` → not found
 2. Checks `getmetatable(obj).__index` → that's `Animal`
 3. Looks in `Animal` → finds `speak`
@@ -67,6 +75,7 @@ When you access `obj.speak`, Lua:
 This is how instances share class methods without copying them:
 
 Example:
+
 ```lua
 local Dog = {}
 Dog.__index = Dog
@@ -76,6 +85,7 @@ function Dog:name_upper() return self.name:upper() end
 local d = Dog.new("buddy")
 print(d:name_upper())
 ```
+
 ```expected
 BUDDY
 ```
@@ -87,6 +97,7 @@ BUDDY
 Class-level fields are shared. Instance-level fields are per-object:
 
 Example:
+
 ```lua
 local Counter = {}
 Counter.__index = Counter
@@ -99,6 +110,7 @@ end
 local c = Counter.new(5)
 print(c.class_name .. " | " .. c.count)
 ```
+
 ```expected
 Counter | 5
 ```
@@ -110,6 +122,7 @@ Counter | 5
 Return `self` from methods to enable fluent APIs:
 
 Example:
+
 ```lua
 local Builder = {}
 Builder.__index = Builder
@@ -130,6 +143,7 @@ end
 local built = Builder.new():add("Lua"):add("is"):add("fun"):build()
 print(built)
 ```
+
 ```expected
 Lua is fun
 ```
@@ -141,6 +155,7 @@ Lua is fun
 A subclass sets its `__index` to look up the parent:
 
 Example:
+
 ```lua
 -- Base class
 local Shape = {}
@@ -165,6 +180,7 @@ end
 local c = Circle.new("blue", 5)
 print(c:getColor() .. " | area=" .. c:area())
 ```
+
 ```expected
 blue | area=78
 ```
@@ -176,6 +192,7 @@ blue | area=78
 Calling the parent's method from a child:
 
 Example:
+
 ```lua
 local Base = {}
 Base.__index = Base
@@ -193,6 +210,7 @@ local obj = setmetatable(Base.new(), Child)
 obj:init()
 print(table.concat(obj.log, ","))
 ```
+
 ```expected
 base-init,child-init
 ```
@@ -202,6 +220,7 @@ base-init,child-init
 ## instanceof check
 
 Example:
+
 ```lua
 local Cat = {}
 Cat.__index = Cat
@@ -214,6 +233,7 @@ end
 local c = Cat.new()
 print(instanceof(c, Cat))
 ```
+
 ```expected
 true
 ```
@@ -223,6 +243,7 @@ true
 ## __tostring
 
 Example:
+
 ```lua
 local Point = {}
 Point.__index = Point
@@ -234,6 +255,7 @@ function Point.new(x, y)
 end
 print(tostring(Point.new(3, 7)))
 ```
+
 ```expected
 (3, 7)
 ```
@@ -248,11 +270,13 @@ print(tostring(Point.new(3, 7)))
 
 Create a `Stack` class with `push(v)`, `pop()`, and `size()` methods.
 Push "a", "b", "c", pop once, return size.
+
 > Tip: store items in self.items; use table.insert and table.remove.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 2
 ```
@@ -264,11 +288,13 @@ Push "a", "b", "c", pop once, return size.
 Create a `BankAccount` with `deposit(n)`, `withdraw(n)` (refuse if balance
 would go negative, return false), and `balance()`.
 Deposit 100, withdraw 40, try to withdraw 200, return balance().
+
 > Tip: check self._balance >= n before withdrawing.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 60
 ```
@@ -280,11 +306,13 @@ Deposit 100, withdraw 40, try to withdraw 200, return balance().
 Create `Vehicle` with `describe()` returning "Vehicle: name".
 Create `Car` extending `Vehicle` overriding `describe()` to return "Car: name".
 Return Car.new("Tesla"):describe().
+
 > Tip: setmetatable(Car, { __index = Vehicle }).
 
 ```lua
 -- your code here
 ```
+
 ```expected
 Car: Tesla
 ```
@@ -293,13 +321,15 @@ Car: Tesla
 
 ### Exercise 4
 
-Use method chaining to build the string "SELECT * FROM users WHERE id = 1"
+Use method chaining to build the string "SELECT \* FROM users WHERE id = 1"
 using a QueryBuilder class with select(), from(), where() methods.
+
 > Tip: each method sets a field on self and returns self.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 SELECT * FROM users WHERE id = 1
 ```
@@ -311,11 +341,13 @@ SELECT * FROM users WHERE id = 1
 Implement a simple event emitter with `on(event, fn)` and `emit(event, ...)`.
 Register two listeners for "data", emit with value 42, and return the sum
 of both listener results.
+
 > Tip: store listeners[event] as a list; emit calls each one.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 84
 ```

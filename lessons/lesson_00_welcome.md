@@ -36,7 +36,7 @@ An interactive Lua and neovim API tutorial — right inside your editor.
 4. `control_flow` | if/elseif/else, while, repeat/until, numeric for, generic for, break, goto
 5. `functions` | Closures, multiple returns, variadic args, tail calls, upvalues, HOF
 6. `oop` | Class pattern, constructors, inheritance, method chaining, mixins
-7. `metatables` | All metamethods, **index/**newindex, operator overloading, \_\_call
+7. `metatables` | All metamethods, __index/__newindex, operator overloading, __call
 8. `iterators` | Generic for internals, stateless/stateful iterators, coroutine iterators
 9. `patterns` | Pattern language, character classes, captures, anchors, balanced match
 10. `error_handling` | pcall, xpcall, error(), assert, error objects, stack traces
@@ -46,7 +46,7 @@ An interactive Lua and neovim API tutorial — right inside your editor.
 
 ### Part II — Neovim API
 
-14. `vim_api` | vim._ namespace, inspect, fn, api, tbl\__ utilities, notify, schedule
+14. `vim_api` | vim._ namespace, inspect, fn, api, tbl_ utilities, notify, schedule
 15. `vim_options` | vim.opt/o/bo/wo, vim.g/b/w/t/env, scopes, option metadata
 16. `vim_keymaps` | keymap.set/del, all modes, buffer-local, expr, which-key desc
 17. `vim_autocommands` | create_autocmd, augroups, events, patterns, once, exec_autocmds

@@ -1,3 +1,6 @@
+
+`gn` next lesson `gp` previous lesson `gO` go to ToC
+
 # Lesson 01: Lua Basics
 
 Lua is a lightweight, dynamically-typed scripting language designed for
@@ -5,7 +8,7 @@ embedding. According to the Lua 5.4 reference manual, it is "a powerful,
 efficient, lightweight, embeddable scripting language". Neovim uses LuaJIT
 (Lua 5.1 compatible with some 5.2 features) for its configuration and plugin API.
 
-> **Note:** All values in Lua are *first-class*. This means that all values
+> **Note:** All values in Lua are _first-class_. This means that all values
 > can be stored in variables, passed as arguments to other functions, and
 > returned as results.
 
@@ -15,23 +18,25 @@ efficient, lightweight, embeddable scripting language". Neovim uses LuaJIT
 
 Lua has exactly eight types. `type(v)` returns the type name as a string.
 
-| Type | Description | Literal example |
-|------|-------------|----------------|
-| `nil` | absence of a value | `nil` |
-| `boolean` | logical true or false | `true`, `false` |
-| `number` | integer or floating-point | `42`, `3.14`, `0xff` |
-| `string` | immutable byte sequence | `"hello"`, `[[block]]` |
-| `table` | associative array (the only data structure) | `{1, 2, 3}` |
-| `function` | first-class callable | `function() end` |
-| `userdata` | C data pointer (from C extensions) | (from C API) |
-| `thread` | coroutine handle | `coroutine.create(f)` |
+| Type       | Description                                 | Literal example        |
+| ---------- | ------------------------------------------- | ---------------------- |
+| `nil`      | absence of a value                          | `nil`                  |
+| `boolean`  | logical true or false                       | `true`, `false`        |
+| `number`   | integer or floating-point                   | `42`, `3.14`, `0xff`   |
+| `string`   | immutable byte sequence                     | `"hello"`, `[[block]]` |
+| `table`    | associative array (the only data structure) | `{1, 2, 3}`            |
+| `function` | first-class callable                        | `function() end`       |
+| `userdata` | C data pointer (from C extensions)          | (from C API)           |
+| `thread`   | coroutine handle                            | `coroutine.create(f)`  |
 
 Example:
+
 ```lua
 -- remeber: to `return` a value you need to use:
 -- print(), vim.print() or return
 print(type("hello"))
 ```
+
 ```expected
 string
 ```
@@ -39,9 +44,11 @@ string
 ---
 
 Example:
+
 ```lua
 print(type(42))
 ```
+
 ```expected
 number
 ```
@@ -49,9 +56,11 @@ number
 ---
 
 Example:
+
 ```lua
 print(type(nil))
 ```
+
 ```expected
 nil
 ```
@@ -59,9 +68,11 @@ nil
 ---
 
 Example:
+
 ```lua
 print(type({}))
 ```
+
 ```expected
 table
 ```
@@ -69,9 +80,11 @@ table
 ---
 
 Example:
+
 ```lua
 print(type(print))
 ```
+
 ```expected
 function
 ```
@@ -89,11 +102,13 @@ name = value                -- assigns to an existing variable (or creates a glo
 ```
 
 Example:
+
 ```lua
 local x = 10
 local y = 20
 print(x + y)
 ```
+
 ```expected
 30
 ```
@@ -106,10 +121,12 @@ Lua allows assigning multiple values in one statement.
 Extra values are discarded; missing values become nil.
 
 Example:
+
 ```lua
 local a, b, c = 1, 2, 3
 print(b)
 ```
+
 ```expected
 2
 ```
@@ -117,10 +134,12 @@ print(b)
 ---
 
 Example:
+
 ```lua
 local a, b = 1, 2, 3   -- 3 is discarded
 print(a + b)
 ```
+
 ```expected
 3
 ```
@@ -128,10 +147,12 @@ print(a + b)
 ---
 
 Example:
+
 ```lua
 local a, b, c = 1, 2   -- c becomes nil
 print(c == nil)
 ```
+
 ```expected
 true
 ```
@@ -141,14 +162,16 @@ true
 ### Swap idiom
 
 Multiple assignment makes swapping trivial — the right side is evaluated
-*before* any assignment happens:
+_before_ any assignment happens:
 
 Example:
+
 ```lua
 local a, b = 10, 20
 a, b = b, a
 print(tostring(a) .. "/" .. tostring(b))
 ```
+
 ```expected
 20/10
 ```
@@ -162,10 +185,12 @@ Assigning `nil` to a variable effectively removes it.
 Any variable that has not been assigned is `nil`.
 
 Example:
+
 ```lua
 local x
 print(x == nil)
 ```
+
 ```expected
 true
 ```
@@ -173,10 +198,12 @@ true
 ---
 
 Example:
+
 ```lua
 local t = { a = 1 }
 print(t.b == nil)
 ```
+
 ```expected
 true
 ```
@@ -191,6 +218,7 @@ including `0`, `""`, and `{}` — is truthy. This is different from many
 other languages!
 
 Example:
+
 ```lua
 -- 0 is truthy in Lua!
 if 0 then
@@ -199,6 +227,7 @@ else
   return "falsy"
 end
 ```
+
 ```expected
 truthy
 ```
@@ -206,10 +235,12 @@ truthy
 ---
 
 Example:
+
 ```lua
 -- Empty string is truthy
 if "" then return "truthy" else return "falsy" end
 ```
+
 ```expected
 truthy
 ```
@@ -217,10 +248,12 @@ truthy
 ---
 
 Example:
+
 ```lua
 -- Only nil and false are falsy
 if nil then return "truthy" else return "falsy" end
 ```
+
 ```expected
 falsy
 ```
@@ -230,16 +263,18 @@ falsy
 ### Boolean operators: and, or, not
 
 `and` and `or` return one of their operands (not necessarily a boolean).
-This is because they use *short-circuit evaluation*:
+This is because they use _short-circuit evaluation_:
 
 - `a and b` → returns `a` if `a` is falsy, otherwise returns `b`
 - `a or b` → returns `a` if `a` is truthy, otherwise returns `b`
 
 Example:
+
 ```lua
 -- "and" returns first falsy or last value
 print(1 and 2)
 ```
+
 ```expected
 2
 ```
@@ -247,9 +282,11 @@ print(1 and 2)
 ---
 
 Example:
+
 ```lua
 print(false and 2)
 ```
+
 ```expected
 false
 ```
@@ -257,10 +294,12 @@ false
 ---
 
 Example:
+
 ```lua
 -- "or" returns first truthy or last value
 print(nil or "default")
 ```
+
 ```expected
 default
 ```
@@ -268,12 +307,14 @@ default
 ---
 
 Example:
+
 ```lua
 -- Classic default-value idiom
 local x = nil
 local result = x or "fallback"
 print(result)
 ```
+
 ```expected
 fallback
 ```
@@ -281,6 +322,7 @@ fallback
 ---
 
 Example:
+
 ```lua
 -- Ternary idiom: condition and val_if_true or val_if_false
 -- (only safe when val_if_true is never false/nil)
@@ -288,6 +330,7 @@ local n = 5
 local msg = n > 3 and "big" or "small"
 print(msg)
 ```
+
 ```expected
 big
 ```
@@ -301,10 +344,12 @@ In LuaJIT (used by Neovim) all numbers are IEEE 754 doubles, but
 integers are represented exactly up to 2^53.
 
 Example:
+
 ```lua
 -- Integer arithmetic stays integer
 print(type(3 + 4))
 ```
+
 ```expected
 number
 ```
@@ -312,10 +357,12 @@ number
 ---
 
 Example:
+
 ```lua
 -- Any float operation makes the result a float
 print(type(3 + 0.0))
 ```
+
 ```expected
 number
 ```
@@ -324,21 +371,23 @@ number
 
 ### Arithmetic operators
 
-| Operator | Operation | Example |
-|----------|-----------|---------|
-| `+` | addition | `3 + 4` → `7` |
-| `-` | subtraction | `10 - 3` → `7` |
-| `*` | multiplication | `3 * 4` → `12` |
-| `/` | float division (always float) | `7 / 2` → `3.5` |
-| `//` | floor division | `7 // 2` → `3` |
-| `%` | modulo | `7 % 3` → `1` |
-| `^` | exponentiation (float) | `2 ^ 8` → `256` |
-| `-` | unary negation | `-5` → `-5` |
+| Operator | Operation                     | Example         |
+| -------- | ----------------------------- | --------------- |
+| `+`      | addition                      | `3 + 4` → `7`   |
+| `-`      | subtraction                   | `10 - 3` → `7`  |
+| `*`      | multiplication                | `3 * 4` → `12`  |
+| `/`      | float division (always float) | `7 / 2` → `3.5` |
+| `//`     | floor division                | `7 // 2` → `3`  |
+| `%`      | modulo                        | `7 % 3` → `1`   |
+| `^`      | exponentiation (float)        | `2 ^ 8` → `256` |
+| `-`      | unary negation                | `-5` → `-5`     |
 
 Example:
+
 ```lua
 print(7 / 2)
 ```
+
 ```expected
 3.5
 ```
@@ -346,12 +395,14 @@ print(7 / 2)
 ---
 
 Example:
+
 ```lua
 -- NOTE: not supported in LuaJIT:
 -- print(7 // 2)
 -- instead use:
 print(math.floor(7 / 2))
 ```
+
 ```expected
 3
 ```
@@ -359,9 +410,11 @@ print(math.floor(7 / 2))
 ---
 
 Example:
+
 ```lua
 print(2 ^ 10)
 ```
+
 ```expected
 1024
 ```
@@ -371,10 +424,12 @@ print(2 ^ 10)
 ### math library highlights
 
 Example:
+
 ```lua
 local my_max = math.max(3, 1, 4, 1, 5, 9, 2, 6)
 print(my_max)
 ```
+
 ```expected
 9
 ```
@@ -382,9 +437,11 @@ print(my_max)
 ---
 
 Example:
+
 ```lua
 print(math.floor(3.7))
 ```
+
 ```expected
 3
 ```
@@ -392,9 +449,11 @@ print(math.floor(3.7))
 ---
 
 Example:
+
 ```lua
 print(math.abs(-42))
 ```
+
 ```expected
 42
 ```
@@ -403,18 +462,21 @@ print(math.abs(-42))
 
 ## 6. Strings
 
-Strings in Lua are immutable sequences of bytes. They are *interned* —
+Strings in Lua are immutable sequences of bytes. They are _interned_ —
 equal strings share the same memory, making equality comparison O(1).
 
 String literals can be written with:
+
 - Single quotes: `'hello'`
 - Double quotes: `"hello"`
 - Long brackets: `[[hello]]` or `[==[hello]==]` (no escape processing)
 
 Example:
+
 ```lua
 print("hello" == 'hello')
 ```
+
 ```expected
 true
 ```
@@ -426,9 +488,11 @@ true
 The `..` operator concatenates strings. Numbers are automatically converted:
 
 Example:
+
 ```lua
 print("hello" .. " " .. "world")
 ```
+
 ```expected
 hello world
 ```
@@ -436,22 +500,26 @@ hello world
 ---
 
 Example:
+
 ```lua
 -- Numbers are coerced to strings by ..
 print("value: " .. 42)
 ```
+
 ```expected
 value: 42
 ```
 
 ---
 
-### String length with #
+### String length with
 
 Example:
+
 ```lua
 print(#"hello")
 ```
+
 ```expected
 5
 ```
@@ -464,9 +532,11 @@ print(#"hello")
 `tonumber(s, base)` parses a string as a number (base defaults to 10):
 
 Example:
+
 ```lua
 print(tostring(3.14))
 ```
+
 ```expected
 3.14
 ```
@@ -474,9 +544,11 @@ print(tostring(3.14))
 ---
 
 Example:
+
 ```lua
 print(tonumber("42") + 8)
 ```
+
 ```expected
 50
 ```
@@ -484,9 +556,11 @@ print(tonumber("42") + 8)
 ---
 
 Example:
+
 ```lua
 print(tonumber("ff", 16))   -- hex
 ```
+
 ```expected
 255
 ```
@@ -494,9 +568,11 @@ print(tonumber("ff", 16))   -- hex
 ---
 
 Example:
+
 ```lua
 print(tonumber("not a number"))
 ```
+
 ```expected
 nil
 ```
@@ -505,21 +581,23 @@ nil
 
 ## 7. Comparison Operators
 
-| Operator | Meaning |
-|----------|---------|
-| `==` | equal |
-| `~=` | not equal |
-| `<` | less than |
-| `>` | greater than |
-| `<=` | less than or equal |
-| `>=` | greater than or equal |
+| Operator | Meaning               |
+| -------- | --------------------- |
+| `==`     | equal                 |
+| `~=`     | not equal             |
+| `<`      | less than             |
+| `>`      | greater than          |
+| `<=`     | less than or equal    |
+| `>=`     | greater than or equal |
 
 **Important:** `==` never coerces types. `1 == "1"` is `false`.
 
 Example:
+
 ```lua
 print(1 == "1")
 ```
+
 ```expected
 false
 ```
@@ -527,25 +605,29 @@ false
 ---
 
 Example:
+
 ```lua
 print(1 ~= 2)
 ```
+
 ```expected
 true
 ```
 
 ---
 
-## 8. The Global Table _G
+## 8. The Global Table \_G
 
 All global variables live in the table `_G`. Accessing `_G.x` is the same
 as accessing the global `x`. This is useful for dynamic variable names:
 
 Example:
+
 ```lua
 my_global = 99
 print(_G["my_global"])
 ```
+
 ```expected
 99
 ```
@@ -553,9 +635,11 @@ print(_G["my_global"])
 ---
 
 Example:
+
 ```lua
 print(type(_G))
 ```
+
 ```expected
 table
 ```
@@ -569,9 +653,11 @@ to strings in concatenation. However, it is better practice to use
 `tonumber` and `tostring` explicitly:
 
 Example:
+
 ```lua
 print("10" + 5)   -- string coerced to number
 ```
+
 ```expected
 15
 ```
@@ -579,11 +665,13 @@ print("10" + 5)   -- string coerced to number
 ---
 
 Example:
+
 ```lua
 -- Concatenation does NOT work directly on numbers without ..
 -- But tostring is cleaner than relying on coercion
 print(tostring(100) .. "%")
 ```
+
 ```expected
 100%
 ```
@@ -596,9 +684,11 @@ print(tostring(100) .. "%")
 For tables with holes (gaps in integer keys), the result is undefined.
 
 Example:
+
 ```lua
 print(#"Neovim")
 ```
+
 ```expected
 6
 ```
@@ -606,9 +696,11 @@ print(#"Neovim")
 ---
 
 Example:
+
 ```lua
 print(#{10, 20, 30, 40})
 ```
+
 ```expected
 4
 ```
@@ -624,11 +716,13 @@ print(#{10, 20, 30, 40})
 ### Exercise 1 — Types
 
 Return the type of `true` as a string.
+
 > Tip: use the `type()` function.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 boolean
 ```
@@ -638,11 +732,13 @@ boolean
 ### Exercise 2 — Arithmetic
 
 Calculate `(15 + 5) * 3 / 4` using floor division for the final step.
+
 > Tip: use `//` for floor division.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 15
 ```
@@ -652,11 +748,13 @@ Calculate `(15 + 5) * 3 / 4` using floor division for the final step.
 ### Exercise 3 — Truthiness
 
 Return "yes" if `0` is truthy in Lua, otherwise "no".
+
 > Tip: only nil and false are falsy in Lua.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 yes
 ```
@@ -667,12 +765,14 @@ yes
 
 Use the `or` idiom to assign a default value.
 Given `local name = nil`, produce the string "anonymous" if name is nil.
+
 > Tip: `name or "default"` returns "default" when name is nil.
 
 ```lua
 local name = nil
 -- your code here
 ```
+
 ```expected
 anonymous
 ```
@@ -683,11 +783,13 @@ anonymous
 
 Assign the values 10, 20, 30 to a, b, c in a single statement.
 Return b.
+
 > Tip: `local a, b, c = ...`
 
 ```lua
 -- your code here
 ```
+
 ```expected
 20
 ```
@@ -697,11 +799,13 @@ Return b.
 ### Exercise 6 — String length
 
 Return the number of characters in the string "Neovim is great".
+
 > Tip: use the `#` operator.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 15
 ```
@@ -711,11 +815,13 @@ Return the number of characters in the string "Neovim is great".
 ### Exercise 7 — tonumber
 
 Convert the string "255" from base 16 (hexadecimal) to a number.
+
 > Tip: `tonumber(s, base)`.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 4294967295
 ```
@@ -726,6 +832,7 @@ Convert the string "255" from base 16 (hexadecimal) to a number.
 
 Swap the values of two variables in one line without a temporary variable.
 Start with a=1, b=2 and return a after the swap.
+
 > Tip: Lua's multiple assignment evaluates the right side first.
 
 ```lua
@@ -733,20 +840,23 @@ local a, b = 1, 2
 -- swap here
 a
 ```
+
 ```expected
 2
 ```
 
 ---
 
-### Exercise 9 — _G
+### Exercise 9 — \_G
 
 Store your name in a global variable `author`, then read it back via `_G`.
+
 > Tip: assign to `author` (no local), then return `_G["author"]`.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 your name here
 ```
@@ -756,6 +866,7 @@ your name here
 ### Exercise 10 — Challenge: type detective
 
 Write a function `describe(v)` that returns a string like:
+
 - `"nil"` for nil
 - `"yes"` for true, `"no"` for false
 - the number as a string for numbers
@@ -764,11 +875,13 @@ Write a function `describe(v)` that returns a string like:
 - `"other"` for anything else
 
 Test it on the string `"hello"`.
+
 > Tip: use if/elseif chains with `type(v)`.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 string(5)
 ```

@@ -1,3 +1,6 @@
+
+`gn` next lesson `gp` previous lesson `gO` go to ToC
+
 # Lesson 22: Treesitter
 
 Treesitter is an incremental parsing library. Neovim embeds it to build
@@ -13,13 +16,13 @@ making it fast enough to use on every keystroke.
 
 ## Core Concepts
 
-| Concept | Description |
-|---------|-------------|
-| **Parser** | reads text and produces a syntax tree |
-| **Tree** | the full parse result; has a root node |
-| **Node** | a single syntax element with a type, range, and children |
-| **Query** | an S-expression pattern language for finding nodes |
-| **Capture** | a named part of a query match (`@name`) |
+| Concept     | Description                                              |
+| ----------- | -------------------------------------------------------- |
+| **Parser**  | reads text and produces a syntax tree                    |
+| **Tree**    | the full parse result; has a root node                   |
+| **Node**    | a single syntax element with a type, range, and children |
+| **Query**   | an S-expression pattern language for finding nodes       |
+| **Capture** | a named part of a query match (`@name`)                  |
 
 ---
 
@@ -29,6 +32,7 @@ making it fast enough to use on every keystroke.
 for a buffer. The `lang` argument uses the grammar name (e.g. "lua", "python"):
 
 Example:
+
 ```lua
 local buf = vim.api.nvim_create_buf(false, true)
 vim.api.nvim_buf_set_lines(buf, 0, -1, false, { "local x = 1" })
@@ -36,6 +40,7 @@ vim.bo[buf].filetype = "lua"
 local ok, parser = pcall(vim.treesitter.get_parser, buf, "lua")
 print(ok)
 ```
+
 ```expected
 true
 ```
@@ -48,6 +53,7 @@ true
 Each tree has a `root()` method returning the root node:
 
 Example:
+
 ```lua
 local buf = vim.api.nvim_create_buf(false, true)
 vim.api.nvim_buf_set_lines(buf, 0, -1, false, { "local x = 42" })
@@ -57,6 +63,7 @@ if not ok then return "no treesitter-lua" end
 local root = parser:parse()[1]:root()
 print(root:type())
 ```
+
 ```expected
 chunk
 ```
@@ -67,20 +74,21 @@ chunk
 
 Every node has these key methods:
 
-| Method | Returns |
-|--------|---------|
-| `node:type()` | grammar node type as a string |
-| `node:range()` | `start_row, start_col, end_row, end_col` |
-| `node:child_count()` | number of named and unnamed children |
-| `node:named_child_count()` | named children only |
-| `node:child(i)` | i-th child (0-indexed) |
-| `node:named_child(i)` | i-th named child (0-indexed) |
-| `node:parent()` | parent node |
-| `node:is_named()` | true if this is a named node |
-| `node:is_missing()` | true if the node was inserted by error recovery |
-| `node:has_error()` | true if the node or a descendant has a parse error |
+| Method                     | Returns                                            |
+| -------------------------- | -------------------------------------------------- |
+| `node:type()`              | grammar node type as a string                      |
+| `node:range()`             | `start_row, start_col, end_row, end_col`           |
+| `node:child_count()`       | number of named and unnamed children               |
+| `node:named_child_count()` | named children only                                |
+| `node:child(i)`            | i-th child (0-indexed)                             |
+| `node:named_child(i)`      | i-th named child (0-indexed)                       |
+| `node:parent()`            | parent node                                        |
+| `node:is_named()`          | true if this is a named node                       |
+| `node:is_missing()`        | true if the node was inserted by error recovery    |
+| `node:has_error()`         | true if the node or a descendant has a parse error |
 
 Example:
+
 ```lua
 local buf = vim.api.nvim_create_buf(false, true)
 vim.api.nvim_buf_set_lines(buf, 0, -1, false, { "local x = 1", "local y = 2" })
@@ -90,6 +98,7 @@ if not ok then return "no parser" end
 local root = parser:parse()[1]:root()
 print(root:named_child_count())   -- two local_assignment statements
 ```
+
 ```expected
 2
 ```
@@ -101,6 +110,7 @@ print(root:named_child_count())   -- two local_assignment statements
 `node:range()` returns 0-indexed row/col values:
 
 Example:
+
 ```lua
 local buf = vim.api.nvim_create_buf(false, true)
 vim.api.nvim_buf_set_lines(buf, 0, -1, false, { "local x = 1" })
@@ -112,6 +122,7 @@ local sr, sc, er, ec = root:range()
 -- root starts at (0,0) and ends at (1,0) for a one-line file
 print(tostring(sr) .. "," .. tostring(sc))
 ```
+
 ```expected
 0,0
 ```
@@ -124,6 +135,7 @@ print(tostring(sr) .. "," .. tostring(sc))
 for a node. `source` can be a buffer number or a string:
 
 Example:
+
 ```lua
 local src = "local greeting = 'hello'"
 local buf = vim.api.nvim_create_buf(false, true)
@@ -136,6 +148,7 @@ local root = parser:parse()[1]:root()
 local text = vim.treesitter.get_node_text(root, buf)
 print(text:sub(1, 5))
 ```
+
 ```expected
 local
 ```
@@ -154,6 +167,7 @@ with `@`. Common predicates: `#eq?`, `#match?`, `#is?`.
 ```
 
 Example:
+
 ```lua
 local buf = vim.api.nvim_create_buf(false, true)
 vim.api.nvim_buf_set_lines(buf, 0, -1, false, {
@@ -175,6 +189,7 @@ end
 -- x, y, z, x, y appear as identifiers
 print(#ids >= 4)
 ```
+
 ```expected
 true
 ```
@@ -187,6 +202,7 @@ true
 `query:iter_matches(root, source)` iterates complete match objects:
 
 Example:
+
 ```lua
 local buf = vim.api.nvim_create_buf(false, true)
 vim.api.nvim_buf_set_lines(buf, 0, -1, false, { "local foo = 1", "local bar = 2" })
@@ -207,6 +223,7 @@ if not ok2 then
 end
 return "true"
 ```
+
 ```expected
 true
 ```
@@ -218,9 +235,11 @@ true
 `vim.treesitter.get_node()` returns the smallest named node under the cursor:
 
 Example:
+
 ```lua
 print(type(vim.treesitter.get_node))
 ```
+
 ```expected
 function
 ```
@@ -234,12 +253,14 @@ Neovim supports injected languages (e.g. Lua inside a markdown code block).
 parser that can parse multiple language ranges in one buffer.
 
 Example:
+
 ```lua
 -- Check that the parser API supports language injection
 local buf = vim.api.nvim_create_buf(false, true)
 local ok, parser = pcall(vim.treesitter.get_parser, buf, "lua")
 print(ok or true)   -- either works or treesitter-lua not installed
 ```
+
 ```expected
 true
 ```
@@ -251,6 +272,7 @@ true
 Always guard treesitter code with `pcall`:
 
 Example:
+
 ```lua
 local function ts_available(lang)
   local buf = vim.api.nvim_create_buf(false, true)
@@ -259,6 +281,7 @@ local function ts_available(lang)
 end
 print(type(ts_available("lua")))
 ```
+
 ```expected
 boolean
 ```
@@ -272,9 +295,11 @@ from a `queries/<lang>/<name>.scm` file. This is how highlight, indent, and
 textobject queries are registered:
 
 Example:
+
 ```lua
 print(type(vim.treesitter.query.get))
 ```
+
 ```expected
 table
 ```
@@ -291,11 +316,13 @@ table
 
 Try to get a Lua parser for a scratch buffer.
 Return whether it succeeded (true/false).
+
 > Tip: use `pcall(vim.treesitter.get_parser, buf, "lua")`.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 true
 ```
@@ -305,11 +332,13 @@ true
 ### Exercise 2 — Root node type
 
 Parse `local x = 1` in a Lua buffer. Return the type of the root node.
+
 > Tip: `parser:parse()[1]:root():type()`.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 chunk
 ```
@@ -319,11 +348,13 @@ chunk
 ### Exercise 3 — Child count
 
 Parse two Lua statements and return the named child count of the root.
+
 > Tip: `root:named_child_count()` counts the top-level statements.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 2
 ```
@@ -334,11 +365,13 @@ Parse two Lua statements and return the named child count of the root.
 
 Parse `local result = 42` and extract the text of the root node.
 Return whether it starts with "local".
+
 > Tip: `vim.treesitter.get_node_text(root, buf):sub(1,5)`.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 true
 ```
@@ -350,11 +383,13 @@ true
 Parse three lines each with an identifier.
 Use `(identifier) @id` query and count the captures.
 Return whether count >= 3.
+
 > Tip: iterate query:iter_captures and count.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 true
 ```
@@ -366,11 +401,13 @@ true
 Parse a Lua buffer containing 3 string literals.
 Write a query that captures all string nodes.
 Return the count.
+
 > Tip: in Lua's treesitter grammar, string literals are `(string)`.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 3
 ```

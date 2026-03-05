@@ -1,3 +1,6 @@
+
+`gn` next lesson `gp` previous lesson `gO` go to ToC
+
 # Lesson 10: Error Handling
 
 Lua handles errors through protected calls. Any value can be thrown as an
@@ -14,17 +17,20 @@ errors are handled at the call site, not bubbled up automatically.
 
 `error(msg, level)` raises an error. The message can be any value.
 `level` controls where the error "points":
+
 - 1 (default): the function calling error
 - 2: the function that called the function calling error
 - 0: no position info
 
 Example:
+
 ```lua
 local ok, err = pcall(function()
   error("something went wrong")
 end)
 print(type(err))
 ```
+
 ```expected
 string
 ```
@@ -37,19 +43,23 @@ string
 Returns `true, results...` on success, or `false, error_object` on failure:
 
 Example:
+
 ```lua
 local ok, val = pcall(function() return 2 + 2 end)
 print(tostring(ok) .. "/" .. tostring(val))
 ```
+
 ```expected
 true/4
 ```
 
 Example:
+
 ```lua
 local ok, err = pcall(function() error("oops") end)
 print(ok)
 ```
+
 ```expected
 false
 ```
@@ -61,6 +71,7 @@ false
 By default, `error(msg)` prepends file:line to the message:
 
 Example:
+
 ```lua
 local ok, err = pcall(function()
   error("test error")
@@ -68,6 +79,7 @@ end)
 -- err will be something like "input:2: test error"
 print(type(err) == "string" and err:find("test error") ~= nil)
 ```
+
 ```expected
 true
 ```
@@ -79,12 +91,14 @@ true
 Errors can be any value — tables are useful for structured errors:
 
 Example:
+
 ```lua
 local ok, err = pcall(function()
   error({ code = 404, msg = "not found" })
 end)
 print(err.code)
 ```
+
 ```expected
 404
 ```
@@ -97,6 +111,7 @@ When a helper function detects bad input, level 2 makes the error
 point to the caller of the helper, not the helper itself:
 
 Example:
+
 ```lua
 local function expect_string(val, arg_name)
   if type(val) ~= "string" then
@@ -107,6 +122,7 @@ end
 local ok, err = pcall(expect_string, 42, "name")
 print(ok)
 ```
+
 ```expected
 false
 ```
@@ -119,6 +135,7 @@ false
 raw error before it's returned. Use it to add a stack traceback:
 
 Example:
+
 ```lua
 local ok, err = xpcall(
   function() error("raw") end,
@@ -126,6 +143,7 @@ local ok, err = xpcall(
 )
 print(err:sub(1, 6))
 ```
+
 ```expected
 CAUGHT
 ```
@@ -137,6 +155,7 @@ CAUGHT
 The most common use of xpcall is to capture the traceback:
 
 Example:
+
 ```lua
 local ok, err = xpcall(
   function() error("boom") end,
@@ -144,6 +163,7 @@ local ok, err = xpcall(
 )
 print(type(err) == "string")
 ```
+
 ```expected
 true
 ```
@@ -156,6 +176,7 @@ true
 Great for preconditions:
 
 Example:
+
 ```lua
 local function divide(a, b)
   assert(b ~= 0, "division by zero")
@@ -164,16 +185,19 @@ end
 local ok, err = pcall(divide, 10, 0)
 print(ok)
 ```
+
 ```expected
 false
 ```
 
 Example:
+
 ```lua
 -- assert returns its arguments on success
 local x = assert(42, "won't error")
 print(x)
 ```
+
 ```expected
 42
 ```
@@ -185,6 +209,7 @@ print(x)
 Inner pcall errors don't propagate unless you re-raise them:
 
 Example:
+
 ```lua
 local inner_ok
 local outer_ok = pcall(function()
@@ -193,6 +218,7 @@ local outer_ok = pcall(function()
 end)
 print(tostring(outer_ok) .. "/" .. tostring(inner_ok))
 ```
+
 ```expected
 true/false
 ```
@@ -204,6 +230,7 @@ true/false
 To propagate an error after inspecting it, call `error` again:
 
 Example:
+
 ```lua
 local function safe_run(fn)
   local ok, err = pcall(fn)
@@ -217,6 +244,7 @@ local function safe_run(fn)
 end
 print(safe_run(function() error({code=404}) end))
 ```
+
 ```expected
 not_found
 ```
@@ -228,6 +256,7 @@ not_found
 If you throw a table as an error and want a nice message:
 
 Example:
+
 ```lua
 local AppError = {}
 AppError.__index = AppError
@@ -243,6 +272,7 @@ local ok, err = pcall(function()
 end)
 print(tostring(err))
 ```
+
 ```expected
 [AUTH] not logged in
 ```
@@ -257,11 +287,13 @@ print(tostring(err))
 
 Write a `safe_divide(a, b)` that raises an error when b is 0.
 Catch it with pcall and return false if error was caught.
+
 > Tip: error("division by zero") in the function body.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 false
 ```
@@ -272,11 +304,13 @@ false
 
 Use `assert` to validate that a value is a number >= 0.
 Call it with -5. Catch the error and return true if caught.
+
 > Tip: assert(n >= 0, "must be non-negative").
 
 ```lua
 -- your code here
 ```
+
 ```expected
 true
 ```
@@ -287,11 +321,13 @@ true
 
 Throw a table error {type="NotFound", item="key"}.
 Catch it and return err.type.
+
 > Tip: error(table, 0) throws without adding location.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 NotFound
 ```
@@ -302,11 +338,13 @@ NotFound
 
 Use xpcall to catch an error and return a message that starts with "CAUGHT:".
 Return the first 6 characters.
+
 > Tip: xpcall(fn, handler); handler receives the raw error.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 CAUGHT
 ```
@@ -318,11 +356,13 @@ CAUGHT
 Write a `retry(fn, n)` function that retries fn up to n times,
 returning true on first success or false if all fail.
 Use a function that fails twice then succeeds.
+
 > Tip: loop with pcall; break on success.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 true
 ```
@@ -335,11 +375,13 @@ Write a simple Result monad: `ok(v)` and `err(msg)` that return
 tagged tables, and `is_ok(r)` that checks the tag.
 Chain two operations where the second one fails.
 Return is_ok of the final result (should be false).
+
 > Tip: { tag = "ok", value = v } and { tag = "err", message = msg }.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 false
 ```

@@ -1,3 +1,6 @@
+
+`gn` next lesson `gp` previous lesson `gO` go to ToC
+
 # Lesson 23: Writing Your Neovim Config
 
 This lesson covers the patterns used in real `init.lua` configurations.
@@ -36,13 +39,15 @@ An example could be:
 The leader key must be set before any keymaps that reference it:
 
 Example:
+
 ```lua
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 print(vim.g.mapleader)
 ```
+
 ```expected
- 
+
 ```
 
 ---
@@ -50,6 +55,7 @@ print(vim.g.mapleader)
 ## Applying options in a loop
 
 Example:
+
 ```lua
 local options = {
   -- editing
@@ -74,6 +80,7 @@ for k, v in pairs(options) do
 end
 print(vim.opt.tabstop:get())
 ```
+
 ```expected
 2
 ```
@@ -85,6 +92,7 @@ print(vim.opt.tabstop:get())
 The correct way to apply per-filetype settings:
 
 Example:
+
 ```lua
 local g = vim.api.nvim_create_augroup("MyFtConfig", { clear = true })
 vim.api.nvim_create_autocmd("FileType", {
@@ -98,6 +106,7 @@ vim.api.nvim_create_autocmd("FileType", {
 })
 print(#vim.api.nvim_get_autocmds({ group = g }))
 ```
+
 ```expected
 1
 ```
@@ -107,12 +116,14 @@ print(#vim.api.nvim_get_autocmds({ group = g }))
 ## OS detection
 
 Example:
+
 ```lua
 local is_win  = vim.fn.has("win32")  == 1
 local is_mac  = vim.fn.has("mac")    == 1
 local is_linux = vim.fn.has("unix")  == 1 and not is_mac
 print(type(is_linux))
 ```
+
 ```expected
 boolean
 ```
@@ -122,6 +133,7 @@ boolean
 ## GUI detection
 
 Example:
+
 ```lua
 local is_gui = vim.fn.has("gui_running") == 1
 if is_gui then
@@ -129,6 +141,7 @@ if is_gui then
 end
 print(type(is_gui))
 ```
+
 ```expected
 boolean
 ```
@@ -139,18 +152,20 @@ boolean
 
 `vim.fn.stdpath(what)` returns standard Neovim directories:
 
-| what | returns |
-|------|---------|
-| `"config"` | `~/.config/nvim` |
-| `"data"` | `~/.local/share/nvim` |
-| `"cache"` | `~/.cache/nvim` |
-| `"state"` | `~/.local/state/nvim` |
-| `"log"` | log directory |
+| what       | returns               |
+| ---------- | --------------------- |
+| `"config"` | `~/.config/nvim`      |
+| `"data"`   | `~/.local/share/nvim` |
+| `"cache"`  | `~/.cache/nvim`       |
+| `"state"`  | `~/.local/state/nvim` |
+| `"log"`    | log directory         |
 
 Example:
+
 ```lua
 print(type(vim.fn.stdpath("config")))
 ```
+
 ```expected
 string
 ```
@@ -160,6 +175,7 @@ string
 ## Checking plugin availability before configuring
 
 Example:
+
 ```lua
 local ok, telescope = pcall(require, "telescope")
 if ok then
@@ -167,6 +183,7 @@ if ok then
 end
 print(type(ok))
 ```
+
 ```expected
 boolean
 ```
@@ -179,12 +196,14 @@ boolean
 Used to defer work until Neovim is fully initialized:
 
 Example:
+
 ```lua
 local ran = false
 vim.schedule(function() ran = true end)
 -- It hasn't run yet here (it's deferred), but the function is registered
 print(type(vim.schedule))
 ```
+
 ```expected
 function
 ```
@@ -196,9 +215,11 @@ function
 `vim.defer_fn(fn, ms)` runs `fn` after `ms` milliseconds:
 
 Example:
+
 ```lua
 print(type(vim.defer_fn))
 ```
+
 ```expected
 function
 ```
@@ -210,6 +231,7 @@ function
 In init.lua, use a wrapper so one bad plugin doesn't break everything:
 
 Example:
+
 ```lua
 local function safe_require(mod)
   local ok, m = pcall(require, mod)
@@ -221,6 +243,7 @@ local function safe_require(mod)
 end
 print(type(safe_require("string")))
 ```
+
 ```expected
 table
 ```
@@ -232,6 +255,7 @@ table
 Register keymaps only when the relevant plugin is loaded:
 
 Example:
+
 ```lua
 local ok, _ = pcall(require, "nonexistent_plugin_xyz")
 local my_fn = function() end
@@ -249,6 +273,7 @@ end
 
 print(found)  -- should now be false
 ```
+
 ```expected
 false
 ```
@@ -259,18 +284,20 @@ false
 
 `vim.notify(msg, level, opts)` shows a notification:
 
-| Level | Constant |
-|-------|---------|
-| 0 | `vim.log.levels.TRACE` |
-| 1 | `vim.log.levels.DEBUG` |
-| 2 | `vim.log.levels.INFO` |
-| 3 | `vim.log.levels.WARN` |
-| 4 | `vim.log.levels.ERROR` |
+| Level | Constant               |
+| ----- | ---------------------- |
+| 0     | `vim.log.levels.TRACE` |
+| 1     | `vim.log.levels.DEBUG` |
+| 2     | `vim.log.levels.INFO`  |
+| 3     | `vim.log.levels.WARN`  |
+| 4     | `vim.log.levels.ERROR` |
 
 Example:
+
 ```lua
 print(type(vim.notify))
 ```
+
 ```expected
 function
 ```
@@ -282,6 +309,7 @@ function
 `VimEnter` fires after init.lua completes — good for deferred setup:
 
 Example:
+
 ```lua
 local g = vim.api.nvim_create_augroup("PostInit", { clear = true })
 vim.api.nvim_create_autocmd("VimEnter", {
@@ -293,6 +321,7 @@ vim.api.nvim_create_autocmd("VimEnter", {
 })
 print(#vim.api.nvim_get_autocmds({ group = g }))
 ```
+
 ```expected
 1
 ```
@@ -304,6 +333,7 @@ print(#vim.api.nvim_get_autocmds({ group = g }))
 Setting colourscheme and customizing the status line:
 
 Example:
+
 ```lua
 -- Set a colorscheme
 local current_colorscheme = vim.g.colors_name
@@ -316,6 +346,7 @@ end, 1000)
 
 print(type(current_colorscheme))
 ```
+
 ```expected
 string
 ```
@@ -329,13 +360,15 @@ string
 ### Exercise 1
 
 Set your leader to space and confirm vim.g.mapleader.
+
 > Tip: vim.g.mapleader = " ".
 
 ```lua
 -- your code here
 ```
+
 ```expected
- 
+
 ```
 
 ---
@@ -343,11 +376,13 @@ Set your leader to space and confirm vim.g.mapleader.
 ### Exercise 2
 
 Apply a table of 3 options with a loop. Return the tabstop value.
+
 > Tip: for k, v in pairs(opts) do vim.opt[k] = v end.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 2
 ```
@@ -358,11 +393,13 @@ Apply a table of 3 options with a loop. Return the tabstop value.
 
 Write a `safe_require(mod)` that returns the module or nil on failure.
 Call it with "string" and return the type of the result.
+
 > Tip: pcall(require, mod).
 
 ```lua
 -- your code here
 ```
+
 ```expected
 table
 ```
@@ -373,11 +410,13 @@ table
 
 Register a FileType autocmd for "lua" that sets tabstop to 2.
 Return the count of autocmds in the group.
+
 > Tip: nvim_create_augroup + nvim_create_autocmd with FileType pattern.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 1
 ```
@@ -387,11 +426,13 @@ Return the count of autocmds in the group.
 ### Exercise 5
 
 Get the config path with stdpath("config") and return its type.
+
 > Tip: vim.fn.stdpath("config").
 
 ```lua
 -- your code here
 ```
+
 ```expected
 string
 ```
@@ -401,18 +442,22 @@ string
 ### Exercise 6 — Challenge
 
 Write a `configure(spec)` function that accepts a table like:
+
 ```lua
 {
   options = { tabstop=2, number=true },
   keymaps = { {"n","<F1>",function()end,{}} },
 }
 ```
+
 and applies all options and keymaps. Call it, then return vim.opt.tabstop:get().
+
 > Tip: loop options with vim.opt[k]=v; loop keymaps with vim.keymap.set.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 2
 ```

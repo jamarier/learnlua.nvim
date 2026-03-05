@@ -1,3 +1,6 @@
+
+`gn` next lesson `gp` previous lesson `gO` go to ToC
+
 # Lesson 13: File I/O
 
 Lua's `io` library provides file operations. The reference manual
@@ -10,21 +13,23 @@ for stdin/stdout, and the "complete model" with explicit file handles.
 
 `io.open(filename, mode)` returns a file handle or nil + error message:
 
-| Mode | Meaning |
-|------|---------|
-| `"r"` | read (default) |
-| `"w"` | write (truncate) |
-| `"a"` | append |
-| `"r+"` | read+write (existing) |
-| `"w+"` | read+write (truncate) |
-| `"b"` | binary mode (combine with above) |
+| Mode   | Meaning                          |
+| ------ | -------------------------------- |
+| `"r"`  | read (default)                   |
+| `"w"`  | write (truncate)                 |
+| `"a"`  | append                           |
+| `"r+"` | read+write (existing)            |
+| `"w+"` | read+write (truncate)            |
+| `"b"`  | binary mode (combine with above) |
 
 Example:
+
 ```lua
 local path = vim.fn.tempname()
 local f = io.open(path, "w")
 print(type(f))
 ```
+
 ```expected
 userdata
 ```
@@ -34,6 +39,7 @@ userdata
 ## Writing to a file
 
 Example:
+
 ```lua
 local path = vim.fn.tempname()
 local f = assert(io.open(path, "w"))
@@ -46,6 +52,7 @@ local content = r:read("*a")
 r:close()
 print(content)
 ```
+
 ```expected
 hello
 world
@@ -56,15 +63,16 @@ world
 
 ## f:read modes
 
-| Mode | Returns |
-|------|---------|
+| Mode            | Returns                               |
+| --------------- | ------------------------------------- |
 | `"*l"` or `"l"` | next line (without newline) — default |
-| `"*L"` or `"L"` | next line (with newline) |
-| `"*n"` or `"n"` | reads a number |
-| `"*a"` or `"a"` | entire file |
-| number | reads that many bytes |
+| `"*L"` or `"L"` | next line (with newline)              |
+| `"*n"` or `"n"` | reads a number                        |
+| `"*a"` or `"a"` | entire file                           |
+| number          | reads that many bytes                 |
 
 Example:
+
 ```lua
 local path = vim.fn.tempname()
 local f = assert(io.open(path, "w"))
@@ -76,6 +84,7 @@ local first = r:read("l")
 r:close()
 print(first)
 ```
+
 ```expected
 line1
 ```
@@ -87,6 +96,7 @@ line1
 `f:lines()` returns an iterator:
 
 Example:
+
 ```lua
 local path = vim.fn.tempname()
 local w = assert(io.open(path, "w"))
@@ -99,6 +109,7 @@ for line in io.lines(path) do
 end
 print(table.concat(lines, ","))
 ```
+
 ```expected
 a,b,c
 ```
@@ -108,6 +119,7 @@ a,b,c
 ## Append mode
 
 Example:
+
 ```lua
 local path = vim.fn.tempname()
 local f = assert(io.open(path, "w"))
@@ -123,6 +135,7 @@ local content = r:read("*a")
 r:close()
 print(vim.trim(content))
 ```
+
 ```expected
 first
 second
@@ -133,11 +146,13 @@ second
 ## f:seek
 
 `f:seek(whence, offset)` repositions the file pointer:
+
 - `"set"`: from beginning
 - `"cur"`: from current
 - `"end"`: from end
 
 Example:
+
 ```lua
 local path = vim.fn.tempname()
 local f = assert(io.open(path, "w+"))
@@ -147,6 +162,7 @@ local s = f:read("*a")
 f:close()
 print(s)
 ```
+
 ```expected
 hello world
 ```
@@ -158,10 +174,12 @@ hello world
 `io.open` returns nil + message on failure — always check:
 
 Example:
+
 ```lua
 local f, err = io.open("/nonexistent/path/file.txt", "r")
 print(f == nil)
 ```
+
 ```expected
 true
 ```
@@ -174,12 +192,14 @@ In Neovim plugins, `vim.fn` Vimscript functions are often more convenient
 than raw `io`:
 
 Example:
+
 ```lua
 local path = vim.fn.tempname()
 vim.fn.writefile({"line1", "line2", "line3"}, path)
 local lines = vim.fn.readfile(path)
 print(table.concat(lines, ","))
 ```
+
 ```expected
 line1,line2,line3
 ```
@@ -189,11 +209,13 @@ line1,line2,line3
 ## vim.fn.filereadable and vim.fn.isdirectory
 
 Example:
+
 ```lua
 local path = vim.fn.tempname()
 vim.fn.writefile({"test"}, path)
 print(vim.fn.filereadable(path) == 1)
 ```
+
 ```expected
 true
 ```
@@ -207,11 +229,13 @@ true
 ### Exercise 1
 
 Write "hello" to a temp file and read it back. Return the content.
+
 > Tip: use vim.fn.tempname() for a safe temp path.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 hello
 ```
@@ -222,11 +246,13 @@ hello
 
 Write 3 lines to a file, then read them back one at a time using f:read("l").
 Return the second line.
+
 > Tip: call f:read("l") three times, keep the second return.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 line2
 ```
@@ -236,11 +262,13 @@ line2
 ### Exercise 3
 
 Use io.lines to read a file containing "a\nb\nc" and count the lines.
+
 > Tip: increment a counter in the for loop.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 3
 ```
@@ -251,11 +279,13 @@ Use io.lines to read a file containing "a\nb\nc" and count the lines.
 
 Use vim.fn.writefile and vim.fn.readfile to write and read a list of lines.
 Write {"foo", "bar", "baz"} and return the length of the read result.
+
 > Tip: vim.fn.readfile returns a table of strings.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 3
 ```
@@ -266,11 +296,13 @@ Write {"foo", "bar", "baz"} and return the length of the read result.
 
 Write a function `file_copy(src, dst)` that copies a file byte-by-byte.
 Create a temp file, write "copied content", copy it, read the copy. Return its content.
-> Tip: read "*a" from src, write to dst.
+
+> Tip: read "\*a" from src, write to dst.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 copied content
 ```

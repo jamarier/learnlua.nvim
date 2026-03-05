@@ -1,3 +1,6 @@
+
+`gn` next lesson `gp` previous lesson `gO` go to ToC
+
 # Lesson 03: Tables
 
 Tables are the only compound data structure in Lua. The reference manual
@@ -6,7 +9,7 @@ represent arrays, sequences, symbol tables, sets, records, graphs, trees,
 and many other data structures.
 
 A table is an associative array: it maps keys to values. Keys can be any
-value except `nil` and `NaN`. Integer keys starting at 1 form a *sequence*
+value except `nil` and `NaN`. Integer keys starting at 1 form a _sequence_
 (the array part), which has an efficient contiguous representation.
 
 ---
@@ -14,10 +17,12 @@ value except `nil` and `NaN`. Integer keys starting at 1 form a *sequence*
 ## 1. Creating Tables
 
 Example:
+
 ```lua
 local empty = {}
 print(type(empty))
 ```
+
 ```expected
 table
 ```
@@ -27,10 +32,12 @@ table
 ### Array constructor
 
 Example:
+
 ```lua
 local fruits = { "apple", "banana", "cherry" }
 print(fruits[2])
 ```
+
 ```expected
 banana
 ```
@@ -40,10 +47,12 @@ banana
 ### Record constructor
 
 Example:
+
 ```lua
 local person = { name = "Ada", age = 36, lang = "Lua" }
 print(person.name)
 ```
+
 ```expected
 Ada
 ```
@@ -53,12 +62,14 @@ Ada
 ### Mixed constructor
 
 Example:
+
 ```lua
 local t = { 10, 20, x = 30, 40 }
 -- array part: t[1]=10, t[2]=20, t[3]=40
 -- hash part:  t.x=30
 print(tostring(t[1]) .. "," .. tostring(t[2]) .. "," .. tostring(t[3]))
 ```
+
 ```expected
 10,20,40
 ```
@@ -68,10 +79,12 @@ print(tostring(t[1]) .. "," .. tostring(t[2]) .. "," .. tostring(t[3]))
 ### Explicit integer keys
 
 Example:
+
 ```lua
 local t = { [1] = "a", [3] = "c", [2] = "b" }
 print(t[2])
 ```
+
 ```expected
 b
 ```
@@ -88,10 +101,12 @@ print(t.key)      -- dot notation — syntactic sugar for string keys only
 ```
 
 Example:
+
 ```lua
 local t = { hello = "world" }
 print(t["hello"] == t.hello)
 ```
+
 ```expected
 true
 ```
@@ -99,30 +114,34 @@ true
 ---
 
 Example:
+
 ```lua
 -- Dot notation requires a valid identifier key
 local t = { ["my-key"] = 99 }
 print(t["my-key"])   -- must use brackets
 ```
+
 ```expected
 99
 ```
 
 ---
 
-## 3. Table Length with #
+## 3. Table Length with
 
-`#t` returns the *border* of a sequence: any index where `t[i] ~= nil`
+`#t` returns the _border_ of a sequence: any index where `t[i] ~= nil`
 and `t[i+1] == nil`. For sequences without holes, this is the last index.
 
 **Warning:** `#` gives undefined results for tables with holes (gaps in
 integer keys). Always use tables without gaps if you need a reliable length.
 
 Example:
+
 ```lua
 local t = {10, 20, 30, 40, 50}
 print(#t)
 ```
+
 ```expected
 5
 ```
@@ -135,11 +154,13 @@ print(#t)
 `table.remove(t, [pos])` removes and returns a value (default: the last).
 
 Example:
+
 ```lua
 local t = {1, 2, 3}
 table.insert(t, 4)
 print(#t)
 ```
+
 ```expected
 4
 ```
@@ -147,11 +168,13 @@ print(#t)
 ---
 
 Example:
+
 ```lua
 local t = {1, 2, 3, 4}
 table.insert(t, 2, 99)  -- insert at position 2
 print(table.concat(t, ","))
 ```
+
 ```expected
 1,99,2,3,4
 ```
@@ -159,11 +182,13 @@ print(table.concat(t, ","))
 ---
 
 Example:
+
 ```lua
 local t = {1, 2, 3, 4, 5}
 local removed = table.remove(t)   -- removes last
 print(tostring(removed) .. " / " .. tostring(#t))
 ```
+
 ```expected
 5 / 4
 ```
@@ -171,11 +196,13 @@ print(tostring(removed) .. " / " .. tostring(#t))
 ---
 
 Example:
+
 ```lua
 local t = {1, 2, 3, 4, 5}
 table.remove(t, 2)   -- removes index 2
 print(table.concat(t, ","))
 ```
+
 ```expected
 1,3,4,5
 ```
@@ -188,11 +215,13 @@ print(table.concat(t, ","))
 function `comp(a, b)` must return `true` if `a < b`.
 
 Example:
+
 ```lua
 local t = {5, 3, 1, 4, 2}
 table.sort(t)
 print(table.concat(t, " "))
 ```
+
 ```expected
 1 2 3 4 5
 ```
@@ -200,12 +229,14 @@ print(table.concat(t, " "))
 ---
 
 Example:
+
 ```lua
 -- Custom comparator: sort descending
 local t = {5, 3, 1, 4, 2}
 table.sort(t, function(a, b) return a > b end)
 print(table.concat(t, " "))
 ```
+
 ```expected
 5 4 3 2 1
 ```
@@ -213,12 +244,14 @@ print(table.concat(t, " "))
 ---
 
 Example:
+
 ```lua
 -- Sort strings by length
 local t = { "banana", "fig", "apple", "kiwi" }
 table.sort(t, function(a, b) return #a < #b end)
 print(table.concat(t, " "))
 ```
+
 ```expected
 fig kiwi apple banana
 ```
@@ -231,10 +264,12 @@ fig kiwi apple banana
 Much faster than repeated `..` for large arrays.
 
 Example:
+
 ```lua
 local t = {"a", "b", "c", "d"}
 print(table.concat(t, "-"))
 ```
+
 ```expected
 a-b-c-d
 ```
@@ -242,11 +277,13 @@ a-b-c-d
 ---
 
 Example:
+
 ```lua
 -- With range
 local t = {"a", "b", "c", "d", "e"}
 print(table.concat(t, ",", 2, 4))
 ```
+
 ```expected
 b,c,d
 ```
@@ -260,6 +297,7 @@ b,c,d
 `ipairs(t)` iterates indices 1, 2, 3, ... stopping at the first nil:
 
 Example:
+
 ```lua
 local sum = 0
 for i, v in ipairs({10, 20, 30}) do
@@ -267,6 +305,7 @@ for i, v in ipairs({10, 20, 30}) do
 end
 print(sum)
 ```
+
 ```expected
 60
 ```
@@ -278,6 +317,7 @@ print(sum)
 `pairs(t)` iterates all keys in undefined order:
 
 Example:
+
 ```lua
 local counts = {}
 local t = { x=1, y=2, z=3 }
@@ -286,6 +326,7 @@ for k, v in pairs(t) do
 end
 print(counts.y)
 ```
+
 ```expected
 4
 ```
@@ -298,11 +339,13 @@ print(counts.y)
 `pairs` is built on `next`:
 
 Example:
+
 ```lua
 local t = { a = 1 }
 local k, v = next(t, nil)   -- first pair
 print(tostring(k) .. "=" .. tostring(v))
 ```
+
 ```expected
 a=1
 ```
@@ -315,11 +358,13 @@ a=1
 This is the inverse of collecting `...` into a table.
 
 Example:
+
 ```lua
 local t = {10, 20, 30}
 local a, b, c = table.unpack(t)
 print(b)
 ```
+
 ```expected
 20
 ```
@@ -327,12 +372,14 @@ print(b)
 ---
 
 Example:
+
 ```lua
 -- With range
 local t = {1, 2, 3, 4, 5}
 local a, b, c = table.unpack(t, 2, 4)
 print(tostring(a) .. tostring(b) .. tostring(c))
 ```
+
 ```expected
 234
 ```
@@ -345,12 +392,14 @@ print(tostring(a) .. tostring(b) .. tostring(c))
 If `a2` is omitted, it defaults to `a1`:
 
 Example:
+
 ```lua
 local t = {1, 2, 3, 4, 5}
 local dst = {}
 table.move(t, 2, 4, 1, dst)
 print(table.concat(dst, ","))
 ```
+
 ```expected
 2,3,4
 ```
@@ -362,6 +411,7 @@ print(table.concat(dst, ","))
 Tables can contain other tables, forming trees and complex structures:
 
 Example:
+
 ```lua
 local matrix = {
   {1, 2, 3},
@@ -370,6 +420,7 @@ local matrix = {
 }
 print(matrix[2][3])
 ```
+
 ```expected
 6
 ```
@@ -377,6 +428,7 @@ print(matrix[2][3])
 ---
 
 Example:
+
 ```lua
 local config = {
   server = { host = "localhost", port = 8080 },
@@ -384,6 +436,7 @@ local config = {
 }
 print(config.server.port)
 ```
+
 ```expected
 8080
 ```
@@ -395,6 +448,7 @@ print(config.server.port)
 Since keys are unique, tables naturally implement sets:
 
 Example:
+
 ```lua
 local set = {}
 for _, v in ipairs({"apple", "banana", "apple", "cherry"}) do
@@ -405,6 +459,7 @@ local count = 0
 for _ in pairs(set) do count = count + 1 end
 print(count)
 ```
+
 ```expected
 3
 ```
@@ -414,6 +469,7 @@ print(count)
 ## 12. Stack and Queue patterns
 
 Example:
+
 ```lua
 -- Stack (LIFO): insert/remove at end
 local stack = {}
@@ -423,6 +479,7 @@ table.insert(stack, "c")
 table.remove(stack)   -- pop
 print(table.concat(stack, ""))
 ```
+
 ```expected
 ab
 ```
@@ -430,6 +487,7 @@ ab
 ---
 
 Example:
+
 ```lua
 -- Queue (FIFO): insert at end, remove from front
 local queue = {}
@@ -439,6 +497,7 @@ table.insert(queue, "third")
 table.remove(queue, 1)   -- dequeue
 print(queue[1])
 ```
+
 ```expected
 second
 ```
@@ -455,11 +514,13 @@ second
 
 Create a table representing a book: title="Lua Manual", pages=320, year=2024.
 Return the number of pages.
+
 > Tip: use the record constructor `{ key = value }`.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 320
 ```
@@ -470,11 +531,13 @@ Return the number of pages.
 
 Start with `{1, 2, 3, 4, 5}`. Remove the middle element (index 3) and
 insert 99 at the beginning. Return the resulting string with table.concat.
+
 > Tip: table.remove(t, 3) then table.insert(t, 1, 99).
 
 ```lua
 -- your code here
 ```
+
 ```expected
 99,1,2,4,5
 ```
@@ -485,11 +548,13 @@ insert 99 at the beginning. Return the resulting string with table.concat.
 
 Sort `{"banana", "apple", "cherry", "date"}` alphabetically and return
 the first element.
+
 > Tip: table.sort in-place, then t[1].
 
 ```lua
 -- your code here
 ```
+
 ```expected
 apple
 ```
@@ -500,6 +565,7 @@ apple
 
 Given two sets A and B (as tables with boolean values), find their intersection
 (keys present in both). Return the count of elements in the intersection.
+
 > Tip: iterate one set and check if each key exists in the other.
 
 ```lua
@@ -507,6 +573,7 @@ local A = { x=true, y=true, z=true }
 local B = { y=true, z=true, w=true }
 -- your code here
 ```
+
 ```expected
 2
 ```
@@ -517,12 +584,14 @@ local B = { y=true, z=true, w=true }
 
 Given a deeply nested table, safely access a value that might not exist.
 Return the value if it exists, "missing" if any level is nil.
+
 > Tip: use `and` chaining: `t.a and t.a.b and t.a.b.c or "missing"`.
 
 ```lua
 local data = { user = { profile = { score = 42 } } }
 -- your code here (access data.user.profile.score)
 ```
+
 ```expected
 42
 ```
@@ -533,12 +602,14 @@ local data = { user = { profile = { score = 42 } } }
 
 Count the frequency of each word in {"the","cat","sat","on","the","mat","the"}.
 Return the count for "the".
+
 > Tip: use a table as a counter: freq[word] = (freq[word] or 0) + 1.
 
 ```lua
 local words = {"the","cat","sat","on","the","mat","the"}
 -- your code here
 ```
+
 ```expected
 3
 ```
@@ -549,11 +620,13 @@ local words = {"the","cat","sat","on","the","mat","the"}
 
 Flatten `{1, {2, 3}, {4, {5, 6}}}` into a single array `{1,2,3,4,5,6}`.
 Return table.concat of the result with ",".
+
 > Tip: use a recursive function that checks type(v) == "table".
 
 ```lua
 -- your code here
 ```
+
 ```expected
 1,2,3,4,5,6
 ```
@@ -565,11 +638,13 @@ Return table.concat of the result with ",".
 Use table.move to copy the subarray from index 3 to 6 of
 `{10,20,30,40,50,60,70}` into a new table.
 Return the first element of the new table.
+
 > Tip: table.move(src, 3, 6, 1, dst).
 
 ```lua
 -- your code here
 ```
+
 ```expected
 30
 ```
@@ -579,12 +654,14 @@ Return the first element of the new table.
 ### Exercise 9 — unpack into function
 
 Given `local args = {5, 3}`, pass them to `math.max` using `table.unpack`.
+
 > Tip: math.max(table.unpack(args)).
 
 ```lua
 local args = {5, 3, 8, 1}
 -- your code here
 ```
+
 ```expected
 8
 ```
@@ -606,6 +683,7 @@ local items = {
 }
 -- your code here
 ```
+
 ```expected
 3
 ```

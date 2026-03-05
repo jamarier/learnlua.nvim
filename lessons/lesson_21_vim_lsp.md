@@ -1,7 +1,10 @@
+
+`gn` next lesson `gp` previous lesson `gO` go to ToC
+
 # Lesson 21: LSP — Language Server Protocol
 
-Neovim has a built-in LSP client. It implements the Language Server Protocol, 
-which defines a standard communication layer between editors and 
+Neovim has a built-in LSP client. It implements the Language Server Protocol,
+which defines a standard communication layer between editors and
 language-specific tools (Go, Rust, Python, Lua, etc.).
 
 The Neovim LSP documentation says: "Neovim supports the Language Server
@@ -27,10 +30,12 @@ Neovim (LSP client)  ←→  Language Server (e.g. lua-language-server)
 Returns all active LSP clients. Filter by buffer, name, method, etc:
 
 Example:
+
 ```lua
 local clients = vim.lsp.get_clients()
 print(type(clients))
 ```
+
 ```expected
 table
 ```
@@ -43,10 +48,12 @@ table
 Returns the client id (integer) or nil if already running:
 
 Example:
+
 ```lua
 -- Just verify the function exists
 print(type(vim.lsp.start))
 ```
+
 ```expected
 function
 ```
@@ -56,11 +63,13 @@ function
 ## Checking for attached clients
 
 Example:
+
 ```lua
 local buf = vim.api.nvim_get_current_buf()
 local clients = vim.lsp.get_clients({ bufnr = buf })
 print(type(clients) == "table")
 ```
+
 ```expected
 true
 ```
@@ -73,9 +82,11 @@ true
 of whether an LSP is active. Plugins can create diagnostics programmatically:
 
 Example:
+
 ```lua
 print(type(vim.diagnostic))
 ```
+
 ```expected
 table
 ```
@@ -84,17 +95,19 @@ table
 
 ## Severity levels
 
-| Constant | Value | Meaning |
-|----------|-------|---------|
-| `vim.diagnostic.severity.ERROR` | 1 | compilation errors |
-| `vim.diagnostic.severity.WARN` | 2 | possible issues |
-| `vim.diagnostic.severity.INFO` | 3 | informational |
-| `vim.diagnostic.severity.HINT` | 4 | suggestions |
+| Constant                        | Value | Meaning            |
+| ------------------------------- | ----- | ------------------ |
+| `vim.diagnostic.severity.ERROR` | 1     | compilation errors |
+| `vim.diagnostic.severity.WARN`  | 2     | possible issues    |
+| `vim.diagnostic.severity.INFO`  | 3     | informational      |
+| `vim.diagnostic.severity.HINT`  | 4     | suggestions        |
 
 Example:
+
 ```lua
 print(vim.diagnostic.severity.ERROR)
 ```
+
 ```expected
 1
 ```
@@ -105,12 +118,14 @@ print(vim.diagnostic.severity.ERROR)
 
 `vim.diagnostic.set(ns, buf, diagnostics, opts)` attaches a list of
 diagnostic objects to a buffer. Each diagnostic needs at minimum:
+
 - `lnum` — 0-indexed line number
 - `col` — 0-indexed column
 - `severity` — one of the severity constants
 - `message` — human-readable description
 
 Example:
+
 ```lua
 local ns = vim.api.nvim_create_namespace("diag_lesson")
 local buf = vim.api.nvim_create_buf(false, true)
@@ -132,6 +147,7 @@ vim.diagnostic.set(ns, buf, {
 })
 print(#vim.diagnostic.get(buf))
 ```
+
 ```expected
 2
 ```
@@ -143,6 +159,7 @@ print(#vim.diagnostic.get(buf))
 Retrieve diagnostics, optionally filtered:
 
 Example:
+
 ```lua
 local ns = vim.api.nvim_create_namespace("diag_get_lesson")
 local buf = vim.api.nvim_create_buf(false, true)
@@ -155,6 +172,7 @@ vim.diagnostic.set(ns, buf, {
 local errors = vim.diagnostic.get(buf, { severity = vim.diagnostic.severity.ERROR })
 print(#errors)
 ```
+
 ```expected
 1
 ```
@@ -166,6 +184,7 @@ print(#errors)
 `vim.diagnostic.reset(ns, buf)` removes all diagnostics from a namespace:
 
 Example:
+
 ```lua
 local ns = vim.api.nvim_create_namespace("diag_reset_lesson")
 local buf = vim.api.nvim_create_buf(false, true)
@@ -176,6 +195,7 @@ vim.diagnostic.set(ns, buf, {
 vim.diagnostic.reset(ns, buf)
 print(#vim.diagnostic.get(buf, { namespace = ns }))
 ```
+
 ```expected
 0
 ```
@@ -187,6 +207,7 @@ print(#vim.diagnostic.get(buf, { namespace = ns }))
 Controls how diagnostics are displayed globally:
 
 Example:
+
 ```lua
 vim.diagnostic.config({
   virtual_text = {
@@ -200,6 +221,7 @@ vim.diagnostic.config({
 })
 print(type(vim.diagnostic.config))
 ```
+
 ```expected
 function
 ```
@@ -211,6 +233,7 @@ function
 Returns counts per severity for a buffer:
 
 Example:
+
 ```lua
 local ns = vim.api.nvim_create_namespace("diag_count_lesson")
 local buf = vim.api.nvim_create_buf(false, true)
@@ -223,6 +246,7 @@ vim.diagnostic.set(ns, buf, {
 local counts = vim.diagnostic.count(buf)
 print(counts[vim.diagnostic.severity.ERROR])
 ```
+
 ```expected
 2
 ```
@@ -234,20 +258,22 @@ print(counts[vim.diagnostic.severity.ERROR])
 These operate on the buffer's currently-attached LSP clients.
 They send requests to the server and handle responses asynchronously:
 
-| Function | LSP method |
-|----------|-----------|
-| `vim.lsp.buf.hover()` | `textDocument/hover` |
-| `vim.lsp.buf.definition()` | `textDocument/definition` |
-| `vim.lsp.buf.references()` | `textDocument/references` |
-| `vim.lsp.buf.rename(new)` | `textDocument/rename` |
-| `vim.lsp.buf.code_action()` | `textDocument/codeAction` |
-| `vim.lsp.buf.format(opts)` | `textDocument/formatting` |
+| Function                       | LSP method                   |
+| ------------------------------ | ---------------------------- |
+| `vim.lsp.buf.hover()`          | `textDocument/hover`         |
+| `vim.lsp.buf.definition()`     | `textDocument/definition`    |
+| `vim.lsp.buf.references()`     | `textDocument/references`    |
+| `vim.lsp.buf.rename(new)`      | `textDocument/rename`        |
+| `vim.lsp.buf.code_action()`    | `textDocument/codeAction`    |
+| `vim.lsp.buf.format(opts)`     | `textDocument/formatting`    |
 | `vim.lsp.buf.signature_help()` | `textDocument/signatureHelp` |
 
 Example:
+
 ```lua
 print(type(vim.lsp.buf.hover))
 ```
+
 ```expected
 function
 ```
@@ -259,6 +285,7 @@ function
 The idiomatic way to set up per-buffer LSP keymaps:
 
 Example:
+
 ```lua
 local g = vim.api.nvim_create_augroup("LspLesson", { clear = true })
 vim.api.nvim_create_autocmd("LspAttach", {
@@ -272,6 +299,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 })
 print(#vim.api.nvim_get_autocmds({ group = g }))
 ```
+
 ```expected
 1
 ```
@@ -286,11 +314,13 @@ print(#vim.api.nvim_get_autocmds({ group = g }))
 
 Create a namespace and scratch buffer, set one ERROR diagnostic.
 Return the count.
+
 > Tip: vim.diagnostic.set then vim.diagnostic.get.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 1
 ```
@@ -300,11 +330,13 @@ Return the count.
 ### Exercise 2
 
 Set diagnostics of all four severities. Return the count of only WARNs.
+
 > Tip: vim.diagnostic.get(buf, { severity = vim.diagnostic.severity.WARN }).
 
 ```lua
 -- your code here
 ```
+
 ```expected
 1
 ```
@@ -314,11 +346,13 @@ Set diagnostics of all four severities. Return the count of only WARNs.
 ### Exercise 3
 
 Set 3 diagnostics, reset the namespace, return remaining count.
+
 > Tip: vim.diagnostic.reset(ns, buf).
 
 ```lua
 -- your code here
 ```
+
 ```expected
 0
 ```
@@ -329,11 +363,13 @@ Set 3 diagnostics, reset the namespace, return remaining count.
 
 Use vim.diagnostic.count to count diagnostics by severity.
 Set 3 ERRORs and 2 WARNs. Return the ERROR count.
+
 > Tip: vim.diagnostic.count(buf)[vim.diagnostic.severity.ERROR].
 
 ```lua
 -- your code here
 ```
+
 ```expected
 3
 ```
@@ -345,11 +381,13 @@ Set 3 ERRORs and 2 WARNs. Return the ERROR count.
 Write `count_above(buf, min_severity)` that counts diagnostics at or above
 (numerically ≤) a given severity. Set ERROR(1), WARN(2), INFO(3), HINT(4).
 Call with min_severity = WARN (2). Return count (should be 2: ERROR + WARN).
+
 > Tip: filter vim.diagnostic.get(buf) by d.severity <= min_severity.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 2
 ```

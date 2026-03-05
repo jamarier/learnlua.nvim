@@ -1,3 +1,6 @@
+
+`gn` next lesson `gp` previous lesson `gO` go to ToC
+
 # Lesson 04: Control Flow
 
 Lua's control structures are: `if`, `while`, `repeat/until`, and `for`
@@ -24,6 +27,7 @@ end
 Conditions can be any expression. Remember: only `nil` and `false` are falsy.
 
 Example:
+
 ```lua
 local x = 10
 if x > 5 then
@@ -32,6 +36,7 @@ else
   return "small"
 end
 ```
+
 ```expected
 big
 ```
@@ -39,6 +44,7 @@ big
 ---
 
 Example:
+
 ```lua
 local score = 75
 local grade
@@ -55,6 +61,7 @@ else
 end
 print(grade)
 ```
+
 ```expected
 C
 ```
@@ -66,11 +73,13 @@ C
 Lua has no ternary `?:` operator, but the `and`/`or` idiom works:
 
 Example:
+
 ```lua
 local n = 7
 local result = (n % 2 == 0) and "even" or "odd"
 print(result)
 ```
+
 ```expected
 odd
 ```
@@ -85,10 +94,11 @@ while condition do
 end
 ```
 
-The condition is checked *before* each iteration. If false initially, the body
+The condition is checked _before_ each iteration. If false initially, the body
 never runs.
 
 Example:
+
 ```lua
 local i = 1
 local sum = 0
@@ -98,6 +108,7 @@ while i <= 5 do
 end
 print(sum)
 ```
+
 ```expected
 15
 ```
@@ -112,11 +123,12 @@ repeat
 until condition
 ```
 
-The condition is checked *after* each iteration, so the body always runs
+The condition is checked _after_ each iteration, so the body always runs
 at least once. Variables declared inside the body are visible in the
 `until` condition — this is unique to `repeat/until` in Lua.
 
 Example:
+
 ```lua
 local i = 1
 local result = 0
@@ -126,6 +138,7 @@ repeat
 until i > 5
 print(result)
 ```
+
 ```expected
 15
 ```
@@ -133,6 +146,7 @@ print(result)
 ---
 
 Example:
+
 ```lua
 -- Variables declared inside repeat are visible in until
 local tries = 0
@@ -142,6 +156,7 @@ repeat
 until ok                    -- ok is visible here!
 print(tries)
 ```
+
 ```expected
 3
 ```
@@ -161,6 +176,7 @@ end
 The limit and step are evaluated once before the loop starts.
 
 Example:
+
 ```lua
 local sum = 0
 for i = 1, 10 do
@@ -168,6 +184,7 @@ for i = 1, 10 do
 end
 print(sum)
 ```
+
 ```expected
 55
 ```
@@ -175,6 +192,7 @@ print(sum)
 ---
 
 Example:
+
 ```lua
 -- Counting down with negative step
 local result = {}
@@ -183,6 +201,7 @@ for i = 5, 1, -1 do
 end
 print(table.concat(result, ", "))
 ```
+
 ```expected
 5, 4, 3, 2, 1
 ```
@@ -190,6 +209,7 @@ print(table.concat(result, ", "))
 ---
 
 Example:
+
 ```lua
 -- Step other than 1
 local result = {}
@@ -198,6 +218,7 @@ for i = 0, 10, 2 do
 end
 print(table.concat(result, " "))
 ```
+
 ```expected
 0 2 4 6 8 10
 ```
@@ -216,6 +237,7 @@ The generic `for` works with any iterator. `ipairs` iterates arrays by index;
 `pairs` iterates all key-value pairs. See lesson 08 for the full internals.
 
 Example:
+
 ```lua
 local sum = 0
 for i, v in ipairs({10, 20, 30}) do
@@ -223,6 +245,7 @@ for i, v in ipairs({10, 20, 30}) do
 end
 print(sum)
 ```
+
 ```expected
 60
 ```
@@ -230,6 +253,7 @@ print(sum)
 ---
 
 Example:
+
 ```lua
 -- pairs iterates all keys (order not guaranteed for non-integer keys)
 local t = { a = 1, b = 2, c = 3 }
@@ -239,6 +263,7 @@ for k, v in pairs(t) do
 end
 print(sum)
 ```
+
 ```expected
 6
 ```
@@ -250,6 +275,7 @@ print(sum)
 `break` exits the innermost loop immediately:
 
 Example:
+
 ```lua
 local found = nil
 for i = 1, 100 do
@@ -260,6 +286,7 @@ for i = 1, 100 do
 end
 print(found)
 ```
+
 ```expected
 8
 ```
@@ -272,6 +299,7 @@ Lua has `goto label` for jumping to a `::label::`. It is mainly used to
 simulate `continue` (skip the rest of the loop body):
 
 Example:
+
 ```lua
 -- Simulate "continue": skip odd numbers
 local result = {}
@@ -282,6 +310,7 @@ for i = 1, 8 do
 end
 print(table.concat(result, ", "))
 ```
+
 ```expected
 2, 4, 6, 8
 ```
@@ -294,6 +323,7 @@ print(table.concat(result, ", "))
 to the block and freed when the block ends:
 
 Example:
+
 ```lua
 local result = "outer"
 do
@@ -302,6 +332,7 @@ do
 end
 print(result)  -- back to the outer result
 ```
+
 ```expected
 outer
 ```
@@ -310,10 +341,11 @@ outer
 
 ## 9. Nested loops and break
 
-`break` only exits the *innermost* loop. To break multiple levels,
+`break` only exits the _innermost_ loop. To break multiple levels,
 use `goto` or a flag variable:
 
 Example:
+
 ```lua
 local found_i, found_j
 for i = 1, 5 do
@@ -327,6 +359,7 @@ end
 ::done::
 print(tostring(found_i) .. "x" .. tostring(found_j))
 ```
+
 ```expected
 3x4
 ```
@@ -335,10 +368,11 @@ print(tostring(found_i) .. "x" .. tostring(found_j))
 
 ## 10. Scope rules
 
-Lua uses *lexical scoping*. A local variable is visible from its
+Lua uses _lexical scoping_. A local variable is visible from its
 declaration to the end of the block that contains it:
 
 Example:
+
 ```lua
 local x = 1
 do
@@ -350,6 +384,7 @@ do
   return x
 end
 ```
+
 ```expected
 2
 ```
@@ -365,17 +400,20 @@ end
 ### Exercise 1 — if/elseif
 
 Write a function `classify(n)` that returns:
+
 - "negative" if n < 0
 - "zero" if n == 0
 - "small" if 0 < n <= 10
 - "large" if n > 10
 
 Call it with 7.
+
 > Tip: use if/elseif/else.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 small
 ```
@@ -385,11 +423,13 @@ small
 ### Exercise 2 — while
 
 Use a `while` loop to find the first power of 2 that is greater than 1000.
+
 > Tip: start with n=1 and double it each iteration.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 1024
 ```
@@ -401,12 +441,14 @@ Use a `while` loop to find the first power of 2 that is greater than 1000.
 Use `repeat/until` to read from a sequence until you find a value > 50.
 Given `local nums = {10, 20, 35, 60, 90}`, return the first value > 50
 and the index where it was found.
+
 > Tip: use a counter inside repeat; the until condition sees the counter.
 
 ```lua
 local nums = {10, 20, 35, 60, 90}
 -- your code here
 ```
+
 ```expected
 60
 ```
@@ -416,11 +458,13 @@ local nums = {10, 20, 35, 60, 90}
 ### Exercise 4 — Numeric for
 
 Use a numeric for loop to compute the sum of squares: 1² + 2² + ... + 10².
-> Tip: sum = sum + i*i.
+
+> Tip: sum = sum + i\*i.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 385
 ```
@@ -431,11 +475,13 @@ Use a numeric for loop to compute the sum of squares: 1² + 2² + ... + 10².
 
 Use ipairs to build a string from {"a","b","c","d"} where each element
 is prefixed by its 1-based index: "1:a, 2:b, 3:c, 4:d".
+
 > Tip: build up with table.concat after collecting into a list.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 1:a, 2:b, 3:c, 4:d
 ```
@@ -446,11 +492,13 @@ is prefixed by its 1-based index: "1:a, 2:b, 3:c, 4:d".
 
 Find the first index in {5, 3, 8, 1, 9, 2, 7} where the value exceeds 7.
 Return that index.
+
 > Tip: use a for loop and break when found.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 5
 ```
@@ -461,11 +509,13 @@ Return that index.
 
 Use goto to skip multiples of 3 when building a list from 1 to 12.
 Return the sum of the non-multiples.
+
 > Tip: `if i % 3 == 0 then goto continue end` then `::continue::` at end of loop body.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 40
 ```
@@ -477,11 +527,13 @@ Return the sum of the non-multiples.
 Predict and return the value of `x` after the following block.
 Set `x` to 10 outside, then inside a `do` block set `local x = 99`.
 Return the outer `x`.
+
 > Tip: `local` inside `do` creates a new scope.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 10
 ```
@@ -492,11 +544,13 @@ Return the outer `x`.
 
 Find all pairs (i, j) where 1 <= i <= j <= 5 and i + j == 7.
 Return them as a string in the format "2+5, 3+4" (sorted).
+
 > Tip: use two nested for loops.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 2+5, 3+4
 ```
@@ -506,12 +560,14 @@ Return them as a string in the format "2+5, 3+4" (sorted).
 ### Exercise 10 — Challenge: FizzBuzz
 
 Write FizzBuzz for numbers 1 to 20:
+
 - "Fizz" for multiples of 3
 - "Buzz" for multiples of 5
 - "FizzBuzz" for multiples of both
 - the number itself otherwise
 
 Return the result for n=15.
+
 > Tip: check FizzBuzz first (divisible by both), then Fizz, then Buzz, then number.
 
 ```lua
@@ -520,6 +576,7 @@ local function fizzbuzz(n)
 end
 fizzbuzz(15)
 ```
+
 ```expected
 FizzBuzz
 ```

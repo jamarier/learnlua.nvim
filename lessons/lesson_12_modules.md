@@ -1,10 +1,13 @@
+
+`gn` next lesson `gp` previous lesson `gO` go to ToC
+
 # Lesson 12: Modules and require
 
 Lua's module system is built on a single function: `require`. The reference
-manual says: *"The require function loads the given module. The function
+manual says: _"The require function loads the given module. The function
 starts by looking into the package.loaded table to determine whether modname
 is already loaded. If it is, then require returns the value stored at
-package.loaded[modname]. Otherwise, it tries to find a loader for the module."*
+package.loaded[modname]. Otherwise, it tries to find a loader for the module."_
 
 This design means modules are singletons: the first `require` runs the file,
 every subsequent call returns the cached result.
@@ -28,6 +31,7 @@ return M   -- <-- this is what require() returns
 ```
 
 Example:
+
 ```lua
 -- Simulating a module inline
 local M = {}
@@ -37,6 +41,7 @@ function M.square(x) return x * x end
 -- What the "user" does:
 print(M.double(7))
 ```
+
 ```expected
 14
 ```
@@ -52,12 +57,14 @@ result in `package.loaded`, and returns it.
 You can interact with this cache directly:
 
 Example:
+
 ```lua
 -- Manually populate the cache
 package.loaded["mymod"] = { version = "1.0", name = "mymod" }
 local m = require("mymod")
 print(m.version)
 ```
+
 ```expected
 1.0
 ```
@@ -65,6 +72,7 @@ print(m.version)
 ---
 
 Example:
+
 ```lua
 -- Verify require returns the cached value
 package.loaded["same"] = { x = 42 }
@@ -72,6 +80,7 @@ local a = require("same")
 local b = require("same")
 print(a == b)   -- same table reference
 ```
+
 ```expected
 true
 ```
@@ -83,11 +92,13 @@ true
 Set `package.loaded[name] = nil` to force a fresh load on next `require`:
 
 Example:
+
 ```lua
 package.loaded["reload_test"] = { loaded = true }
 package.loaded["reload_test"] = nil
 print(package.loaded["reload_test"])
 ```
+
 ```expected
 nil
 ```
@@ -100,10 +111,12 @@ nil
 `?` is replaced by the module name, with `.` converted to `/`:
 
 Example:
+
 ```lua
 -- package.path is always a string
 print(type(package.path))
 ```
+
 ```expected
 string
 ```
@@ -111,10 +124,12 @@ string
 ---
 
 Example:
+
 ```lua
 -- It contains ? placeholders
 print(package.path:find("?") ~= nil)
 ```
+
 ```expected
 true
 ```
@@ -126,6 +141,7 @@ true
 The standard Lua module pattern:
 
 Example:
+
 ```lua
 local M = {}
 
@@ -146,6 +162,7 @@ M.increment()
 M.increment()
 print(M.get())
 ```
+
 ```expected
 3
 ```
@@ -157,6 +174,7 @@ print(M.get())
 Defer expensive work until first use:
 
 Example:
+
 ```lua
 local M = {}
 local _data = nil
@@ -175,6 +193,7 @@ end
 
 print(#M.get_items())
 ```
+
 ```expected
 5
 ```
@@ -187,6 +206,7 @@ Used universally in Neovim plugins. The module has a `defaults` table and
 a `setup(opts)` that merges user options:
 
 Example:
+
 ```lua
 local M = {}
 
@@ -212,6 +232,7 @@ M.setup({ retries = 5, debug = true })
 -- timeout preserved from defaults
 print(M.config().timeout)
 ```
+
 ```expected
 1000
 ```
@@ -230,6 +251,7 @@ myplugin/
 ```
 
 Example:
+
 ```lua
 -- Simulate a submodule:
 package.loaded["myplugin.config"] = {
@@ -240,6 +262,7 @@ package.loaded["myplugin"] = {
 }
 print(require("myplugin").config.get().width)
 ```
+
 ```expected
 80
 ```
@@ -251,10 +274,12 @@ print(require("myplugin").config.get().width)
 When a module might not be installed (e.g. an optional plugin):
 
 Example:
+
 ```lua
 local ok, mod = pcall(require, "nonexistent_module_xyz")
 print(ok)
 ```
+
 ```expected
 false
 ```
@@ -262,6 +287,7 @@ false
 ---
 
 Example:
+
 ```lua
 -- Pattern: safe_require returns nil on failure
 local function safe_require(name)
@@ -272,6 +298,7 @@ end
 local m = safe_require("nonexistent_xyz")
 print(m == nil)
 ```
+
 ```expected
 true
 ```
@@ -281,6 +308,7 @@ true
 ## 10. Module with Singleton State
 
 Example:
+
 ```lua
 local Registry = {}
 Registry.__index = Registry
@@ -307,6 +335,7 @@ local r2 = Registry.get_instance()
 r1:register("key", 42)
 print(r2:lookup("key"))   -- same instance
 ```
+
 ```expected
 42
 ```
@@ -318,6 +347,7 @@ print(r2:lookup("key"))   -- same instance
 Defer loading submodules until first access:
 
 Example:
+
 ```lua
 local M = {}
 
@@ -339,6 +369,7 @@ setmetatable(M, {
 
 print(M.utils.trim("  hello  "))
 ```
+
 ```expected
 hello
 ```
@@ -355,11 +386,13 @@ hello
 
 Store a value in package.loaded, require it, and verify it's the same table.
 Return true if `require("test_mod") == package.loaded["test_mod"]`.
+
 > Tip: package.loaded is just a regular table.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 true
 ```
@@ -370,11 +403,13 @@ true
 
 Create a module with a private counter and two public functions:
 `inc()` and `val()`. Increment 5 times and return val().
+
 > Tip: the counter is a local variable outside the M table.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 5
 ```
@@ -385,11 +420,13 @@ Create a module with a private counter and two public functions:
 
 Create a module with defaults `{ a=1, b=2, c=3 }`.
 Call setup with `{ b=99 }`. Return the value of `a` (should be default).
+
 > Tip: vim.tbl_deep_extend("force", defaults, opts).
 
 ```lua
 -- your code here
 ```
+
 ```expected
 1
 ```
@@ -400,11 +437,13 @@ Call setup with `{ b=99 }`. Return the value of `a` (should be default).
 
 Write a `safe_require` function that returns `nil` if the module doesn't exist.
 Call it on a non-existent module and return `m == nil`.
+
 > Tip: pcall(require, name).
 
 ```lua
 -- your code here
 ```
+
 ```expected
 true
 ```
@@ -416,11 +455,13 @@ true
 Populate package.loaded["mymod"] with `{v=1}`. Read v.
 Then set package.loaded["mymod"] = {v=2} to "reload".
 Read v again and return it.
+
 > Tip: mutating package.loaded simulates reloading.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 2
 ```
@@ -432,11 +473,13 @@ Read v again and return it.
 Simulate a plugin with a submodule. Store `{value=42}` in
 `package.loaded["myplugin.data"]`. Access it from a "parent" module
 and return the value.
+
 > Tip: require("myplugin.data").value.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 42
 ```
@@ -448,11 +491,13 @@ and return the value.
 Build a module registry that allows registering and listing modules by name.
 Register "parser", "renderer", "formatter".
 Return the count of registered modules.
+
 > Tip: keep a private table; expose register(name) and count() functions.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 3
 ```

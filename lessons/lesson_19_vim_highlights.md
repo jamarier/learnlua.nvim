@@ -1,3 +1,6 @@
+
+`gn` next lesson `gp` previous lesson `gO` go to ToC
+
 # Lesson 19: Highlights and Extmarks
 
 Neovim's highlight and extmark APIs give plugins precise control over
@@ -18,6 +21,7 @@ A highlight group is a named set of display attributes.
 Namespace 0 is global (affects all contexts):
 
 Example:
+
 ```lua
 vim.api.nvim_set_hl(0, "MyPlugin_Error", {
   fg = "#ff5555",
@@ -27,6 +31,7 @@ vim.api.nvim_set_hl(0, "MyPlugin_Error", {
 local hl = vim.api.nvim_get_hl(0, { name = "MyPlugin_Error" })
 print(hl.bold)
 ```
+
 ```expected
 true
 ```
@@ -35,18 +40,18 @@ true
 
 ## Highlight attribute fields
 
-| Field | Type | Meaning |
-|-------|------|---------|
-| `fg` | `"#rrggbb"` or int | foreground colour |
-| `bg` | `"#rrggbb"` or int | background colour |
-| `sp` | `"#rrggbb"` or int | special colour (underline) |
-| `bold` | bool | bold text |
-| `italic` | bool | italic text |
-| `underline` | bool | underline |
-| `undercurl` | bool | wavy underline |
-| `strikethrough` | bool | strikethrough |
-| `reverse` | bool | swap fg/bg |
-| `link` | string | inherit from another group |
+| Field           | Type               | Meaning                    |
+| --------------- | ------------------ | -------------------------- |
+| `fg`            | `"#rrggbb"` or int | foreground colour          |
+| `bg`            | `"#rrggbb"` or int | background colour          |
+| `sp`            | `"#rrggbb"` or int | special colour (underline) |
+| `bold`          | bool               | bold text                  |
+| `italic`        | bool               | italic text                |
+| `underline`     | bool               | underline                  |
+| `undercurl`     | bool               | wavy underline             |
+| `strikethrough` | bool               | strikethrough              |
+| `reverse`       | bool               | swap fg/bg                 |
+| `link`          | string             | inherit from another group |
 
 ---
 
@@ -55,11 +60,13 @@ true
 `link` makes one group inherit another's attributes:
 
 Example:
+
 ```lua
 vim.api.nvim_set_hl(0, "MyWarning", { link = "DiagnosticWarn" })
 local hl = vim.api.nvim_get_hl(0, { name = "MyWarning" })
 print(hl.link)
 ```
+
 ```expected
 DiagnosticWarn
 ```
@@ -72,10 +79,12 @@ Namespaces isolate extmarks and highlight decorations so plugins don't
 clobber each other. Create one per plugin or per feature:
 
 Example:
+
 ```lua
 local ns = vim.api.nvim_create_namespace("myplugin.hints")
 print(type(ns))
 ```
+
 ```expected
 number
 ```
@@ -87,10 +96,12 @@ number
 The older API — adds a highlight to a range. Still widely used:
 
 `nvim_buf_add_highlight(buf, ns_id, hl_group, line, col_start, col_end)`
+
 - `col_end = -1` means end of line
 - Returns an extmark id
 
 Example:
+
 ```lua
 local buf = vim.api.nvim_create_buf(false, true)
 vim.api.nvim_buf_set_lines(buf, 0, -1, false, {"hello world"})
@@ -98,6 +109,7 @@ local ns = vim.api.nvim_create_namespace("test_add_hl")
 local id = vim.api.nvim_buf_add_highlight(buf, ns, "Comment", 0, 0, 5)
 print(id >= 0)
 ```
+
 ```expected
 true
 ```
@@ -111,22 +123,23 @@ it can move with text, carry virtual text, sign text, and line decorations.
 
 Key options:
 
-| Option | Meaning |
-|--------|---------|
-| `hl_group` | highlight group for the range |
-| `end_row`, `end_col` | extent of the range |
-| `virt_text` | `{{text, hl_group}, ...}` after the line |
-| `virt_text_pos` | `"eol"`, `"overlay"`, `"right_align"` |
-| `virt_lines` | `{{{text, hl}, ...}, ...}` full virtual lines |
-| `virt_lines_above` | place virt_lines above the marked line |
-| `sign_text` | text in the sign column |
-| `sign_hl_group` | highlight for sign_text |
-| `number_hl_group` | highlight for the line number |
-| `line_hl_group` | whole-line highlight |
-| `priority` | rendering priority |
-| `right_gravity` | whether mark moves right on insert |
+| Option               | Meaning                                       |
+| -------------------- | --------------------------------------------- |
+| `hl_group`           | highlight group for the range                 |
+| `end_row`, `end_col` | extent of the range                           |
+| `virt_text`          | `{{text, hl_group}, ...}` after the line      |
+| `virt_text_pos`      | `"eol"`, `"overlay"`, `"right_align"`         |
+| `virt_lines`         | `{{{text, hl}, ...}, ...}` full virtual lines |
+| `virt_lines_above`   | place virt_lines above the marked line        |
+| `sign_text`          | text in the sign column                       |
+| `sign_hl_group`      | highlight for sign_text                       |
+| `number_hl_group`    | highlight for the line number                 |
+| `line_hl_group`      | whole-line highlight                          |
+| `priority`           | rendering priority                            |
+| `right_gravity`      | whether mark moves right on insert            |
 
 Example:
+
 ```lua
 local buf = vim.api.nvim_create_buf(false, true)
 vim.api.nvim_buf_set_lines(buf, 0, -1, false, {"function main()"})
@@ -137,6 +150,7 @@ local id = vim.api.nvim_buf_set_extmark(buf, ns, 0, 0, {
 })
 print(id > 0)
 ```
+
 ```expected
 true
 ```
@@ -146,6 +160,7 @@ true
 ## Virtual text (end of line)
 
 Example:
+
 ```lua
 local buf = vim.api.nvim_create_buf(false, true)
 vim.api.nvim_buf_set_lines(buf, 0, -1, false, {"local x = 1"})
@@ -160,6 +175,7 @@ vim.api.nvim_buf_set_extmark(buf, ns, 0, 0, {
 local marks = vim.api.nvim_buf_get_extmarks(buf, ns, 0, -1, { details = true })
 print(marks[1][4].virt_text ~= nil)
 ```
+
 ```expected
 true
 ```
@@ -171,6 +187,7 @@ true
 `virt_lines` inserts entire phantom lines above or below a line:
 
 Example:
+
 ```lua
 local buf = vim.api.nvim_create_buf(false, true)
 vim.api.nvim_buf_set_lines(buf, 0, -1, false, {"real line"})
@@ -184,6 +201,7 @@ local id = vim.api.nvim_buf_set_extmark(buf, ns, 0, 0, {
 })
 print(id > 0)
 ```
+
 ```expected
 true
 ```
@@ -193,10 +211,12 @@ true
 ## Retrieving extmarks
 
 `nvim_buf_get_extmarks(buf, ns, start, end, opts)`:
+
 - `start` and `end` are `{row, col}` or `0` / `-1`
 - `details = true` returns the opts table alongside position info
 
 Example:
+
 ```lua
 local buf = vim.api.nvim_create_buf(false, true)
 vim.api.nvim_buf_set_lines(buf, 0, -1, false, {"line a", "line b", "line c"})
@@ -207,6 +227,7 @@ end
 local marks = vim.api.nvim_buf_get_extmarks(buf, ns, 0, -1, {})
 print(#marks)
 ```
+
 ```expected
 3
 ```
@@ -218,6 +239,7 @@ print(#marks)
 Pass an existing `id` to `nvim_buf_set_extmark` to move or update it:
 
 Example:
+
 ```lua
 local buf = vim.api.nvim_create_buf(false, true)
 vim.api.nvim_buf_set_lines(buf, 0, -1, false, {"a","b","c"})
@@ -228,6 +250,7 @@ vim.api.nvim_buf_set_extmark(buf, ns, 2, 0, { id = id })
 local marks = vim.api.nvim_buf_get_extmarks(buf, ns, 0, -1, {})
 print(marks[1][2])   -- row of the (now moved) mark
 ```
+
 ```expected
 2
 ```
@@ -239,6 +262,7 @@ print(marks[1][2])   -- row of the (now moved) mark
 `nvim_buf_clear_namespace(buf, ns, line_start, line_end)`:
 
 Example:
+
 ```lua
 local buf = vim.api.nvim_create_buf(false, true)
 vim.api.nvim_buf_set_lines(buf, 0, -1, false, {"x","y"})
@@ -248,6 +272,7 @@ vim.api.nvim_buf_set_extmark(buf, ns, 1, 0, {})
 vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
 print(#vim.api.nvim_buf_get_extmarks(buf, ns, 0, -1, {}))
 ```
+
 ```expected
 0
 ```
@@ -259,6 +284,7 @@ print(#vim.api.nvim_buf_get_extmarks(buf, ns, 0, -1, {}))
 Use `sign_text` to show icons in the sign column:
 
 Example:
+
 ```lua
 local buf = vim.api.nvim_create_buf(false, true)
 vim.api.nvim_buf_set_lines(buf, 0, -1, false, {"error here"})
@@ -269,6 +295,7 @@ local id = vim.api.nvim_buf_set_extmark(buf, ns, 0, 0, {
 })
 print(id > 0)
 ```
+
 ```expected
 true
 ```
@@ -282,11 +309,13 @@ true
 ### Exercise 1
 
 Create a namespace "ex1ns" and verify it returns a number.
+
 > Tip: type(vim.api.nvim_create_namespace("ex1ns")).
 
 ```lua
 -- your code here
 ```
+
 ```expected
 number
 ```
@@ -297,11 +326,13 @@ number
 
 Define a highlight group "ExBold" with bold = true.
 Read it back and confirm bold is true.
+
 > Tip: nvim_set_hl then nvim_get_hl.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 true
 ```
@@ -312,11 +343,13 @@ true
 
 Create a buffer with one line, add an extmark with virt_text "← hint".
 Retrieve all extmarks with details = true and return the count.
+
 > Tip: nvim_buf_get_extmarks(buf, ns, 0, -1, { details = true }).
 
 ```lua
 -- your code here
 ```
+
 ```expected
 1
 ```
@@ -327,11 +360,13 @@ Retrieve all extmarks with details = true and return the count.
 
 Add 4 extmarks to different lines in a buffer. Clear the namespace.
 Return the count of remaining extmarks.
+
 > Tip: nvim_buf_clear_namespace(buf, ns, 0, -1).
 
 ```lua
 -- your code here
 ```
+
 ```expected
 0
 ```
@@ -342,11 +377,13 @@ Return the count of remaining extmarks.
 
 Create an extmark at row 0, then update it to row 2 by passing `id`
 to a second nvim_buf_set_extmark call. Confirm its new row is 2.
+
 > Tip: marks[1][2] is the row in the get_extmarks result.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 2
 ```
@@ -359,11 +396,13 @@ Write a function `highlight_pattern(buf, ns, pattern, hl_group)` that
 finds all matches of a Lua pattern in a buffer and adds an extmark
 highlight for each match.
 Test on a buffer with "foo bar foo" — highlight "foo" and return the mark count.
+
 > Tip: get lines, string.find each in a loop, set extmarks with end_col.
 
 ```lua
 -- your code here
 ```
+
 ```expected
 2
 ```

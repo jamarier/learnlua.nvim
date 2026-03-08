@@ -13,16 +13,16 @@ local validators = {
 
 M.check = function(code_lines, expected)
   local code = table.concat(code_lines, "\n")
-  local last_printed = nil
+  local printed_lines = {}
 
-  -- Capture helper
+  -- Capture helper — accumulates every print call
   local function capture_output(...)
     local parts = {}
     for i = 1, select("#", ...) do
       local v = select(i, ...)
       table.insert(parts, type(v) == "table" and vim.inspect(v) or tostring(v))
     end
-    last_printed = table.concat(parts, "\t")
+    table.insert(printed_lines, table.concat(parts, "\t"))
   end
 
   local sandbox_table = {}
@@ -72,31 +72,20 @@ M.check = function(code_lines, expected)
   setmetatable(sandbox, { __index = _G })
 
   local fn, err
-
-  -- -- 1. If it's a single line and doesn't have 'return', try adding it
-  -- -- don't know if it is a good idea
-  -- if #code_lines == 1 and not code:match("^%s*return%s") then
-  --   local return_code = "return " .. code
-  --   fn = load(return_code, "exercise", "t", sandbox)
-  -- end
-
-  -- 2. If #1 failed or it's multi-line, load the code exactly as written
-  if not fn then
-    fn, err = load(code, "exercise", "t", sandbox)
-  end
+  fn, err = load(code, "exercise", "t", sandbox)
 
   if not fn then
-    return false, "Syntax error: " .. err, nil
+    return false, "Syntax error: " .. err, nil, {}
   end
 
   local ok, result = pcall(fn)
   if not ok then
-    return false, "Runtime error: " .. tostring(result), nil
+    return false, "Runtime error: " .. tostring(result), nil, printed_lines
   end
 
-  -- FALLBACK: Use printed output if return is nil
-  if result == nil and last_printed ~= nil then
-    result = last_printed
+  -- FALLBACK: Use last printed output if return is nil
+  if result == nil and #printed_lines > 0 then
+    result = printed_lines[#printed_lines]
   end
 
   -- Final stringify for tables
@@ -108,16 +97,16 @@ M.check = function(code_lines, expected)
   local validator = validators[expected]
   if validator then
     if validator(result) then
-      return true, "Correct!", result
+      return true, "Correct!", result, printed_lines
     else
-      return false, "expected a " .. expected .. ', got "' .. tostring(result) .. '"', result
+      return false, "expected a " .. expected .. ', got "' .. tostring(result) .. '"', result, printed_lines
     end
   end
 
   if normalize(result) == normalize(expected) then
-    return true, "Correct!", result
+    return true, "Correct!", result, printed_lines
   else
-    return false, 'expected "' .. expected .. '"', result
+    return false, 'expected "' .. expected .. '"', result, printed_lines
   end
 end
 

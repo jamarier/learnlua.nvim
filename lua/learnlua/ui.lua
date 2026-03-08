@@ -255,16 +255,29 @@ M.open = function(sections, runner, filepath)
 
     vim.keymap.set("n", cfg.mappings.test_code, function()
       local lines = vim.api.nvim_buf_get_lines(editor_buf, 0, -1, false)
-      local _, _, result = runner.check(lines, section.expected)
+      local _, _, result, printed_lines = runner.check(lines, section.expected)
 
       -- Clear previous editor virtual text
       vim.api.nvim_buf_clear_namespace(editor_buf, editor_ns, 0, -1)
 
       local last_line = #lines - 1
-      local display_result = tostring(result):gsub("\n", " "):gsub("%s+", " "):gsub("^%s+", ""):gsub("%s+$", "")
 
+      -- Build virtual lines: one entry per printed line, plus the return value
+      -- if it differs from the last print.
       local virt = {}
-      table.insert(virt, { { "  output: " .. display_result, "Comment" } })
+
+      -- Collect all printed output lines
+      if printed_lines and #printed_lines > 0 then
+        for i, line in ipairs(printed_lines) do
+          local label = i == 1 and "  output: " or "          "
+          local display = tostring(line):gsub("\n", " "):gsub("%s+", " "):gsub("^%s+", ""):gsub("%s+$", "")
+          table.insert(virt, { { label .. display, "Comment" } })
+        end
+      else
+        -- No prints — show the return value
+        local display = tostring(result):gsub("\n", " "):gsub("%s+", " "):gsub("^%s+", ""):gsub("%s+$", "")
+        table.insert(virt, { { "  output: " .. display, "Comment" } })
+      end
 
       vim.api.nvim_buf_set_extmark(editor_buf, editor_ns, last_line, 0, {
         virt_lines_above = false,
